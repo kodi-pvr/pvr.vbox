@@ -27,9 +27,6 @@ Recording::Recording(unsigned int id, const std::string &channelId,
   const std::string &channelName, RecordingState state)
   : m_id(id), m_channelName(channelName), m_state(state)
 {
-  // TODO: External recordings don't have a title
-  if (state == RecordingState::EXTERNAL)
-    m_title = "External recording (channel " + m_channelName + ")";
 }
 
 Recording::~Recording()

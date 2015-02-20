@@ -126,6 +126,14 @@ Recording RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *
 
   if (xml->FirstChildElement("programme-title"))
     recording.m_title = xml->FirstChildElement("programme-title")->GetText();
+  else
+  {
+    // TODO: Some recordings don't have a name, especially external ones
+    if (state == RecordingState::EXTERNAL)
+      recording.m_title = "External recording (channel " + channelName + ")";
+    else
+      recording.m_title = "Unnamed recording (channel " + channelName + ")";
+  }
 
   if (xml->FirstChildElement("url"))
     recording.m_url = xml->FirstChildElement("url")->GetText();
