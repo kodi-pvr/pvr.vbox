@@ -258,12 +258,12 @@ extern "C" {
     return PVR_ERROR_NO_ERROR;
   }
 
-  int GetRecordingsAmount(void)
+  int GetRecordingsAmount(bool deleted)
   {
     return g_vbox->GetRecordingsAmount();
   }
 
-  PVR_ERROR GetRecordings(ADDON_HANDLE handle)
+  PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
   {
     try {
       auto recordings = g_vbox->GetRecordingsAndTimers();
@@ -432,6 +432,10 @@ extern "C" {
   PVR_ERROR MoveChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DialogChannelSettings(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DialogAddChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR OpenDialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR OpenDialogChannelSettings(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR OpenDialogChannelAdd(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR UndeleteRecording(const PVR_RECORDING& recording) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Channel group methods
   int GetChannelGroupsAmount(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
@@ -469,6 +473,7 @@ extern "C" {
   int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
   PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
   PVR_ERROR UpdateTimer(const PVR_TIMER &timer) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Miscellaneous unimplemented methods
   PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus) { return PVR_ERROR_NOT_IMPLEMENTED; }
