@@ -242,6 +242,15 @@ extern "C" {
           sizeof(channel.strChannelName) - 1);
         strncpy(channel.strIconPath, item.GetIconUrl().c_str(),
           sizeof(channel.strIconPath) - 1);
+        strncpy(channel.strStreamURL, item.m_url.c_str(),
+          sizeof(channel.strStreamURL));
+
+        // Set stream format for TV channels
+        if (!item.IsRadio())
+        {
+          strncpy(channel.strInputFormat, "video/mp2t",
+            sizeof(channel.strInputFormat));
+        }
 
         PVR->TransferChannelEntry(handle, &channel);
       }
