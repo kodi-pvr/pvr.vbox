@@ -173,6 +173,7 @@ extern "C" {
   {
     pCapabilities->bSupportsTV = true;
     pCapabilities->bSupportsRadio = true;
+    pCapabilities->bSupportsChannelGroups = false;
 
     // Wait for initialization until we decide if we support recordings or not.
     // Recording is only possible when external media is present
