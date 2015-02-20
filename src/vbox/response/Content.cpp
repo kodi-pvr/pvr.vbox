@@ -51,7 +51,8 @@ std::vector<Channel> XMLTVResponseContent::GetChannels() const
     element != NULL; element = m_content->NextSiblingElement("channel"))
   {
     Channel channel = CreateChannel(element);
-    channel.SetNumber(++channelNumber);
+    // TODO: The API doesn't provide LCN
+    channel.m_number = ++channelNumber;
     channels.push_back(channel);
   }
 
@@ -79,11 +80,11 @@ Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) con
   // Set icon URL if it exists
   const char *iconUrl = xml->FirstChildElement("icon")->Attribute("src");
   if (iconUrl != NULL)
-    channel.SetIconUrl(iconUrl);
+    channel.m_iconUrl = iconUrl;
 
   // Set radio and encryption status
-  channel.SetRadio(type == "Radio");
-  channel.SetEncrypted(encryption == "Encrypted");
+  channel.m_radio = type == "Radio";
+  channel.m_encrypted = encryption == "Encrypted";
 
   return channel;
 }

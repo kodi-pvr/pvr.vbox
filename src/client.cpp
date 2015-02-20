@@ -227,26 +227,26 @@ extern "C" {
       for (const auto &item : channels)
       {
         // Skip those that are not of the correct type
-        if (item.IsRadio() != bRadio)
+        if (item.m_radio != bRadio)
           continue;
 
         PVR_CHANNEL channel;
         memset(&channel, 0, sizeof(PVR_CHANNEL));
 
         channel.iUniqueId = item.GetUniqueId();
-        channel.bIsRadio = item.IsRadio();
-        channel.iChannelNumber = item.GetNumber();
-        channel.iEncryptionSystem = item.IsEncrypted() ? 0xFFFF : 0x0000;
+        channel.bIsRadio = item.m_radio;
+        channel.iChannelNumber = item.m_number;
+        channel.iEncryptionSystem = item.m_encrypted ? 0xFFFF : 0x0000;
 
-        strncpy(channel.strChannelName, item.GetName().c_str(),
+        strncpy(channel.strChannelName, item.m_name.c_str(),
           sizeof(channel.strChannelName) - 1);
-        strncpy(channel.strIconPath, item.GetIconUrl().c_str(),
+        strncpy(channel.strIconPath, item.m_iconUrl.c_str(),
           sizeof(channel.strIconPath) - 1);
         strncpy(channel.strStreamURL, item.m_url.c_str(),
           sizeof(channel.strStreamURL));
 
         // Set stream format for TV channels
-        if (!item.IsRadio())
+        if (!item.m_radio)
         {
           strncpy(channel.strInputFormat, "video/mp2t",
             sizeof(channel.strInputFormat));

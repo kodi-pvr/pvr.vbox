@@ -23,7 +23,10 @@
 
 using namespace vbox;
 
-void Channel::SetIconUrl(const std::string &url)
+unsigned int Channel::GetUniqueId() const
 {
-  m_iconUrl = url;
+  // Convert the string m_id to an unsigned int
+  std::hash<std::string> hasher;
+  int uniqueId = hasher(m_id);
+  return std::abs(uniqueId);
 }

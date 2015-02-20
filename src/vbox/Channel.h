@@ -36,101 +36,19 @@ namespace vbox {
       return m_id;
     }
 
-    unsigned int GetUniqueId() const
-    {
-      std::hash<std::string> hasher;
-      return hasher(m_id);
-    }
+    unsigned int GetUniqueId() const;
 
-    std::string GetName() const
-    {
-      return m_name;
-    }
-
-    unsigned int GetNumber() const
-    {
-      return m_number;
-    }
-
-    void SetNumber(unsigned int number)
-    {
-      m_number = number;
-    }
-
-    std::string GetIconUrl() const
-    {
-      return m_iconUrl;
-    }
-
-    /**
-     * Sets the icon URL
-     * @param url the icon URL
-     */
-    void SetIconUrl(const std::string &url);
-
-    bool IsRadio() const
-    {
-      return m_radio;
-    }
-
-    /**
-     * Indicate whether this is a radio channel or not
-     * @param radio true for radio
-     */
-    void SetRadio(bool radio)
-    {
-      m_radio = radio;
-    }
-
-    bool IsEncrypted() const
-    {
-      return m_encrypted;
-    }
-
-    /**
-     * Indicate whether this channel is encrypted or not
-     * @param encrypted true if encrypted
-     */
-    void SetEncrypted(bool encrypted)
-    {
-      m_encrypted = encrypted;
-    }
+    std::string m_name;
+    unsigned int m_number;
+    std::string m_iconUrl;
+    bool m_radio;
+    std::string m_url;
+    bool m_encrypted;
 
   private:
     /**
     * The XMLTV channel ID
     */
     std::string m_id;
-
-    /**
-    * The channel name
-    */
-    std::string m_name;
-
-    /**
-     * The channel number
-     */
-    unsigned int m_number;
-
-    /**
-    * The icon URL
-    */
-    std::string m_iconUrl;
-
-    /**
-    * The channel URL
-    */
-    std::string m_url;
-
-    /**
-     * Radio or not
-     */
-    bool m_radio;
-
-    /**
-     * Encrypted or not
-     * TODO: The VBox SDK does not expose functionality for retrieving the CAID
-     */
-    bool m_encrypted;
   };
 }
