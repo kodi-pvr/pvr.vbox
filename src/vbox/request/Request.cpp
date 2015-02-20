@@ -25,35 +25,20 @@
 using namespace vbox::request;
 
 Request::Request(const std::string &method)
+  : m_method(method)
 {
-
-}
-
-Request::~Request()
-{
-
-}
-
-std::string Request::GetMethod() const
-{
-  return m_method;
+  // Add the method parameter
+  AddParameter("Method", method);
 }
 
 std::string Request::GetUrl() const
 {
   std::string url = g_vbox->GetApiBaseUrl();
 
-  // Append parameters
+  // Append parameters (including method)
   if (m_parameters.size() > 0)
-  {
-    int i = 0;
-
     for (auto const &parameter : m_parameters)
-    {
-      url += ((i == 0) ? "?" : "&") + parameter.first + "=" + parameter.second;
-      i++;
-    }
-  }
+      url += "&" + parameter.first + "=" + parameter.second;
 
   return url;
 }

@@ -56,6 +56,7 @@ namespace vbox {
 
     /**
      * Represents an API response
+     * TODO: Factor out to interface and something like a BasicResponse implementation
      */
     class Response
     {

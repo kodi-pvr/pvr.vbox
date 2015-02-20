@@ -29,15 +29,28 @@ using namespace vbox::response;
 
 std::string Content::GetString(const std::string &parameter) const
 {
-  return std::string(m_content->GetText());
+  XMLElement *element = GetParameterElement(parameter);
+  
+  if (element && element->GetText())
+    return std::string(element->GetText());
+
+  return "";
 }
 
 int Content::GetInteger(const std::string &parameter) const
 {
   int value;
-  m_content->QueryIntText(&value);
+
+  XMLElement *element = GetParameterElement(parameter);
+  if (element)
+    element->QueryIntText(&value);
 
   return value;
+}
+
+tinyxml2::XMLElement* Content::GetParameterElement(const std::string &parameter) const
+{
+  return m_content->FirstChildElement(parameter.c_str());
 }
 
 std::vector<Channel> XMLTVResponseContent::GetChannels() const
@@ -48,7 +61,7 @@ std::vector<Channel> XMLTVResponseContent::GetChannels() const
   unsigned int channelNumber = 1;
 
   for (XMLElement *element = m_content->FirstChildElement("channel");
-    element != NULL; element = m_content->NextSiblingElement("channel"))
+    element != NULL; element = element->NextSiblingElement("channel"))
   {
     Channel channel = CreateChannel(element);
     // TODO: The API doesn't provide LCN
@@ -94,7 +107,7 @@ std::vector<Recording> RecordingResponseContent::GetRecordings() const
   std::vector<Recording> recordings;
 
   for (XMLElement *element = m_content->FirstChildElement("record");
-    element != NULL; element = m_content->NextSiblingElement("record"))
+    element != NULL; element = element->NextSiblingElement("record"))
   {
     Recording recording = CreateRecording(element);
     recordings.push_back(recording);

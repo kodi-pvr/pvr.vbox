@@ -25,11 +25,14 @@
 
 namespace vbox {
   namespace request {
+
+    // TODO: Comment
     class Request
     {
     public:
+      // TODO: Comment
       Request(const std::string &method);
-      virtual ~Request();
+      virtual ~Request() {};
 
       /**
        * Adds a request parameter with the specified value
@@ -44,7 +47,10 @@ namespace vbox {
       /**
        * @return the request method
        */
-      std::string GetMethod() const;
+      std::string GetMethod() const
+      {
+        return m_method;
+      }
 
       /**
        * Returns the complete URL for the request

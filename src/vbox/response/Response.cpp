@@ -54,30 +54,32 @@ void Response::ParseStatus()
   int errorCode;
   std::string errorDescription;
 
-  XMLNode *rootElement = m_document->FirstChild();
+  XMLNode *rootElement = m_document->RootElement();
   XMLElement *statusElement = rootElement->FirstChildElement(GetStatusElementName().c_str());
 
-  statusElement->FirstChildElement("ErrorCode")->QueryIntText(&errorCode);
-  errorDescription = statusElement->FirstChildElement("ErrorDescription")->GetText();
+  // Not all response types always return the status element
+  if (statusElement)
+  {
+    statusElement->FirstChildElement("ErrorCode")->QueryIntText(&errorCode);
+    errorDescription = statusElement->FirstChildElement("ErrorDescription")->GetText();
 
-  m_error.code = static_cast<ErrorCode>(errorCode);
-  m_error.description = errorDescription;
+    m_error.code = static_cast<ErrorCode>(errorCode);
+    m_error.description = errorDescription;
+  }
 }
 
 XMLElement* Response::GetReplyElement() const
 {
-  XMLNode *rootElement = m_document->FirstChild();
+  XMLNode *rootElement = m_document->RootElement();
   return rootElement->FirstChildElement("Reply");
 }
 
 XMLElement* XMLTVResponse::GetReplyElement() const
 {
-  XMLNode *rootElement = m_document->FirstChild();
-  return rootElement->FirstChildElement("tv");
+  return m_document->RootElement();
 }
 
 XMLElement* RecordingResponse::GetReplyElement() const
 {
-  XMLNode *rootElement = m_document->FirstChild();
-  return rootElement->FirstChildElement("records-list");
+  return m_document->RootElement();
 }

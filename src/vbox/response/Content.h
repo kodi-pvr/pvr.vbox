@@ -63,6 +63,10 @@ namespace vbox {
        * The request content
        */
       tinyxml2::XMLElement *m_content;
+
+    private:
+
+      tinyxml2::XMLElement* GetParameterElement(const std::string &parameter) const;
     };
 
     /**
