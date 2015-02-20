@@ -226,6 +226,10 @@ extern "C" {
 
       for (const auto &item : channels)
       {
+        // Skip those that are not of the correct type
+        if (item.IsRadio() != bRadio)
+          continue;
+
         PVR_CHANNEL channel;
         memset(&channel, 0, sizeof(PVR_CHANNEL));
 
