@@ -174,6 +174,23 @@ extern "C" {
     pCapabilities->bSupportsTV = true;
     pCapabilities->bSupportsRadio = true;
     pCapabilities->bSupportsChannelGroups = false;
+    pCapabilities->bSupportsEPG = false; // TODO: Implement
+    pCapabilities->bHandlesInputStream = false; // TODO: Implement
+
+    // Will be determined further down
+    pCapabilities->bSupportsRecordings = true;
+    pCapabilities->bSupportsTimers = true;
+
+    // Unsupported features
+    pCapabilities->bSupportsRecordingsUndelete = false;
+    pCapabilities->bSupportsChannelScan = false;
+    pCapabilities->bSupportsChannelSettings = false;
+    pCapabilities->bHandlesInputStream = false;
+    pCapabilities->bHandlesDemuxing = false;
+    pCapabilities->bSupportsRecordingFolders = false;
+    pCapabilities->bSupportsRecordingPlayCount = false;
+    pCapabilities->bSupportsLastPlayedPosition = false;
+    pCapabilities->bSupportsRecordingEdl = false;
 
     // Wait for initialization until we decide if we support recordings or not.
     // Recording is only possible when external media is present
