@@ -84,17 +84,19 @@ Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) con
   displayElement = displayElement->NextSiblingElement("display-name");
   std::string encryption = displayElement->GetText();
 
-  // Extract the LCN
-  displayElement = displayElement->NextSiblingElement("display-name");
-  std::string lcnText = displayElement->GetText();
-  std::string lcnNumber = lcnText.substr(lcnText.find("_"));
-  unsigned int lcn = std::stoul(lcnNumber);
-
   // Create the channel with some basic information
   Channel channel(uniqueId, xml->Attribute("id"), name,
     xml->FirstChildElement("url")->Attribute("src"));
 
-  channel.m_number = lcn;
+  // Extract the LCN (optional)
+  displayElement = displayElement->NextSiblingElement("display-name");
+
+  if (displayElement)
+  {
+    std::string lcn = displayElement->GetText();
+    std::string lcnNumber = lcn.substr(lcn.find("_"));
+    channel.m_number = std::stoul(lcnNumber);
+  }
 
   // Set icon URL if it exists
   const char *iconUrl = xml->FirstChildElement("icon")->Attribute("src");
