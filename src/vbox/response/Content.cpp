@@ -20,6 +20,7 @@
 */
 
 #include "Content.h"
+#include <tinyxml2/tinyxml2.h>
 #include "../Channel.h"
 #include "../xmltv/Utilities.h"
 

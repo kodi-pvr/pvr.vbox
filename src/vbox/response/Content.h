@@ -23,8 +23,13 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <tinyxml2/tinyxml2.h>
 #include "../Recording.h"
+#include "../xmltv/Event.h"
+
+namespace tinyxml2 {
+  // Forward declarations
+  class XMLElement;
+}
 
 namespace vbox {
 
