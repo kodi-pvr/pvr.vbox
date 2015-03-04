@@ -25,8 +25,8 @@ using namespace vbox;
 
 unsigned int Channel::GetUniqueId() const
 {
-  // Convert the string m_id to an unsigned int
+  // Convert the unique name to an unsigned int
   std::hash<std::string> hasher;
-  int uniqueId = hasher(m_id);
+  int uniqueId = hasher(m_uniqueId);
   return std::abs(uniqueId);
 }

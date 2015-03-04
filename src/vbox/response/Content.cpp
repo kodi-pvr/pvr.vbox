@@ -57,15 +57,14 @@ std::vector<Channel> XMLTVResponseContent::GetChannels() const
 {
   std::vector<Channel> channels;
 
-  // Channels don't have any number, although they appear ordered in the XML
-  unsigned int channelNumber = 1;
+  // Remember the index each channel had, it's needed for certain API requests
+  unsigned int index = 1;
 
   for (XMLElement *element = m_content->FirstChildElement("channel");
     element != NULL; element = element->NextSiblingElement("channel"))
   {
     Channel channel = CreateChannel(element);
-    // TODO: The API doesn't provide LCN
-    channel.m_number = ++channelNumber;
+    channel.m_index = index;
     channels.push_back(channel);
   }
 
@@ -80,15 +79,22 @@ Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) con
   std::string name = displayElement->GetText();
   displayElement = displayElement->NextSiblingElement("display-name");
   std::string type = displayElement->GetText();
-
-  // Skip the "unique name", we won't be needing it
   displayElement = displayElement->NextSiblingElement("display-name");
+  std::string uniqueId = displayElement->GetText();
   displayElement = displayElement->NextSiblingElement("display-name");
   std::string encryption = displayElement->GetText();
 
+  // Extract the LCN
+  displayElement = displayElement->NextSiblingElement("display-name");
+  std::string lcnText = displayElement->GetText();
+  std::string lcnNumber = lcnText.substr(lcnText.find("_"));
+  unsigned int lcn = std::stoul(lcnNumber);
+
   // Create the channel with some basic information
-  Channel channel(xml->Attribute("id"), name,
+  Channel channel(uniqueId, xml->Attribute("id"), name,
     xml->FirstChildElement("url")->Attribute("src"));
+
+  channel.m_number = lcn;
 
   // Set icon URL if it exists
   const char *iconUrl = xml->FirstChildElement("icon")->Attribute("src");

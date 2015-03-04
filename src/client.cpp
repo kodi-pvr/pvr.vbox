@@ -391,7 +391,7 @@ extern "C" {
         auto it = std::find_if(channels.cbegin(), channels.cend(),
           [&item](const Channel &channel)
         {
-          return channel.GetInternalId() == item.m_channelId;
+          return channel.m_xmltvName == item.m_channelId;
         });
 
         if (it != channels.cend())
@@ -415,8 +415,7 @@ extern "C" {
 
   PVR_ERROR AddTimer(const PVR_TIMER &timer)
   {
-    // Get the internal channel ID based on the channel unique ID found in the 
-    // timer
+    // Find the channel the timer is for
     auto channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
       [&timer](const Channel &channel)
@@ -427,10 +426,8 @@ extern "C" {
     if (it == channels.end())
       return PVR_ERROR_INVALID_PARAMETERS;
 
-    std::string channelId = it->GetInternalId();
-
     try {
-      g_vbox->AddTimer(channelId, timer.startTime, timer.endTime);
+      g_vbox->AddTimer(it->m_xmltvName, timer.startTime, timer.endTime);
     }
     catch (VBoxException &e)
     {

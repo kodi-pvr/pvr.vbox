@@ -27,16 +27,24 @@ namespace vbox {
   class Channel
   {
   public:
-    Channel(std::string id, std::string name, std::string url)
-      : m_id(id), m_name(name), m_url(url), m_radio(false), m_encrypted(false) {}
+    Channel(const std::string &uniqueId, const std::string &xmltvName,
+      const std::string &name, const std::string &url)
+      : m_uniqueId(uniqueId), m_xmltvName(xmltvName), m_name(name),
+      m_url(url), m_radio(false), m_encrypted(false) {}
     ~Channel() {};
 
-    std::string GetInternalId() const
-    {
-      return m_id;
-    }
-
     unsigned int GetUniqueId() const;
+    
+    /**
+    * The index of the channel, as it appears in the API results. Needed for
+    * some API requests.
+    */
+    unsigned int m_index;
+
+    /**
+    * The XMLTV channel ID
+    */
+    std::string m_xmltvName;
 
     std::string m_name;
     unsigned int m_number;
@@ -47,8 +55,8 @@ namespace vbox {
 
   private:
     /**
-    * The XMLTV channel ID
-    */
-    std::string m_id;
+     * The internal name used by VBox
+     */
+    std::string m_uniqueId;
   };
 }
