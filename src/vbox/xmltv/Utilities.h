@@ -34,7 +34,7 @@ namespace vbox {
        * @param time e.g. "20120228001500 +0200"
        * @return a UNIX timestamp
        */
-      static time_t ConvertXMLTVTime(const std::string &time)
+      static time_t XmltvToUnixTime(const std::string &time)
       {
         struct tm timeinfo;
         int timezoneHours, timezoneMinutes;
