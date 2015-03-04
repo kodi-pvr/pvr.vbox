@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 #include <libXBMC_addon.h>
 #include "Channel.h"
 #include "Recording.h"
@@ -87,6 +88,8 @@ namespace vbox {
 
   private:
     
+    std::vector<Channel> RetrieveChannels();
+    std::vector<Recording> RetrieveRecordings();
     response::ResponsePtr PerformRequest(const request::Request &request) const;
 
     /**
@@ -129,5 +132,10 @@ namespace vbox {
      * Handler for the startup state
      */
     StartupStateHandler m_stateHandler;
+
+    /**
+     * Mutex for protecting access to m_channels and m_recordings
+     */
+    mutable std::mutex m_mutex;
   };
 }

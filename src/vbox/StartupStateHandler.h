@@ -32,7 +32,8 @@ namespace vbox {
   enum StartupState {
     UNINITIALIZED,
     INITIALIZED,
-    CHANNELS_LOADED
+    CHANNELS_LOADED,
+    RECORDINGS_LOADED
   };
 
   /**

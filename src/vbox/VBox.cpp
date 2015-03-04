@@ -21,6 +21,7 @@
 
 #include <string>
 #include <sstream>
+#include <thread>
 #include "VBox.h"
 #include "../client.h"
 #include "Exceptions.h"
@@ -80,6 +81,21 @@ void VBox::Initialize()
 
   // Consider the addon initialized
   m_stateHandler.EnterState(StartupState::INITIALIZED);
+
+  // Import channels, recordings and guide data asynchronously
+  std::thread([=]() {
+    auto channels = RetrieveChannels();
+
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_channels = channels;
+  });
+
+  std::thread([=]() {
+    auto recordings = RetrieveRecordings();
+
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_recordings = recordings;
+  });
 }
 
 const Settings& VBox::GetSettings() const
@@ -129,24 +145,15 @@ std::string VBox::GetConnectionString() const
 int VBox::GetChannelsAmount() const
 {
   m_stateHandler.WaitForState(StartupState::CHANNELS_LOADED);
+  std::unique_lock<std::mutex> lock(m_mutex);
+
   return m_channels.size();
 }
 
 std::vector<Channel> VBox::GetChannels()
 {
-  if (m_channels.empty())
-  {
-    request::Request request("GetXmltvChannelsList");
-    request.AddParameter("FromChIndex", "FirstChannel");
-    request.AddParameter("ToChIndex", "LastChannel");
-    response::ResponsePtr response = PerformRequest(request);
-
-    response::XMLTVResponseContent content(response->GetReplyElement());
-    m_channels = content.GetChannels();
-
-    // Change state
-    m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
-  }
+  m_stateHandler.WaitForState(StartupState::CHANNELS_LOADED);
+  std::unique_lock<std::mutex> lock(m_mutex);
 
   return m_channels;
 }
@@ -168,6 +175,9 @@ int64_t VBox::GetRecordingUsedSpace() const
 
 int VBox::GetRecordingsAmount() const
 {
+  m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
+  std::unique_lock<std::mutex> lock(m_mutex);
+
   return std::count_if(m_recordings.begin(), m_recordings.end(), [](const Recording &recording) {
     return !recording.IsTimer();
   });
@@ -175,6 +185,8 @@ int VBox::GetRecordingsAmount() const
 
 bool VBox::DeleteRecordingOrTimer(unsigned int id)
 {
+  m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
+
   // The request fails if the recording doesn't exist
   try {
     request::Request request("DeleteRecord");
@@ -182,6 +194,8 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
     response::ResponsePtr response = PerformRequest(request);
 
     // Delete the recording from memory too
+    std::unique_lock<std::mutex> lock(m_mutex);
+    
     auto it = std::find_if(m_recordings.begin(), m_recordings.end(), [id](Recording &recording) {
       return recording.m_id == id;
     });
@@ -206,6 +220,9 @@ void VBox::AddTimer(const std::string channelId, time_t startTime, time_t endTim
 
 int VBox::GetTimersAmount() const
 {
+  m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
+  std::unique_lock<std::mutex> lock(m_mutex);
+
   return std::count_if(m_recordings.begin(), m_recordings.end(), [](const Recording &recording) {
     return recording.IsTimer();
   });
@@ -213,15 +230,8 @@ int VBox::GetTimersAmount() const
 
 std::vector<Recording> VBox::GetRecordingsAndTimers()
 {
-  if (m_recordings.empty())
-  {
-    request::Request request("GetRecordsList");
-    request.AddParameter("Externals", "YES");
-    response::ResponsePtr response = PerformRequest(request);
-
-    response::RecordingResponseContent content(response->GetReplyElement());
-    m_recordings = content.GetRecordings();
-  }
+  m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
+  std::unique_lock<std::mutex> lock(m_mutex);
 
   return m_recordings;
 }
@@ -229,6 +239,33 @@ std::vector<Recording> VBox::GetRecordingsAndTimers()
 std::string VBox::GetApiBaseUrl() const
 {
   return "http://" + m_settings.m_hostname + "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
+}
+
+std::vector<Channel> VBox::RetrieveChannels()
+{
+  request::Request request("GetXmltvChannelsList");
+  request.AddParameter("FromChIndex", "FirstChannel");
+  request.AddParameter("ToChIndex", "LastChannel");
+  response::ResponsePtr response = PerformRequest(request);
+
+  response::XMLTVResponseContent content(response->GetReplyElement());
+  auto channels = content.GetChannels();
+
+  m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
+  return channels;
+}
+
+std::vector<Recording> VBox::RetrieveRecordings()
+{
+  request::Request request("GetRecordsList");
+  request.AddParameter("Externals", "YES");
+  response::ResponsePtr response = PerformRequest(request);
+
+  response::RecordingResponseContent content(response->GetReplyElement());
+  auto recordings = content.GetRecordings();
+
+  m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
+  return recordings;
 }
 
 response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
