@@ -362,7 +362,7 @@ extern "C" {
   PVR_ERROR GetTimers(ADDON_HANDLE handle)
   {
     try {
-      std::vector<Recording> recordings = g_vbox->GetRecordingsAndTimers();
+      auto recordings = g_vbox->GetRecordingsAndTimers();
 
       for (const auto &item : recordings)
       {
