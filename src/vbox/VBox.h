@@ -30,7 +30,7 @@
 #include "Settings.h"
 #include "request/Request.h"
 #include "response/Response.h"
-#include "StartupStateHandler.h"
+#include "util/StartupStateHandler.h"
 
 namespace vbox {
 
@@ -58,7 +58,7 @@ namespace vbox {
      */
     void Initialize();
     const Settings& GetSettings() const;
-    StartupStateHandler& GetStateHandler();
+    util::StartupStateHandler& GetStateHandler();
     std::string GetApiBaseUrl() const;
 
     // General API methods
@@ -131,7 +131,7 @@ namespace vbox {
     /**
      * Handler for the startup state
      */
-    StartupStateHandler m_stateHandler;
+    util::StartupStateHandler m_stateHandler;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings

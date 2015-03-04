@@ -21,6 +21,9 @@
     <Filter Include="Source Files\vbox\xmltv">
       <UniqueIdentifier>{5bdfec6b-edd5-40c4-bba3-568f2764d174}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vbox\util">
+      <UniqueIdentifier>{79e08565-c8e8-4d00-b34c-db51c3af8495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\client.cpp">
@@ -79,8 +82,10 @@
     <ClInclude Include="..\..\src\vbox\xmltv\Utilities.h">
       <Filter>Source Files\vbox\xmltv</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\vbox\StartupStateHandler.h">
       <Filter>Source Files\vbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vbox\util\StartupStateHandler.h">
+      <Filter>Source Files\vbox\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

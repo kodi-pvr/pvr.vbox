@@ -31,6 +31,7 @@
 
 using namespace ADDON;
 using namespace vbox;
+using namespace vbox::util;
 
 VBox::VBox(const Settings &settings) :
 m_settings(settings), m_stateHandler(settings.m_timeout)
