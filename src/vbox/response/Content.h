@@ -23,8 +23,10 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "../Channel.h"
 #include "../Recording.h"
 #include "../xmltv/Event.h"
+#include <memory>
 
 namespace tinyxml2 {
   // Forward declarations
@@ -88,10 +90,10 @@ namespace vbox {
        * Returns the list of channels contained in the response
        * @return the channels
        */
-      std::vector<Channel> GetChannels() const;
+      std::vector<ChannelPtr> GetChannels() const;
 
     private:
-      Channel CreateChannel(const tinyxml2::XMLElement *xml) const;
+      ChannelPtr CreateChannel(const tinyxml2::XMLElement *xml) const;
 
     };
 
@@ -105,10 +107,10 @@ namespace vbox {
         : Content(content) {}
       virtual ~RecordingResponseContent() {};
 
-      std::vector<Recording> GetRecordings() const;
+      std::vector<RecordingPtr> GetRecordings() const;
 
     private:
-      Recording CreateRecording(const tinyxml2::XMLElement *xml) const;
+      RecordingPtr CreateRecording(const tinyxml2::XMLElement *xml) const;
       RecordingState GetState(const std::string &state) const;
     };
   }

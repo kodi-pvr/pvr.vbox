@@ -21,6 +21,7 @@
 */
 
 #include <string>
+#include <memory>
 
 namespace vbox {
 
@@ -33,6 +34,9 @@ namespace vbox {
     RECORDING,
     EXTERNAL
   };
+
+  class Recording;
+  typedef std::unique_ptr<Recording> RecordingPtr;
 
   /**
    * Represents a recording

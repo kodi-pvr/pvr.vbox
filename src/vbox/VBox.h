@@ -69,7 +69,7 @@ namespace vbox {
     
     // Channel methods
     int GetChannelsAmount() const;
-    std::vector<Channel> GetChannels();
+    const std::vector<ChannelPtr>& GetChannels() const;
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -79,7 +79,7 @@ namespace vbox {
     int GetTimersAmount() const;
     bool DeleteRecordingOrTimer(unsigned int id);
     void AddTimer(const std::string channelId, time_t startTime, time_t endTime);
-    std::vector<Recording> GetRecordingsAndTimers();
+    const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -87,8 +87,8 @@ namespace vbox {
 
   private:
     
-    std::vector<Channel> RetrieveChannels();
-    std::vector<Recording> RetrieveRecordings();
+    std::vector<ChannelPtr> RetrieveChannels();
+    std::vector<RecordingPtr> RetrieveRecordings();
     response::ResponsePtr PerformRequest(const request::Request &request) const;
 
     /**
@@ -109,12 +109,12 @@ namespace vbox {
     /**
      * The list of channels
      */
-    std::vector<Channel> m_channels;
+    std::vector<ChannelPtr> m_channels;
 
     /**
      * The list of recordings, including timeres
      */
-    std::vector<Recording> m_recordings;
+    std::vector<RecordingPtr> m_recordings;
 
     /**
      * The external media status

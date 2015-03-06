@@ -54,9 +54,9 @@ tinyxml2::XMLElement* Content::GetParameterElement(const std::string &parameter)
   return m_content->FirstChildElement(parameter.c_str());
 }
 
-std::vector<Channel> XMLTVResponseContent::GetChannels() const
+std::vector<ChannelPtr> XMLTVResponseContent::GetChannels() const
 {
-  std::vector<Channel> channels;
+  std::vector<ChannelPtr> channels;
 
   // Remember the index each channel had, it's needed for certain API requests
   unsigned int index = 1;
@@ -64,15 +64,15 @@ std::vector<Channel> XMLTVResponseContent::GetChannels() const
   for (XMLElement *element = m_content->FirstChildElement("channel");
     element != NULL; element = element->NextSiblingElement("channel"))
   {
-    Channel channel = CreateChannel(element);
-    channel.m_index = ++index;
-    channels.push_back(channel);
+    ChannelPtr channel = CreateChannel(element);
+    channel->m_index = ++index;
+    channels.push_back(std::move(channel));
   }
 
   return channels;
 }
 
-Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) const
+ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) const
 {
   // Extract data from the various <display-name> elements
   const XMLElement *displayElement = xml->FirstChildElement("display-name");
@@ -86,8 +86,8 @@ Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) con
   std::string encryption = displayElement->GetText();
 
   // Create the channel with some basic information
-  Channel channel(uniqueId, xml->Attribute("id"), name,
-    xml->FirstChildElement("url")->Attribute("src"));
+  ChannelPtr channel(new Channel(uniqueId, xml->Attribute("id"), name,
+    xml->FirstChildElement("url")->Attribute("src")));
 
   // Extract the LCN (optional)
   displayElement = displayElement->NextSiblingElement("display-name");
@@ -96,36 +96,36 @@ Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) con
   {
     std::string lcn = displayElement->GetText();
     std::string lcnNumber = lcn.substr(lcn.find("_") + 1);
-    channel.m_number = std::stoul(lcnNumber);
+    channel->m_number = std::stoul(lcnNumber);
   }
 
   // Set icon URL if it exists
   const char *iconUrl = xml->FirstChildElement("icon")->Attribute("src");
   if (iconUrl != NULL)
-    channel.m_iconUrl = iconUrl;
+    channel->m_iconUrl = iconUrl;
 
   // Set radio and encryption status
-  channel.m_radio = type == "Radio";
-  channel.m_encrypted = encryption == "Encrypted";
+  channel->m_radio = type == "Radio";
+  channel->m_encrypted = encryption == "Encrypted";
 
   return channel;
 }
 
-std::vector<Recording> RecordingResponseContent::GetRecordings() const
+std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
 {
-  std::vector<Recording> recordings;
+  std::vector<RecordingPtr> recordings;
 
   for (XMLElement *element = m_content->FirstChildElement("record");
     element != NULL; element = element->NextSiblingElement("record"))
   {
-    Recording recording = CreateRecording(element);
-    recordings.push_back(recording);
+    RecordingPtr recording = CreateRecording(element);
+    recordings.push_back(std::move(recording));
   }
 
   return recordings;
 }
 
-Recording RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *xml) const
+RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
   std::string channelId = xml->Attribute("channel");
@@ -135,30 +135,30 @@ Recording RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *
   RecordingState state = GetState(xml->FirstChildElement("state")->GetText());
 
   // Construct the object
-  Recording recording(id, channelId, channelName, state);
+  RecordingPtr recording(new Recording(id, channelId, channelName, state));
 
   // Add additional properties
-  recording.m_start = xmltv::Utilities::XmltvToUnixTime(xml->Attribute("start"));
+  recording->m_start = xmltv::Utilities::XmltvToUnixTime(xml->Attribute("start"));
 
   // TODO: External recordings don't have an end time, default to one hour
   if (xml->Attribute("end") != NULL)
-    recording.m_end = xmltv::Utilities::XmltvToUnixTime(xml->Attribute("end"));
+    recording->m_end = xmltv::Utilities::XmltvToUnixTime(xml->Attribute("end"));
   else
-    recording.m_end = recording.m_start + 86400;
+    recording->m_end = recording->m_start + 86400;
 
   if (xml->FirstChildElement("programme-title"))
-    recording.m_title = xml->FirstChildElement("programme-title")->GetText();
+    recording->m_title = xml->FirstChildElement("programme-title")->GetText();
   else
   {
     // TODO: Some recordings don't have a name, especially external ones
     if (state == RecordingState::EXTERNAL)
-      recording.m_title = "External recording (channel " + channelName + ")";
+      recording->m_title = "External recording (channel " + channelName + ")";
     else
-      recording.m_title = "Unnamed recording (channel " + channelName + ")";
+      recording->m_title = "Unnamed recording (channel " + channelName + ")";
   }
 
   if (xml->FirstChildElement("url"))
-    recording.m_url = xml->FirstChildElement("url")->GetText();
+    recording->m_url = xml->FirstChildElement("url")->GetText();
 
   return recording;
 }

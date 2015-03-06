@@ -21,9 +21,17 @@
 */
 
 #include <string>
+#include <memory>
 #include "util/IHashable.h"
 
 namespace vbox {
+
+  class Channel;
+  typedef std::unique_ptr<Channel> ChannelPtr;
+
+  /**
+  * Represents a channel
+  */
   class Channel : public util::IHashable
   {
   public:

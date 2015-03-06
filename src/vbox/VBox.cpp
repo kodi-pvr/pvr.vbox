@@ -89,14 +89,14 @@ void VBox::Initialize()
 
     {
       std::unique_lock<std::mutex> lock(m_mutex);
-      m_channels = channels;
+      m_channels = std::move(channels);
     }
 
     auto recordings = RetrieveRecordings();
 
     {
       std::unique_lock<std::mutex> lock(m_mutex);
-      m_recordings = recordings;
+      m_recordings = std::move(recordings);
     }
   }).detach();
 }
@@ -153,7 +153,7 @@ int VBox::GetChannelsAmount() const
   return m_channels.size();
 }
 
-std::vector<Channel> VBox::GetChannels()
+const std::vector<ChannelPtr>& VBox::GetChannels() const
 {
   m_stateHandler.WaitForState(StartupState::CHANNELS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
@@ -181,8 +181,8 @@ int VBox::GetRecordingsAmount() const
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  return std::count_if(m_recordings.begin(), m_recordings.end(), [](const Recording &recording) {
-    return !recording.IsTimer();
+  return std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
+    return !recording->IsTimer();
   });
 }
 
@@ -199,8 +199,8 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
     // Delete the recording from memory too
     std::unique_lock<std::mutex> lock(m_mutex);
     
-    auto it = std::find_if(m_recordings.begin(), m_recordings.end(), [id](Recording &recording) {
-      return recording.m_id == id;
+    auto it = std::find_if(m_recordings.begin(), m_recordings.end(), [id](const RecordingPtr &recording) {
+      return recording->m_id == id;
     });
 
     if (it != m_recordings.end())
@@ -226,12 +226,12 @@ int VBox::GetTimersAmount() const
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  return std::count_if(m_recordings.begin(), m_recordings.end(), [](const Recording &recording) {
-    return recording.IsTimer();
+  return std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
+    return recording->IsTimer();
   });
 }
 
-std::vector<Recording> VBox::GetRecordingsAndTimers()
+const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
 {
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
@@ -244,7 +244,7 @@ std::string VBox::GetApiBaseUrl() const
   return "http://" + m_settings.m_hostname + "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 }
 
-std::vector<Channel> VBox::RetrieveChannels()
+std::vector<ChannelPtr> VBox::RetrieveChannels()
 {
   request::Request request("GetXmltvChannelsList");
   request.AddParameter("FromChIndex", "FirstChannel");
@@ -258,9 +258,9 @@ std::vector<Channel> VBox::RetrieveChannels()
   return channels;
 }
 
-std::vector<Recording> VBox::RetrieveRecordings()
+std::vector<RecordingPtr> VBox::RetrieveRecordings()
 {
-  std::vector<Recording> recordings;
+  std::vector<RecordingPtr> recordings;
 
   // Only attempt to retrieve recordings when external media is present
   if (m_externalMediaStatus.present)
