@@ -260,13 +260,19 @@ std::vector<Channel> VBox::RetrieveChannels()
 
 std::vector<Recording> VBox::RetrieveRecordings()
 {
-  request::Request request("GetRecordsList");
-  request.AddParameter("Externals", "YES");
-  response::ResponsePtr response = PerformRequest(request);
+  std::vector<Recording> recordings;
 
-  response::RecordingResponseContent content(response->GetReplyElement());
-  auto recordings = content.GetRecordings();
+  // Only attempt to retrieve recordings when external media is present
+  if (m_externalMediaStatus.present)
+  {
+    request::Request request("GetRecordsList");
+    request.AddParameter("Externals", "YES");
+    response::ResponsePtr response = PerformRequest(request);
 
+    response::RecordingResponseContent content(response->GetReplyElement());
+    recordings = content.GetRecordings();
+  }
+  
   m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
   return recordings;
 }
