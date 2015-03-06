@@ -117,12 +117,6 @@ namespace vbox {
     std::vector<Recording> m_recordings;
 
     /**
-     * The currently playing channel (NULL if none is playing). Points to a
-     * channel in the m_channels vector.
-     */
-    std::unique_ptr<Channel> m_currentChannel;
-
-    /**
      * The external media status
      */
     ExternalMediaStatus m_externalMediaStatus;
