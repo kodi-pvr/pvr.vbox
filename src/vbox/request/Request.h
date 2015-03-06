@@ -59,6 +59,9 @@ namespace vbox {
       std::string GetUrl() const;
 
     private:
+
+      std::string EncodeUrl(const std::string &string) const;
+
       std::string m_method;
       std::map<std::string, std::string> m_parameters;
     };

@@ -21,6 +21,8 @@
 
 #include "Request.h"
 #include "../../client.h"
+#include <sstream>
+#include <iomanip>
 
 using namespace vbox::request;
 
@@ -38,7 +40,7 @@ std::string Request::GetUrl() const
   // Append parameters (including method)
   if (m_parameters.size() > 0)
     for (auto const &parameter : m_parameters)
-      url += "&" + parameter.first + "=" + parameter.second;
+      url += "&" + parameter.first + "=" + EncodeUrl(parameter.second);
 
   return url;
 }
@@ -56,4 +58,29 @@ void Request::AddParameter(const std::string &name, int value)
 void Request::AddParameter(const std::string &name, unsigned int value)
 {
   m_parameters[name] = std::to_string(value);
+}
+
+std::string Request::EncodeUrl(const std::string &value) const
+{
+  // Adapted from http://stackoverflow.com/a/17708801
+  std::ostringstream escaped;
+  escaped.fill('0');
+  escaped << std::hex;
+
+  for (auto i = value.cbegin(), n = value.cend(); i != n; ++i)
+  {
+    std::string::value_type c = (*i);
+
+    // Keep alphanumeric and other accepted characters intact
+    if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
+    {
+      escaped << c;
+      continue;
+    }
+
+    // Any other characters are percent-encoded
+    escaped << '%' << std::setw(2) << int((unsigned char)c);
+  }
+
+  return escaped.str();
 }
