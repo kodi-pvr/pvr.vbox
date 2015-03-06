@@ -285,17 +285,17 @@ response::ResponsePtr VBox::PerformRequest(const request::Request &request) cons
   if (fileHandle)
   {
     // Read the response string
-    std::string responseContent;
+    std::unique_ptr<std::string> responseContent(new std::string());
 
     char buffer[1024];
-    while (XBMC->ReadFileString(fileHandle, buffer, 1024))
-      responseContent.append(buffer);
+    while (XBMC->ReadFileString(fileHandle, buffer, sizeof(buffer) - 1))
+      responseContent->append(buffer);
 
     XBMC->CloseFile(fileHandle);
 
     // Parse the response
     response::ResponsePtr response = response::Factory::CreateResponse(request);
-    response->ParseRawResponse(responseContent);
+    response->ParseRawResponse(*responseContent.get());
 
     // Check if the response was successful
     if (!response->IsSuccessful())
