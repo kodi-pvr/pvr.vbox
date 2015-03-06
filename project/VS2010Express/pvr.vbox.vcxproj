@@ -97,6 +97,7 @@
     <ClCompile Include="..\..\src\vbox\response\Content.cpp" />
     <ClCompile Include="..\..\src\vbox\response\Response.cpp" />
     <ClCompile Include="..\..\src\vbox\VBox.cpp" />
+    <ClCompile Include="..\..\src\vbox\xmltv\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\client.h" />

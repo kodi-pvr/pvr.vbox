@@ -44,6 +44,9 @@
     <ClCompile Include="..\..\src\vbox\response\Content.cpp">
       <Filter>Source Files\vbox\response</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\vbox\xmltv\Utilities.cpp">
+      <Filter>Source Files\vbox\xmltv</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\vbox\Recording.cpp">
       <Filter>Source Files\vbox</Filter>
     </ClCompile>
