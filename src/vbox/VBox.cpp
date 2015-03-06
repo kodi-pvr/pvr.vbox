@@ -280,7 +280,7 @@ std::vector<Recording> VBox::RetrieveRecordings()
 response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
 {
   // Attempt to open a HTTP file handle
-  void *fileHandle = XBMC->OpenFile(request.GetUrl().c_str(), 0);
+  void *fileHandle = XBMC->OpenFile(request.GetUrl().c_str(), READ_NO_CACHE);
 
   if (fileHandle)
   {
