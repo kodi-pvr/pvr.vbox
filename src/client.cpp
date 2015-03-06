@@ -206,22 +206,26 @@ extern "C" {
 
   const char *GetBackendName(void)
   {
-    return g_vbox->GetBackendName().c_str();
+    static std::string backendName = g_vbox->GetBackendName();
+    return backendName.c_str();
   }
 
   const char *GetBackendVersion(void)
   {
-    return g_vbox->GetBackendVersion().c_str();
+    static std::string backendVersion = g_vbox->GetBackendVersion();
+    return backendVersion.c_str();
   }
 
   const char *GetConnectionString(void)
   {
-    return g_vbox->GetConnectionString().c_str();
+    static std::string connectionString = g_vbox->GetConnectionString();
+    return connectionString.c_str();
   }
 
   const char *GetBackendHostname(void)
   {
-    return g_vbox->GetBackendHostname().c_str();
+    static std::string backendHostname = g_vbox->GetBackendHostname();
+    return backendHostname.c_str();
   }
 
   int GetChannelsAmount(void)
@@ -256,9 +260,9 @@ extern "C" {
         channel.iEncryptionSystem = item.m_encrypted ? 0xFFFF : 0x0000;
 
         strncpy(channel.strChannelName, item.m_name.c_str(),
-          sizeof(channel.strChannelName) - 1);
+          sizeof(channel.strChannelName));
         strncpy(channel.strIconPath, item.m_iconUrl.c_str(),
-          sizeof(channel.strIconPath) - 1);
+          sizeof(channel.strIconPath));
         strncpy(channel.strStreamURL, item.m_url.c_str(),
           sizeof(channel.strStreamURL));
 
@@ -313,7 +317,7 @@ extern "C" {
         recording.iDuration = static_cast<int>(item.m_end - item.m_start);
 
         strncpy(recording.strChannelName, item.m_channelName.c_str(),
-          sizeof(recording.strChannelName) - 1);
+          sizeof(recording.strChannelName));
 
         strncpy(recording.strRecordingId, std::to_string(item.m_id).c_str(),
           sizeof(recording.strRecordingId));
