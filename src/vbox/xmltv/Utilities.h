@@ -22,6 +22,8 @@
 
 #include <ctime>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 namespace vbox {
   namespace xmltv {
@@ -30,32 +32,42 @@ namespace vbox {
     public:
 
       /**
+       * The XMLTV datetime format string
+       */
+      static const char* XMLTV_DATETIME_FORMAT;
+
+      /**
        * Converts an XMLTV datetime string to time_t
-       * @param time e.g. "20120228001500 +0200"
+       * @param time e.g. "20120228001500+0200"
        * @return a UNIX timestamp
        */
       static time_t XmltvToUnixTime(const std::string &time)
       {
         struct tm timeinfo;
-        int timezoneHours, timezoneMinutes;
 
-        sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d %02d%02d",
+        sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d",
           &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday, 
-          &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec, 
-          &timezoneHours, &timezoneMinutes);
+          &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec);
 
         timeinfo.tm_hour -= 1;
         timeinfo.tm_year -= 1900;
-        time_t timestamp = mktime(&timeinfo);
         
-        // Correct for timezone
-        if (timezoneHours < 0)
-          timezoneMinutes *= -1;
+        return mktime(&timeinfo);
+      }
 
-        timestamp += timezoneHours * 3600;
-        timestamp += timezoneMinutes * 60;
+      /**
+       * Converts a time_t to a GMT XMLTV datetime string
+       * @param time a UNIX timestamp
+       * @return e.g. "20120228001500+0000"
+       */
+      static std::string UnixTimeToXmltv(const time_t timestamp)
+      {
+        struct std::tm tm = *std::localtime(&timestamp);
+        std::ostringstream ss;
+        ss << std::put_time(&tm, Utilities::XMLTV_DATETIME_FORMAT);
+        ss << "+0000";
 
-        return timestamp;
+        return ss.str();
       }
     };
   }
