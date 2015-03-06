@@ -114,7 +114,7 @@ extern "C" {
 
   void ADDON_Destroy()
   {
-    delete g_vbox;
+    SAFE_DELETE(g_vbox);
     g_status = ADDON_STATUS_UNKNOWN;
   } 
 
