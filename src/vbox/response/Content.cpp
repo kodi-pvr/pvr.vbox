@@ -65,7 +65,7 @@ std::vector<Channel> XMLTVResponseContent::GetChannels() const
     element != NULL; element = element->NextSiblingElement("channel"))
   {
     Channel channel = CreateChannel(element);
-    channel.m_index = index;
+    channel.m_index = ++index;
     channels.push_back(channel);
   }
 
@@ -95,7 +95,7 @@ Channel XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) con
   if (displayElement)
   {
     std::string lcn = displayElement->GetText();
-    std::string lcnNumber = lcn.substr(lcn.find("_"));
+    std::string lcnNumber = lcn.substr(lcn.find("_") + 1);
     channel.m_number = std::stoul(lcnNumber);
   }
 
