@@ -70,7 +70,6 @@ namespace vbox {
     // Channel methods
     int GetChannelsAmount() const;
     std::vector<Channel> GetChannels();
-    void GetEpg(const Channel &channel);
 
     // Recording methods
     bool SupportsRecordings() const;
