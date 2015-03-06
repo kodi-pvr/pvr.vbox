@@ -87,16 +87,18 @@ void VBox::Initialize()
   std::thread([=]() {
     auto channels = RetrieveChannels();
 
-    std::unique_lock<std::mutex> lock(m_mutex);
-    m_channels = channels;
-  });
+    {
+      std::unique_lock<std::mutex> lock(m_mutex);
+      m_channels = channels;
+    }
 
-  std::thread([=]() {
     auto recordings = RetrieveRecordings();
 
-    std::unique_lock<std::mutex> lock(m_mutex);
-    m_recordings = recordings;
-  });
+    {
+      std::unique_lock<std::mutex> lock(m_mutex);
+      m_recordings = recordings;
+    }
+  }).detach();
 }
 
 const Settings& VBox::GetSettings() const
