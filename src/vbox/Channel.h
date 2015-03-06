@@ -21,19 +21,17 @@
 */
 
 #include <string>
-#include <functional>
+#include "util/IHashable.h"
 
 namespace vbox {
-  class Channel
+  class Channel : public util::IHashable
   {
   public:
     Channel(const std::string &uniqueId, const std::string &xmltvName,
       const std::string &name, const std::string &url)
       : m_uniqueId(uniqueId), m_xmltvName(xmltvName), m_name(name),
       m_url(url), m_radio(false), m_encrypted(false) {}
-    ~Channel() {};
-
-    unsigned int GetUniqueId() const;
+    ~Channel() {}
     
     /**
     * The index of the channel, as it appears in the API results. Needed for
@@ -52,6 +50,9 @@ namespace vbox {
     bool m_radio;
     std::string m_url;
     bool m_encrypted;
+
+  protected:
+    std::string GetHashContents() const override;
 
   private:
     /**
