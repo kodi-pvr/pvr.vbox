@@ -109,7 +109,8 @@
     <ClInclude Include="..\..\src\vbox\response\Factory.h" />
     <ClInclude Include="..\..\src\vbox\response\Response.h" />
     <ClInclude Include="..\..\src\vbox\Settings.h" />
-    <ClInclude Include="..\..\src\vbox\StartupStateHandler.h" />
+    <ClInclude Include="..\..\src\vbox\util\IHashable.h" />
+    <ClInclude Include="..\..\src\vbox\util\StartupStateHandler.h" />
     <ClInclude Include="..\..\src\vbox\VBox.h" />
     <ClInclude Include="..\..\src\vbox\xmltv\Utilities.h" />
   </ItemGroup>

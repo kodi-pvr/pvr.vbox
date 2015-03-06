@@ -87,6 +87,9 @@
     </ClInclude>
       <Filter>Source Files\vbox</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\vbox\util\IHashable.h">
+      <Filter>Source Files\vbox\util</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\vbox\util\StartupStateHandler.h">
       <Filter>Source Files\vbox\util</Filter>
     </ClInclude>
