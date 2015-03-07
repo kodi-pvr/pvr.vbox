@@ -19,7 +19,7 @@ msgstr ""
 #settings labels
 
 msgctxt "#30000"
-msgid "General"
+msgid "Connection"
 msgstr ""
 
 msgctxt "#30001"
@@ -28,4 +28,8 @@ msgstr ""
 
 msgctxt "#30002"
 msgid "Port"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Response timeout"
 msgstr ""

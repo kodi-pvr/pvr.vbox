@@ -38,9 +38,10 @@ CHelper_libXBMC_pvr   *PVR = NULL;
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
 VBox *g_vbox;
 
-// Initialize settings
-std::string g_hostname = "";
-int g_port = 80;
+// Redeclare extern variables
+std::string g_hostname;
+int g_port;
+int g_timeout;
 
 extern "C" {
 
@@ -60,6 +61,7 @@ extern "C" {
 
     UPDATE_STR(g_hostname, "hostname", buffer, "localhost");
     UPDATE_INT(g_port, "port", 80);
+    UPDATE_INT(g_timeout, "timeout", 60);
 
 #undef UPDATE_INT
 #undef UPDATE_STR
@@ -89,7 +91,7 @@ extern "C" {
     Settings settings;
     settings.m_hostname = g_hostname;
     settings.m_port = g_port;
-    settings.m_timeout = 5000; // TODO: Make configurable
+    settings.m_timeout = g_timeout * 1000;
 
     // Start the addon
     VBox::Log(LOG_DEBUG, "creating VBox Gateway PVR addon");

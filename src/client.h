@@ -41,3 +41,4 @@ extern vbox::VBox *g_vbox;
 // Settings
 extern std::string g_hostname;
 extern int g_port;
+extern int g_timeout;

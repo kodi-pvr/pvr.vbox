@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="30000">
-	<setting id="hostname" type="text" label="30001" default="" />
-	<setting id="port" type="number" label="30002" default="80" />
+    <setting id="hostname" type="text" label="30001" default="" />
+    <setting id="port" type="number" label="30002" default="80" />
+    <setting id="timeout" type="number" label="30003" default="60" />
   </category>
 </settings>
