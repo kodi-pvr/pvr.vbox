@@ -177,9 +177,10 @@ extern "C" {
     pCapabilities->bSupportsEPG = false; // TODO: Implement
     pCapabilities->bHandlesInputStream = false; // TODO: Implement
 
-    // Will be determined further down
-    pCapabilities->bSupportsRecordings = true;
-    pCapabilities->bSupportsTimers = true;
+    // Recording capability is determined further down, we'll assume false 
+    // in case the real capabilities cannot be determined for some reason
+    pCapabilities->bSupportsRecordings = false;
+    pCapabilities->bSupportsTimers = false;
 
     // Unsupported features
     pCapabilities->bSupportsRecordingsUndelete = false;
