@@ -49,8 +49,9 @@ namespace vbox {
           &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday, 
           &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec);
 
-        timeinfo.tm_hour -= 1;
         timeinfo.tm_year -= 1900;
+        timeinfo.tm_mon -= 1;
+        timeinfo.tm_isdst = -1;
         
         return mktime(&timeinfo);
       }
@@ -65,7 +66,7 @@ namespace vbox {
         struct std::tm tm = *std::localtime(&timestamp);
         std::ostringstream ss;
         ss << std::put_time(&tm, Utilities::XMLTV_DATETIME_FORMAT);
-        ss << "+0000";
+        ss << "+0200";
 
         return ss.str();
       }
