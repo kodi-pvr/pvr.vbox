@@ -60,7 +60,7 @@ void VBox::Initialize()
   Log(LOG_INFO, std::string("         uboot version: " + content.GetString("UbootVersion")).c_str());
   Log(LOG_INFO, std::string("        kernel version: " + content.GetString("KernelVersion")).c_str());
   Log(LOG_INFO, std::string("      software version: " + softwareVersion).c_str());
-  Log(LOG_INFO, std::string("      number of tuners: " + content.GetInteger("TunersNumber")).c_str());
+  Log(LOG_INFO, std::string("      number of tuners: " + std::to_string(content.GetInteger("TunersNumber"))).c_str());
 
   m_backendName = model;
   m_backendVersion = softwareVersion;
