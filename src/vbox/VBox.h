@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <mutex>
 #include <libXBMC_addon.h>
 #include "Channel.h"
@@ -31,6 +32,8 @@
 #include "request/Request.h"
 #include "response/Response.h"
 #include "util/StartupStateHandler.h"
+#include "xmltv/Programme.h"
+#include "xmltv/Schedule.h"
 
 namespace vbox {
 
@@ -70,6 +73,7 @@ namespace vbox {
     // Channel methods
     int GetChannelsAmount() const;
     const std::vector<ChannelPtr>& GetChannels() const;
+    const ChannelPtr& GetChannel(unsigned int uniqueId) const;
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -81,6 +85,9 @@ namespace vbox {
     void AddTimer(const std::string channelId, time_t startTime, time_t endTime);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
+    // EPG methods
+    const xmltv::Schedule& GetSchedule(const ChannelPtr &channel, time_t startTime, time_t endTime);
+
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
     static void LogException(VBoxException &e);
@@ -89,6 +96,7 @@ namespace vbox {
     
     void RetrieveChannels();
     void RetrieveRecordings();
+    void RetrieveGuide(time_t startTime, time_t endTime);
     response::ResponsePtr PerformRequest(const request::Request &request) const;
 
     /**
@@ -115,6 +123,12 @@ namespace vbox {
      * The list of recordings, including timeres
      */
     std::vector<RecordingPtr> m_recordings;
+
+    /**
+     * The guide data. The XMLTV channel name is the key, the value is the 
+     * schedule for the channel
+     */
+    std::map<std::string, xmltv::Schedule> m_guide;
 
     /**
      * The external media status

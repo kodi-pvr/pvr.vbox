@@ -25,7 +25,8 @@
 #include <vector>
 #include "../Channel.h"
 #include "../Recording.h"
-#include "../xmltv/Event.h"
+#include "../xmltv/Programme.h"
+#include "../xmltv/Schedule.h"
 #include <memory>
 
 namespace tinyxml2 {
@@ -92,8 +93,17 @@ namespace vbox {
        */
       std::vector<ChannelPtr> GetChannels() const;
 
+      /**
+       * Returns the complete schedule (all programmes) for the specified 
+       * channel
+       * @param channel the channel
+       * @return the schedule
+       */
+      xmltv::Schedule GetSchedule(const ChannelPtr &channel) const;
+
     private:
       ChannelPtr CreateChannel(const tinyxml2::XMLElement *xml) const;
+      xmltv::ProgrammePtr CreateProgramme(const tinyxml2::XMLElement *xml) const;
 
     };
 

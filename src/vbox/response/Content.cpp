@@ -72,6 +72,25 @@ std::vector<ChannelPtr> XMLTVResponseContent::GetChannels() const
   return channels;
 }
 
+xmltv::Schedule XMLTVResponseContent::GetSchedule(const ChannelPtr &channel) const
+{
+  xmltv::Schedule schedule(new std::vector<xmltv::ProgrammePtr>);
+
+  for (XMLElement *element = m_content->FirstChildElement("programme");
+    element != NULL; element = element->NextSiblingElement("programme"))
+  {
+    // Skip programmes that are not for this channel
+    std::string channelName = element->Attribute("channel");
+    if (channelName != channel->m_xmltvName)
+      continue;
+
+    xmltv::ProgrammePtr programme = CreateProgramme(element);
+    schedule->push_back(std::move(programme));
+  }
+
+  return schedule;
+}
+
 ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) const
 {
   // Extract data from the various <display-name> elements
@@ -109,6 +128,26 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
   channel->m_encrypted = encryption == "Encrypted";
 
   return channel;
+}
+
+xmltv::ProgrammePtr XMLTVResponseContent::CreateProgramme(const tinyxml2::XMLElement *xml) const
+{
+  // Construct a basic event
+  std::string startTime = xml->Attribute("start");
+  std::string endTime = xml->Attribute("stop");
+  std::string channel = xml->Attribute("channel");
+  xmltv::ProgrammePtr programme(new xmltv::Programme(startTime, endTime, channel));
+
+  // Add title and description, if present
+  const XMLElement *title = xml->FirstChildElement("title");
+  if (title)
+    programme->m_title = title->GetText();
+
+  const XMLElement *description = xml->FirstChildElement("desc");
+  if (description)
+    programme->m_description = description->GetText();
+
+  return programme;
 }
 
 std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const

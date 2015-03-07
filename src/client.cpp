@@ -25,6 +25,7 @@
 #include "client.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
+#include "vbox/xmltv/Utilities.h"
 
 using namespace ADDON;
 using namespace vbox;
@@ -174,7 +175,7 @@ extern "C" {
     pCapabilities->bSupportsTV = true;
     pCapabilities->bSupportsRadio = true;
     pCapabilities->bSupportsChannelGroups = false;
-    pCapabilities->bSupportsEPG = false; // TODO: Implement
+    pCapabilities->bSupportsEPG = true;
     pCapabilities->bHandlesInputStream = false; // TODO: Implement
 
     // Recording capability is determined further down, we'll assume false 
@@ -453,7 +454,33 @@ extern "C" {
 
   PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time_t iStart, time_t iEnd)
   {
-    return PVR_ERROR_SERVER_ERROR;
+    try {
+      // Find the channel and retrieve the relevant programmes for it
+      auto &schedule = g_vbox->GetSchedule(g_vbox->GetChannel(channel.iUniqueId), iStart, iEnd);
+
+      // Transfer the events
+      for (const auto &programme : *schedule)
+      {
+        EPG_TAG event;
+        memset(&event, 0, sizeof(EPG_TAG));
+
+        event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
+        event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
+        event.iChannelNumber = channel.iChannelNumber; // TODO: May not be correct
+        event.iUniqueBroadcastId = programme->GetUniqueId();
+        event.strTitle = programme->m_title.c_str();
+        event.strPlot = programme->m_description.c_str();
+
+        PVR->TransferEpgEntry(handle, &event);
+      }
+
+      return PVR_ERROR_NO_ERROR;
+    }
+    catch (VBoxException &e)
+    {
+      g_vbox->LogException(e);
+      return PVR_ERROR_FAILED;
+    }
   }
 
   // Unused API methods

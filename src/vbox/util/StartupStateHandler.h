@@ -34,7 +34,8 @@ namespace vbox {
       UNINITIALIZED,
       INITIALIZED,
       CHANNELS_LOADED,
-      RECORDINGS_LOADED
+      RECORDINGS_LOADED,
+      GUIDE_LOADED
     };
 
     /**

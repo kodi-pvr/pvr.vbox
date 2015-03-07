@@ -29,9 +29,6 @@
     <ClCompile Include="..\..\src\client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\vbox\Channel.cpp">
-      <Filter>Source Files\vbox</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\vbox\VBox.cpp">
       <Filter>Source Files\vbox</Filter>
     </ClCompile>
@@ -47,6 +44,12 @@
     <ClCompile Include="..\..\src\vbox\xmltv\Utilities.cpp">
       <Filter>Source Files\vbox\xmltv</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\vbox\xmltv\Programme.cpp">
+      <Filter>Source Files\vbox\xmltv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vbox\Channel.cpp">
+      <Filter>Source Files\vbox</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\vbox\Recording.cpp">
       <Filter>Source Files\vbox</Filter>
     </ClCompile>
@@ -54,9 +57,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\client.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\vbox\Channel.h">
-      <Filter>Source Files\vbox</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\vbox\Settings.h">
       <Filter>Source Files\vbox</Filter>
@@ -79,12 +79,16 @@
     <ClInclude Include="..\..\src\vbox\response\Content.h">
       <Filter>Source Files\vbox\response</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\vbox\Recording.h">
-      <Filter>Source Files\vbox</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\vbox\xmltv\Utilities.h">
       <Filter>Source Files\vbox\xmltv</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\vbox\xmltv\Programme.h">
+      <Filter>Source Files\vbox\xmltv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vbox\Channel.h">
+      <Filter>Source Files\vbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vbox\Recording.h">
       <Filter>Source Files\vbox</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\vbox\util\IHashable.h">
@@ -92,6 +96,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\vbox\util\StartupStateHandler.h">
       <Filter>Source Files\vbox\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vbox\xmltv\Schedule.h">
+      <Filter>Source Files\vbox\xmltv</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

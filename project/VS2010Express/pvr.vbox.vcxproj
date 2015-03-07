@@ -97,6 +97,7 @@
     <ClCompile Include="..\..\src\vbox\response\Content.cpp" />
     <ClCompile Include="..\..\src\vbox\response\Response.cpp" />
     <ClCompile Include="..\..\src\vbox\VBox.cpp" />
+    <ClCompile Include="..\..\src\vbox\xmltv\Programme.cpp" />
     <ClCompile Include="..\..\src\vbox\xmltv\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +113,8 @@
     <ClInclude Include="..\..\src\vbox\util\IHashable.h" />
     <ClInclude Include="..\..\src\vbox\util\StartupStateHandler.h" />
     <ClInclude Include="..\..\src\vbox\VBox.h" />
+    <ClInclude Include="..\..\src\vbox\xmltv\Programme.h" />
+    <ClInclude Include="..\..\src\vbox\xmltv\Schedule.h" />
     <ClInclude Include="..\..\src\vbox\xmltv\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
