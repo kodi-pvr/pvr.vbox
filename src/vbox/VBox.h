@@ -87,8 +87,8 @@ namespace vbox {
 
   private:
     
-    std::vector<ChannelPtr> RetrieveChannels();
-    std::vector<RecordingPtr> RetrieveRecordings();
+    void RetrieveChannels();
+    void RetrieveRecordings();
     response::ResponsePtr PerformRequest(const request::Request &request) const;
 
     /**

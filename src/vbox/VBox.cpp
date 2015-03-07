@@ -85,19 +85,8 @@ void VBox::Initialize()
 
   // Import channels, recordings and guide data asynchronously
   std::thread([=]() {
-    auto channels = RetrieveChannels();
-
-    {
-      std::unique_lock<std::mutex> lock(m_mutex);
-      m_channels = std::move(channels);
-    }
-
-    auto recordings = RetrieveRecordings();
-
-    {
-      std::unique_lock<std::mutex> lock(m_mutex);
-      m_recordings = std::move(recordings);
-    }
+    RetrieveChannels();
+    RetrieveRecordings();
   }).detach();
 }
 
@@ -244,21 +233,21 @@ std::string VBox::GetApiBaseUrl() const
   return "http://" + m_settings.m_hostname + "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 }
 
-std::vector<ChannelPtr> VBox::RetrieveChannels()
+void VBox::RetrieveChannels()
 {
   request::Request request("GetXmltvChannelsList");
   request.AddParameter("FromChIndex", "FirstChannel");
   request.AddParameter("ToChIndex", "LastChannel");
   response::ResponsePtr response = PerformRequest(request);
-
   response::XMLTVResponseContent content(response->GetReplyElement());
-  auto channels = content.GetChannels();
+  
+  std::unique_lock<std::mutex> lock(m_mutex);
+  m_channels = std::move(content.GetChannels());
 
   m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
-  return channels;
 }
 
-std::vector<RecordingPtr> VBox::RetrieveRecordings()
+void VBox::RetrieveRecordings()
 {
   std::vector<RecordingPtr> recordings;
 
@@ -268,13 +257,13 @@ std::vector<RecordingPtr> VBox::RetrieveRecordings()
     request::Request request("GetRecordsList");
     request.AddParameter("Externals", "YES");
     response::ResponsePtr response = PerformRequest(request);
-
     response::RecordingResponseContent content(response->GetReplyElement());
-    recordings = content.GetRecordings();
+
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_recordings = std::move(content.GetRecordings());
   }
-  
+
   m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
-  return recordings;
 }
 
 response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
