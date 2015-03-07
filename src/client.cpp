@@ -244,44 +244,37 @@ extern "C" {
 
   PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
   {
-    try {
-      auto &channels = g_vbox->GetChannels();
+    auto &channels = g_vbox->GetChannels();
 
-      for (const auto &item : channels)
-      {
-        // Skip those that are not of the correct type
-        if (item->m_radio != bRadio)
-          continue;
-
-        PVR_CHANNEL channel;
-        memset(&channel, 0, sizeof(PVR_CHANNEL));
-
-        channel.iUniqueId = item->GetUniqueId();
-        channel.bIsRadio = item->m_radio;
-        channel.iChannelNumber = item->m_number;
-        channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
-
-        strncpy(channel.strChannelName, item->m_name.c_str(),
-          sizeof(channel.strChannelName));
-        strncpy(channel.strIconPath, item->m_iconUrl.c_str(),
-          sizeof(channel.strIconPath));
-        strncpy(channel.strStreamURL, item->m_url.c_str(),
-          sizeof(channel.strStreamURL));
-
-        // Set stream format for TV channels
-        if (!item->m_radio)
-        {
-          strncpy(channel.strInputFormat, "video/mp2t",
-            sizeof(channel.strInputFormat));
-        }
-
-        PVR->TransferChannelEntry(handle, &channel);
-      }
-    }
-    catch (VBoxException &e)
+    for (const auto &item : channels)
     {
-      g_vbox->LogException(e);
-      return PVR_ERROR_FAILED;
+      // Skip those that are not of the correct type
+      if (item->m_radio != bRadio)
+        continue;
+
+      PVR_CHANNEL channel;
+      memset(&channel, 0, sizeof(PVR_CHANNEL));
+
+      channel.iUniqueId = item->GetUniqueId();
+      channel.bIsRadio = item->m_radio;
+      channel.iChannelNumber = item->m_number;
+      channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
+
+      strncpy(channel.strChannelName, item->m_name.c_str(),
+        sizeof(channel.strChannelName));
+      strncpy(channel.strIconPath, item->m_iconUrl.c_str(),
+        sizeof(channel.strIconPath));
+      strncpy(channel.strStreamURL, item->m_url.c_str(),
+        sizeof(channel.strStreamURL));
+
+      // Set stream format for TV channels
+      if (!item->m_radio)
+      {
+        strncpy(channel.strInputFormat, "video/mp2t",
+          sizeof(channel.strInputFormat));
+      }
+
+      PVR->TransferChannelEntry(handle, &channel);
     }
 
     return PVR_ERROR_NO_ERROR;
@@ -302,41 +295,34 @@ extern "C" {
 
   PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
   {
-    try {
-      auto &recordings = g_vbox->GetRecordingsAndTimers();
+    auto &recordings = g_vbox->GetRecordingsAndTimers();
 
-      for (const auto &item : recordings)
-      {
-        // Skip timers
-        if (item->IsTimer())
-          continue;
-
-        PVR_RECORDING recording;
-        memset(&recording, 0, sizeof(PVR_RECORDING));
-
-        // TODO: Duration, plot
-        recording.recordingTime = item->m_start;
-        recording.iDuration = static_cast<int>(item->m_end - item->m_start);
-
-        strncpy(recording.strChannelName, item->m_channelName.c_str(),
-          sizeof(recording.strChannelName));
-
-        strncpy(recording.strRecordingId, std::to_string(item->m_id).c_str(),
-          sizeof(recording.strRecordingId));
-
-        strncpy(recording.strStreamURL, item->m_url.c_str(),
-          sizeof(recording.strStreamURL));
-
-        strncpy(recording.strTitle, item->m_title.c_str(),
-          sizeof(recording.strTitle));
-
-        PVR->TransferRecordingEntry(handle, &recording);
-      }
-    }
-    catch (VBoxException &e)
+    for (const auto &item : recordings)
     {
-      g_vbox->LogException(e);
-      return PVR_ERROR_FAILED;
+      // Skip timers
+      if (item->IsTimer())
+        continue;
+
+      PVR_RECORDING recording;
+      memset(&recording, 0, sizeof(PVR_RECORDING));
+
+      // TODO: Duration, plot
+      recording.recordingTime = item->m_start;
+      recording.iDuration = static_cast<int>(item->m_end - item->m_start);
+
+      strncpy(recording.strChannelName, item->m_channelName.c_str(),
+        sizeof(recording.strChannelName));
+
+      strncpy(recording.strRecordingId, std::to_string(item->m_id).c_str(),
+        sizeof(recording.strRecordingId));
+
+      strncpy(recording.strStreamURL, item->m_url.c_str(),
+        sizeof(recording.strStreamURL));
+
+      strncpy(recording.strTitle, item->m_title.c_str(),
+        sizeof(recording.strTitle));
+
+      PVR->TransferRecordingEntry(handle, &recording);
     }
 
     return PVR_ERROR_NO_ERROR;
@@ -367,53 +353,46 @@ extern "C" {
 
   PVR_ERROR GetTimers(ADDON_HANDLE handle)
   {
-    try {
-      auto &recordings = g_vbox->GetRecordingsAndTimers();
+    auto &recordings = g_vbox->GetRecordingsAndTimers();
 
-      for (const auto &item : recordings)
-      {
-        // Skip recordings
-        if (!item->IsTimer())
-          continue;
-
-        PVR_TIMER timer;
-        memset(&timer, 0, sizeof(PVR_TIMER));
-
-        timer.startTime = item->m_start;
-        timer.endTime = item->m_end;
-        timer.iClientIndex = item->m_id;
-
-        // Convert the internal timer state to PVR_TIMER_STATE
-        switch (item->GetState())
-        {
-        case RecordingState::SCHEDULED:
-          timer.state = PVR_TIMER_STATE_SCHEDULED;
-        case RecordingState::RECORDING:
-          timer.state = PVR_TIMER_STATE_RECORDING;
-        }
-
-        // Find the timer's channel and use its unique ID
-        auto &channels = g_vbox->GetChannels();
-        auto it = std::find_if(channels.cbegin(), channels.cend(),
-          [&item](const ChannelPtr &channel)
-        {
-          return channel->m_xmltvName == item->m_channelId;
-        });
-
-        if (it != channels.cend())
-          timer.iClientChannelUid = (*it)->GetUniqueId();
-
-        strncpy(timer.strTitle, item->m_title.c_str(),
-          sizeof(timer.strTitle));
-
-        // TODO: Set margins to whatever the API reports
-        PVR->TransferTimerEntry(handle, &timer);
-      }
-    }
-    catch (VBoxException &e)
+    for (const auto &item : recordings)
     {
-      g_vbox->LogException(e);
-      return PVR_ERROR_FAILED;
+      // Skip recordings
+      if (!item->IsTimer())
+        continue;
+
+      PVR_TIMER timer;
+      memset(&timer, 0, sizeof(PVR_TIMER));
+
+      timer.startTime = item->m_start;
+      timer.endTime = item->m_end;
+      timer.iClientIndex = item->m_id;
+
+      // Convert the internal timer state to PVR_TIMER_STATE
+      switch (item->GetState())
+      {
+      case RecordingState::SCHEDULED:
+        timer.state = PVR_TIMER_STATE_SCHEDULED;
+      case RecordingState::RECORDING:
+        timer.state = PVR_TIMER_STATE_RECORDING;
+      }
+
+      // Find the timer's channel and use its unique ID
+      auto &channels = g_vbox->GetChannels();
+      auto it = std::find_if(channels.cbegin(), channels.cend(),
+        [&item](const ChannelPtr &channel)
+      {
+        return channel->m_xmltvName == item->m_channelId;
+      });
+
+      if (it != channels.cend())
+        timer.iClientChannelUid = (*it)->GetUniqueId();
+
+      strncpy(timer.strTitle, item->m_title.c_str(),
+        sizeof(timer.strTitle));
+
+      // TODO: Set margins to whatever the API reports
+      PVR->TransferTimerEntry(handle, &timer);
     }
 
     return PVR_ERROR_NO_ERROR;

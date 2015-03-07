@@ -275,32 +275,42 @@ std::string VBox::GetApiBaseUrl() const
 
 void VBox::RetrieveChannels()
 {
-  request::Request request("GetXmltvChannelsList");
-  request.AddParameter("FromChIndex", "FirstChannel");
-  request.AddParameter("ToChIndex", "LastChannel");
-  response::ResponsePtr response = PerformRequest(request);
-  response::XMLTVResponseContent content(response->GetReplyElement());
-  
-  std::unique_lock<std::mutex> lock(m_mutex);
-  m_channels = std::move(content.GetChannels());
+  try {
+    request::Request request("GetXmltvChannelsList");
+    request.AddParameter("FromChIndex", "FirstChannel");
+    request.AddParameter("ToChIndex", "LastChannel");
+    response::ResponsePtr response = PerformRequest(request);
+    response::XMLTVResponseContent content(response->GetReplyElement());
+
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_channels = std::move(content.GetChannels());
+  }
+  catch (VBoxException &e)
+  {
+    LogException(e);
+  }
 
   m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
 }
 
 void VBox::RetrieveRecordings()
 {
-  std::vector<RecordingPtr> recordings;
-
   // Only attempt to retrieve recordings when external media is present
   if (m_externalMediaStatus.present)
   {
-    request::Request request("GetRecordsList");
-    request.AddParameter("Externals", "YES");
-    response::ResponsePtr response = PerformRequest(request);
-    response::RecordingResponseContent content(response->GetReplyElement());
+    try {
+      request::Request request("GetRecordsList");
+      request.AddParameter("Externals", "YES");
+      response::ResponsePtr response = PerformRequest(request);
+      response::RecordingResponseContent content(response->GetReplyElement());
 
-    std::unique_lock<std::mutex> lock(m_mutex);
-    m_recordings = std::move(content.GetRecordings());
+      std::unique_lock<std::mutex> lock(m_mutex);
+      m_recordings = std::move(content.GetRecordings());
+    }
+    catch (VBoxException &e)
+    {
+      LogException(e);
+    }
   }
 
   m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
