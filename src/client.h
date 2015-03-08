@@ -23,7 +23,7 @@
 #include <string>
 #include "libXBMC_addon.h"
 #include "libXBMC_pvr.h"
-#include "libXBMC_gui.h"
+#include "libKODI_guilib.h"
 #include "vbox/VBox.h"
 
 #ifdef TARGET_WINDOWS

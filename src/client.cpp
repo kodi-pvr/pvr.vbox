@@ -20,7 +20,7 @@
  */
 
 #include <algorithm>
-#include "platform/util/util.h"
+#include "util/util.h"
 #include "xbmc_pvr_dll.h"
 #include "client.h"
 #include "vbox/Exceptions.h"
@@ -162,13 +162,13 @@ extern "C" {
 
   const char* GetGUIAPIVersion(void)
   {
-    static const char *strGuiApiVersion = XBMC_GUI_API_VERSION;
+    static const char *strGuiApiVersion = KODI_GUILIB_API_VERSION;
     return strGuiApiVersion;
   }
 
   const char* GetMininumGUIAPIVersion(void)
   {
-    static const char *strMinGuiApiVersion = XBMC_GUI_MIN_API_VERSION;
+    static const char *strMinGuiApiVersion = KODI_GUILIB_MIN_API_VERSION;
     return strMinGuiApiVersion;
   }
 

@@ -345,7 +345,7 @@ void VBox::RetrieveGuide(time_t startTime, time_t endTime)
 response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
 {
   // Attempt to open a HTTP file handle
-  void *fileHandle = XBMC->OpenFile(request.GetUrl().c_str(), READ_NO_CACHE);
+  void *fileHandle = XBMC->OpenFile(request.GetUrl().c_str(), 0x08 /* READ_NO_CACHE */);
 
   if (fileHandle)
   {
