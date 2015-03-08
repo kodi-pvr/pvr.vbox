@@ -26,11 +26,12 @@
 namespace vbox {
   namespace request {
 
-    // TODO: Comment
+    /**
+     * Represents an API request
+     */
     class Request
     {
     public:
-      // TODO: Comment
       Request(const std::string &method);
       virtual ~Request() {};
 
@@ -53,16 +54,28 @@ namespace vbox {
       }
 
       /**
-       * Returns the complete URL for the request
-       * @return  The URL.
+       * @return the complete URL for the request
        */
       std::string GetUrl() const;
 
     private:
 
+      /**
+       * URL-encodes the specified string
+       *
+       * @param name the string to encode
+       * @return the encoded string
+       */
       std::string EncodeUrl(const std::string &string) const;
 
+      /**
+       * The method name
+       */
       std::string m_method;
+
+      /**
+       * The request parameters (and their values)
+       */
       std::map<std::string, std::string> m_parameters;
     };
   }
