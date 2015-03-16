@@ -61,14 +61,6 @@ namespace vbox {
     private:
 
       /**
-       * URL-encodes the specified string
-       *
-       * @param name the string to encode
-       * @return the encoded string
-       */
-      std::string EncodeUrl(const std::string &string) const;
-
-      /**
        * The method name
        */
       std::string m_method;
