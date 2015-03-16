@@ -29,6 +29,8 @@ using namespace vbox::response;
 Response::Response()
 {
   m_document = std::unique_ptr<XMLDocument>(new XMLDocument());
+  m_error.code = ErrorCode::SUCCESS;
+  m_error.description = "";
 }
 
 Response::~Response()
