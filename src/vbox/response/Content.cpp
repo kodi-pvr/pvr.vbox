@@ -22,11 +22,13 @@
 #include "Content.h"
 #include <tinyxml2.h>
 #include "../Channel.h"
+#include "../util/Url.h"
 #include "../xmltv/Utilities.h"
 
 using namespace tinyxml2;
 using namespace vbox;
 using namespace vbox::response;
+using namespace vbox::util;
 
 std::string Content::GetString(const std::string &parameter) const
 {
@@ -80,7 +82,7 @@ xmltv::Schedule XMLTVResponseContent::GetSchedule(const ChannelPtr &channel) con
     element != NULL; element = element->NextSiblingElement("programme"))
   {
     // Skip programmes that are not for this channel
-    std::string channelName = element->Attribute("channel");
+    std::string channelName = Url::Decode(element->Attribute("channel"));
     if (channelName != channel->m_xmltvName)
       continue;
 
@@ -103,9 +105,10 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
   std::string uniqueId = displayElement->GetText();
   displayElement = displayElement->NextSiblingElement("display-name");
   std::string encryption = displayElement->GetText();
+  std::string xmltvName = Url::Decode(xml->Attribute("id"));
 
   // Create the channel with some basic information
-  ChannelPtr channel(new Channel(uniqueId, xml->Attribute("id"), name,
+  ChannelPtr channel(new Channel(uniqueId, xmltvName, name,
     xml->FirstChildElement("url")->Attribute("src")));
 
   // Extract the LCN (optional)
@@ -134,7 +137,7 @@ xmltv::ProgrammePtr XMLTVResponseContent::CreateProgramme(const tinyxml2::XMLEle
   // Construct a basic event
   std::string startTime = xml->Attribute("start");
   std::string endTime = xml->Attribute("stop");
-  std::string channel = xml->Attribute("channel");
+  std::string channel = Url::Decode(xml->Attribute("channel"));
   xmltv::ProgrammePtr programme(new xmltv::Programme(startTime, endTime, channel));
 
   // Add title and description, if present
@@ -166,7 +169,7 @@ std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
 RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
-  std::string channelId = xml->Attribute("channel");
+  std::string channelId = Url::Decode(xml->Attribute("channel"));
   std::string channelName = xml->FirstChildElement("channel-name")->GetText();
   unsigned int id;
   xml->FirstChildElement("record-id")->QueryUnsignedText(&id);
