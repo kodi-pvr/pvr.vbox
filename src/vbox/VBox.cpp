@@ -232,9 +232,17 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
-void VBox::AddTimer(const std::string channelId, time_t startTime, time_t endTime)
+void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime)
 {
-  // TODO: Implement
+  // Add the timer
+  request::Request request("ScheduleChannelRecord");
+  request.AddParameter("ChannelID", channel->m_xmltvName);
+  request.AddParameter("StartTime", xmltv::Utilities::UnixTimeToXmltv(startTime));
+  request.AddParameter("EndTime", xmltv::Utilities::UnixTimeToXmltv(endTime));
+  PerformRequest(request);
+
+  // Refresh the recordings and timers
+  RetrieveRecordings();
 }
 
 int VBox::GetTimersAmount() const

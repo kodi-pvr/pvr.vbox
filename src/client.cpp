@@ -418,7 +418,7 @@ extern "C" {
       return PVR_ERROR_INVALID_PARAMETERS;
 
     try {
-      g_vbox->AddTimer((*it)->m_xmltvName, timer.startTime, timer.endTime);
+      g_vbox->AddTimer(*it, timer.startTime, timer.endTime);
     }
     catch (VBoxException &e)
     {
@@ -426,6 +426,8 @@ extern "C" {
       return PVR_ERROR_FAILED;
     }
 
+    // Make Kodi refresh its list of timers
+    PVR->TriggerTimerUpdate();
     return PVR_ERROR_NO_ERROR;
   }
 
