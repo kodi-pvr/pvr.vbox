@@ -24,10 +24,28 @@
 
 namespace vbox {
   // Base exception class
-  typedef std::runtime_error VBoxException;
+  class VBoxException : public std::runtime_error
+  {
+  public:
+    VBoxException(const std::string &message) : std::runtime_error(message) {}
+  };
 
   // Domain-specific exceptions
-  typedef VBoxException InvalidXMLException;
-  typedef VBoxException InvalidResponseException;
-  typedef VBoxException RequestFailedException;
+  class InvalidXMLException : public VBoxException
+  {
+  public:
+    InvalidXMLException(const std::string &message) : VBoxException(message) {};
+  };
+
+  class InvalidResponseException : public VBoxException
+  {
+  public:
+    InvalidResponseException(const std::string &message) : VBoxException(message) {};
+  };
+
+  class RequestFailedException : public VBoxException
+  {
+  public:
+    RequestFailedException(const std::string &message) : VBoxException(message) {};
+  };
 }
