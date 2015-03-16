@@ -29,6 +29,7 @@
 #include "Recording.h"
 #include "Exceptions.h"
 #include "Settings.h"
+#include "SoftwareVersion.h"
 #include "request/Request.h"
 #include "response/Response.h"
 #include "util/StartupStateHandler.h"
@@ -53,6 +54,12 @@ namespace vbox {
   class VBox
   {
   public:
+
+    /**
+     * The minimum backend software version required to use the addon
+     */
+    static const char * MINIMUM_SOFTWARE_VERSION;
+
     VBox(const Settings &settings);
     ~VBox();
 
@@ -112,7 +119,7 @@ namespace vbox {
     /**
      * The backend version
      */
-    std::string m_backendVersion;
+    SoftwareVersion m_backendVersion;
 
     /**
      * The list of channels

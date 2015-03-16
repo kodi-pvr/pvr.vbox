@@ -34,6 +34,8 @@ using namespace ADDON;
 using namespace vbox;
 using namespace vbox::util;
 
+const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.46.20";
+
 VBox::VBox(const Settings &settings) :
 m_settings(settings), m_stateHandler(settings.m_timeout)
 {
@@ -51,7 +53,7 @@ void VBox::Initialize()
   response::Content content(response->GetReplyElement());
 
   std::string model = content.GetString("ProductName") + " " + content.GetString("ProductNumber");
-  std::string softwareVersion = content.GetString("SoftwareVersion");
+  SoftwareVersion softwareVersion =  SoftwareVersion::ParseString(content.GetString("SoftwareVersion"));
 
   Log(LOG_INFO, "device information: ");
   Log(LOG_INFO, std::string("                 model: " + model).c_str());
@@ -59,11 +61,20 @@ void VBox::Initialize()
   Log(LOG_INFO, std::string("     firmware revision: " + content.GetString("FWRev")).c_str());
   Log(LOG_INFO, std::string("         uboot version: " + content.GetString("UbootVersion")).c_str());
   Log(LOG_INFO, std::string("        kernel version: " + content.GetString("KernelVersion")).c_str());
-  Log(LOG_INFO, std::string("      software version: " + softwareVersion).c_str());
+  Log(LOG_INFO, std::string("      software version: " + softwareVersion.GetString()).c_str());
   Log(LOG_INFO, std::string("      number of tuners: " + std::to_string(content.GetInteger("TunersNumber"))).c_str());
 
   m_backendName = model;
   m_backendVersion = softwareVersion;
+
+  // Check that the backend uses a compatible software version
+  SoftwareVersion minimumVersion = SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION);
+
+  if (m_backendVersion < minimumVersion)
+  {
+    std::string error = std::string("Firmware version ") + MINIMUM_SOFTWARE_VERSION + " or higher is required";
+    throw FirmwareVersionException(error);
+  }
 
   // Query external media status. The request will error if no external media 
   // is attached
@@ -117,7 +128,7 @@ std::string VBox::GetBackendHostname() const
 std::string VBox::GetBackendVersion() const
 {
   if (m_stateHandler.WaitForState(StartupState::INITIALIZED))
-    return m_backendVersion;
+    return m_backendVersion.GetString();
 
   return "";
 }

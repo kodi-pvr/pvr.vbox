@@ -26,6 +26,8 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/Recording.h
                 src/vbox/Recording.cpp
                 src/vbox/Settings.h
+				src/vbox/SoftwareVersion.h
+				src/vbox/SoftwareVersion.cpp
                 src/vbox/VBox.h
                 src/vbox/VBox.cpp)
                       

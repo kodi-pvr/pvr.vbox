@@ -102,6 +102,10 @@ extern "C" {
       g_vbox->Initialize();
       g_status = ADDON_STATUS_OK;
     }
+    catch (FirmwareVersionException &e) {
+      XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
+      g_status = ADDON_STATUS_PERMANENT_FAILURE;
+    }
     catch (VBoxException &e) {
       VBox::LogException(e);
       g_status = ADDON_STATUS_LOST_CONNECTION;

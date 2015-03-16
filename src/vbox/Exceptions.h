@@ -48,4 +48,10 @@ namespace vbox {
   public:
     RequestFailedException(const std::string &message) : VBoxException(message) {};
   };
+
+  class FirmwareVersionException : public VBoxException
+  {
+  public:
+    FirmwareVersionException(const std::string &message) : VBoxException(message) {};
+  };
 }
