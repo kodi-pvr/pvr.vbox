@@ -318,25 +318,30 @@ void VBox::RetrieveRecordings()
 
 void VBox::RetrieveGuide(time_t startTime, time_t endTime)
 {
-  std::map<std::string, xmltv::Schedule> guide;
-
   Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
-  request::Request request("GetXmltvSection");
-  request.AddParameter("FromChIndex", "FirstChannel");
-  request.AddParameter("ToChIndex", "LastChannel");
-  request.AddParameter("StartTime", xmltv::Utilities::UnixTimeToXmltv(startTime));
-  request.AddParameter("EndTime", xmltv::Utilities::UnixTimeToXmltv(endTime));
-  response::ResponsePtr response = PerformRequest(request);
-  response::XMLTVResponseContent content(response->GetReplyElement());
 
-  std::unique_lock<std::mutex> lock(m_mutex);
+  try {
+    request::Request request("GetXmltvSection");
+    request.AddParameter("FromChIndex", "FirstChannel");
+    request.AddParameter("ToChIndex", "LastChannel");
+    request.AddParameter("StartTime", xmltv::Utilities::UnixTimeToXmltv(startTime));
+    request.AddParameter("EndTime", xmltv::Utilities::UnixTimeToXmltv(endTime));
+    response::ResponsePtr response = PerformRequest(request);
+    response::XMLTVResponseContent content(response->GetReplyElement());
 
-  for (const auto &channel : content.GetChannels())
+    std::unique_lock<std::mutex> lock(m_mutex);
+
+    for (const auto &channel : content.GetChannels())
+    {
+      auto schedule = content.GetSchedule(channel);
+      Log(LOG_INFO, "Fetched %d events for channel %s", schedule->size(), channel->m_name.c_str());
+
+      m_guide[channel->m_xmltvName] = std::move(schedule);
+    }
+  }
+  catch (VBoxException &e)
   {
-    auto schedule = content.GetSchedule(channel);
-    Log(LOG_INFO, "Fetched %d events for channel %s", schedule->size(), channel->m_name.c_str());
-
-    m_guide[channel->m_xmltvName] = std::move(schedule);
+    LogException(e);
   }
 
   m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
