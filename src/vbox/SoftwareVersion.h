@@ -56,14 +56,6 @@ namespace vbox
     }
     
     /**
-     * @return whether the version if equal to ore above the specified version
-     */
-    bool IsAtleast(unsigned int major, unsigned int minor = 0, unsigned int revision = 0) const
-    {
-      return m_major >= major && m_minor >= minor && m_revision >= revision;
-    }
-
-    /**
      * @return the software version as a string
      */
     std::string GetString() const;
