@@ -54,7 +54,18 @@ namespace vbox {
      */
     bool IsTimer() const
     {
-      return m_state == RecordingState::SCHEDULED;
+      return m_state == RecordingState::SCHEDULED || 
+        m_state == RecordingState::RECORDING;
+    }
+
+    /**
+     * Whether this object represents a recording
+     * @return true if recording
+     */
+    bool IsRecording() const
+    {
+      return m_state == RecordingState::EXTERNAL || 
+        m_state == RecordingState::SCHEDULED;
     }
 
     /**

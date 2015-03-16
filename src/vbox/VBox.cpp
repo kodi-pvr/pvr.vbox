@@ -198,7 +198,7 @@ int VBox::GetRecordingsAmount() const
   std::unique_lock<std::mutex> lock(m_mutex);
 
   return std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
-    return !recording->IsTimer();
+    return recording->IsRecording();
   });
 }
 

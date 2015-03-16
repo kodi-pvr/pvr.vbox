@@ -306,7 +306,7 @@ extern "C" {
     for (const auto &item : recordings)
     {
       // Skip timers
-      if (item->IsTimer())
+      if (!item->IsRecording())
         continue;
 
       PVR_RECORDING recording;
