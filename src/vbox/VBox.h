@@ -94,7 +94,8 @@ namespace vbox {
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
-    const xmltv::Schedule& GetSchedule(const ChannelPtr &channel, time_t startTime, time_t endTime);
+    bool HasSchedule(const ChannelPtr &channel) const;
+    const xmltv::Schedule& GetSchedule(const ChannelPtr &channel);
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);

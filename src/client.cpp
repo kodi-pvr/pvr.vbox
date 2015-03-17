@@ -442,12 +442,32 @@ extern "C" {
   PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time_t iStart, time_t iEnd)
   {
     try {
-      // Find the channel and retrieve the relevant programmes for it
-      auto &schedule = g_vbox->GetSchedule(g_vbox->GetChannel(channel.iUniqueId), iStart, iEnd);
+      const ChannelPtr &channelPtr = g_vbox->GetChannel(channel.iUniqueId);
+
+      // Ignore of the channel has no schedule
+      if (!g_vbox->HasSchedule(channelPtr))
+        return PVR_ERROR_NO_ERROR;
+
+      // Retrieve the schedule and filter out the programmes that don't fit 
+      // within the start and end times
+      const auto &schedule = g_vbox->GetSchedule(channelPtr);
+      
+      std::string xmltvStartTime = xmltv::Utilities::UnixTimeToXmltv(iStart);
+      std::string xmltvEndTime = xmltv::Utilities::UnixTimeToXmltv(iEnd);
+
+      auto it = std::find_if(
+        schedule->cbegin(),
+        schedule->cend(),
+        [xmltvStartTime, xmltvEndTime](const xmltv::ProgrammePtr &programme)
+      {
+        return programme->m_startTime >= xmltvStartTime &&
+          programme->m_endTime <= xmltvEndTime;
+      });
 
       // Transfer the events
-      for (const auto &programme : *schedule)
+      while (it != schedule->cend())
       {
+        const auto &programme = *it;
         EPG_TAG event;
         memset(&event, 0, sizeof(EPG_TAG));
 
