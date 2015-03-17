@@ -27,6 +27,7 @@
 #include "../Recording.h"
 #include "../xmltv/Programme.h"
 #include "../xmltv/Schedule.h"
+#include "../xmltv/Guide.h"
 #include <memory>
 
 namespace tinyxml2 {
@@ -92,6 +93,12 @@ namespace vbox {
        * @return the channels
        */
       std::vector<ChannelPtr> GetChannels() const;
+
+      /**
+       * Returns the complete guide
+       * @return the guide
+       */
+      xmltv::Guide GetGuide() const;
 
       /**
        * Returns the complete schedule (all programmes) for the specified 

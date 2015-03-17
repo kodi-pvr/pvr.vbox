@@ -74,6 +74,27 @@ std::vector<ChannelPtr> XMLTVResponseContent::GetChannels() const
   return channels;
 }
 
+xmltv::Guide XMLTVResponseContent::GetGuide() const
+{
+  xmltv::Guide guide;
+
+  for (XMLElement *element = m_content->FirstChildElement("programme");
+    element != NULL; element = element->NextSiblingElement("programme"))
+  {
+    // Extract the channel name and the programme
+    std::string channelName = Url::Decode(element->Attribute("channel"));
+    xmltv::ProgrammePtr programme = CreateProgramme(element);
+
+    // Create an empty schedule if this is the first time we've seen this channel
+    if (guide.find(channelName) == guide.cend())
+      guide[channelName] = xmltv::CreateSchedule();
+
+    guide[channelName]->push_back(std::move(programme));
+  }
+
+  return guide;
+}
+
 xmltv::Schedule XMLTVResponseContent::GetSchedule(const ChannelPtr &channel) const
 {
   xmltv::Schedule schedule(new std::vector<xmltv::ProgrammePtr>);
