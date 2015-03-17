@@ -95,9 +95,9 @@ xmltv::Guide XMLTVResponseContent::GetGuide() const
   return guide;
 }
 
-xmltv::Schedule XMLTVResponseContent::GetSchedule(const ChannelPtr &channel) const
+xmltv::SchedulePtr XMLTVResponseContent::GetSchedule(const ChannelPtr &channel) const
 {
-  xmltv::Schedule schedule(new std::vector<xmltv::ProgrammePtr>);
+  xmltv::SchedulePtr schedule(new std::vector<xmltv::ProgrammePtr>);
 
   for (XMLElement *element = m_content->FirstChildElement("programme");
     element != NULL; element = element->NextSiblingElement("programme"))

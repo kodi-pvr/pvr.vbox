@@ -106,7 +106,7 @@ namespace vbox {
        * @param channel the channel
        * @return the schedule
        */
-      xmltv::Schedule GetSchedule(const ChannelPtr &channel) const;
+      xmltv::SchedulePtr GetSchedule(const ChannelPtr &channel) const;
 
     private:
       ChannelPtr CreateChannel(const tinyxml2::XMLElement *xml) const;

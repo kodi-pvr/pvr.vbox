@@ -25,6 +25,6 @@
 
 namespace vbox {
   namespace xmltv {
-    typedef std::map<std::string, xmltv::Schedule> Guide;
+    typedef std::map<std::string, xmltv::SchedulePtr> Guide;
   }
 }

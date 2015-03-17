@@ -95,7 +95,7 @@ namespace vbox {
 
     // EPG methods
     bool HasSchedule(const ChannelPtr &channel) const;
-    const xmltv::Schedule& GetSchedule(const ChannelPtr &channel);
+    const xmltv::SchedulePtr& GetSchedule(const ChannelPtr &channel);
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);

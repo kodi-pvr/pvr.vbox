@@ -273,7 +273,7 @@ bool VBox::HasSchedule(const ChannelPtr &channel) const
   return m_guide.find(channel->m_xmltvName) != m_guide.cend();
 }
 
-const xmltv::Schedule& VBox::GetSchedule(const ChannelPtr &channel)
+const xmltv::SchedulePtr& VBox::GetSchedule(const ChannelPtr &channel)
 {
   // Wait until the guide has been retrieved
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
