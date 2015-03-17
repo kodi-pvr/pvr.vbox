@@ -104,7 +104,7 @@ namespace vbox {
     
     void RetrieveChannels();
     void RetrieveRecordings();
-    void RetrieveGuide(time_t startTime, time_t endTime);
+    void RetrieveGuide();
     response::ResponsePtr PerformRequest(const request::Request &request) const;
 
     /**
