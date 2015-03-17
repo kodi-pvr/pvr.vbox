@@ -35,6 +35,7 @@
 #include "util/StartupStateHandler.h"
 #include "xmltv/Programme.h"
 #include "xmltv/Schedule.h"
+#include "xmltv/Guide.h"
 
 namespace vbox {
 
@@ -135,7 +136,7 @@ namespace vbox {
      * The guide data. The XMLTV channel name is the key, the value is the 
      * schedule for the channel
      */
-    std::map<std::string, xmltv::Schedule> m_guide;
+    xmltv::Guide m_guide;
 
     /**
      * The external media status
