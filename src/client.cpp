@@ -511,12 +511,15 @@ extern "C" {
   {
     const Channel *channelPtr = g_vbox->GetChannel(channel.iUniqueId);
 
+    if (!channelPtr)
+      return PVR_ERROR_INVALID_PARAMETERS;
+
     // Retrieve the schedule and filter out the programmes that don't fit 
     // within the start and end times
     const auto *schedule = g_vbox->GetSchedule(channelPtr);
 
     if (!schedule)
-      return PVR_ERROR_INVALID_PARAMETERS;
+      return PVR_ERROR_NO_ERROR;
       
     std::string xmltvStartTime = xmltv::Utilities::UnixTimeToXmltv(iStart);
     std::string xmltvEndTime = xmltv::Utilities::UnixTimeToXmltv(iEnd);
