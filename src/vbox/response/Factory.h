@@ -37,11 +37,6 @@ namespace vbox {
     public:
 
       /**
-       * List of methods that return XMLTV responses
-       */
-      static const std::vector<std::string> xmlMethods;
-
-      /**
       * Prevents construction
       */
       Factory() = delete;
@@ -62,9 +57,15 @@ namespace vbox {
         else
           return ResponsePtr(new Response());
       }
+
+    private:
+
+      /**
+      * List of methods that return XMLTV responses
+      */
+      static const std::vector<std::string> xmlMethods;
     };
 
-    // Construct the static list of XMLTV methods
     const std::vector<std::string> Factory::xmlMethods = {
       "GetXmltvEntireFile",
       "GetXmltvSection",
