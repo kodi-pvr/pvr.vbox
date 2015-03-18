@@ -47,45 +47,52 @@ VBox::~VBox()
 
 void VBox::Initialize()
 {
-  // Query board info to get backend name and version
-  request::Request request("QueryBoardInfo");
-  response::ResponsePtr response = PerformRequest(request);
-  response::Content content(response->GetReplyElement());
+  // Query the software version, we need a few elements from that response
+  request::Request versionRequest("QuerySwVersion");
+  response::ResponsePtr response = PerformRequest(versionRequest);
+  response::Content versionContent(response->GetReplyElement());
 
-  std::string model = content.GetString("ProductName") + " " + content.GetString("ProductNumber");
-  SoftwareVersion softwareVersion =  SoftwareVersion::ParseString(content.GetString("SoftwareVersion"));
+  // Query the board info, we need some elements from that as well
+  request::Request boardRequest("QueryBoardInfo");
+  response::ResponsePtr boardResponse = PerformRequest(boardRequest);
+  response::Content boardInfo(boardResponse->GetReplyElement());
+
+  // Construct the model string
+  std::string model = versionContent.GetString("Custom"); // VBox
+  model += " " + versionContent.GetString("DeviceType"); // e.g. XTI
+  model += " " + boardInfo.GetString("ProductNumber"); // e.g. 3352
 
   Log(LOG_INFO, "device information: ");
   Log(LOG_INFO, std::string("                 model: " + model).c_str());
-  Log(LOG_INFO, std::string("     hardware revision: " + content.GetString("HWRev")).c_str());
-  Log(LOG_INFO, std::string("     firmware revision: " + content.GetString("FWRev")).c_str());
-  Log(LOG_INFO, std::string("         uboot version: " + content.GetString("UbootVersion")).c_str());
-  Log(LOG_INFO, std::string("        kernel version: " + content.GetString("KernelVersion")).c_str());
-  Log(LOG_INFO, std::string("      software version: " + softwareVersion.GetString()).c_str());
-  Log(LOG_INFO, std::string("      number of tuners: " + std::to_string(content.GetInteger("TunersNumber"))).c_str());
+  Log(LOG_INFO, std::string("     hardware revision: " + boardInfo.GetString("HWRev")).c_str());
+  Log(LOG_INFO, std::string("     firmware revision: " + boardInfo.GetString("FWRev")).c_str());
+  Log(LOG_INFO, std::string("         uboot version: " + boardInfo.GetString("UbootVersion")).c_str());
+  Log(LOG_INFO, std::string("        kernel version: " + boardInfo.GetString("KernelVersion")).c_str());
+  Log(LOG_INFO, std::string("      software version: " + boardInfo.GetString("SoftwareVersion")).c_str());
+  Log(LOG_INFO, std::string("      number of tuners: " + std::to_string(boardInfo.GetInteger("TunersNumber"))).c_str());
 
   m_backendName = model;
-  m_backendVersion = softwareVersion;
+  m_backendVersion = SoftwareVersion::ParseString(boardInfo.GetString("SoftwareVersion"));
 
   // Check that the backend uses a compatible software version
-  SoftwareVersion minimumVersion = SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION);
-
-  if (m_backendVersion < minimumVersion)
+  if (m_backendVersion < SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION))
   {
-    std::string error = std::string("Firmware version ") + MINIMUM_SOFTWARE_VERSION + " or higher is required";
+    std::string error = std::string("Firmware version ") + 
+      MINIMUM_SOFTWARE_VERSION + " or higher is required";
+
     throw FirmwareVersionException(error);
   }
 
   // Query external media status. The request will error if no external media 
   // is attached
   try {
-    request = request::Request("QueryExternalMediaStatus");
-    response = PerformRequest(request);
-    content = response::Content(response->GetReplyElement());
+    request::Request mediaRequest = request::Request("QueryExternalMediaStatus");
+    response::ResponsePtr mediaResponse = PerformRequest(mediaRequest);
+    response::Content mediaStatus = response::Content(mediaResponse->GetReplyElement());
 
     m_externalMediaStatus.present = true;
-    m_externalMediaStatus.spaceTotal = (int64_t)content.GetInteger("TotalMem") * 1048576;
-    m_externalMediaStatus.spaceUsed = (int64_t)content.GetInteger("UsedMem") * 1048576;
+    m_externalMediaStatus.spaceTotal = (int64_t)mediaStatus.GetInteger("TotalMem") * 1048576;
+    m_externalMediaStatus.spaceUsed = (int64_t)mediaStatus.GetInteger("UsedMem") * 1048576;
   }
   catch (VBoxException &e)
   {
@@ -143,13 +150,8 @@ std::string VBox::GetBackendVersion() const
 
 std::string VBox::GetConnectionString() const
 {
-  if (!m_stateHandler.WaitForState(StartupState::INITIALIZED))
-    return "";
-
   std::stringstream ss;
-  ss << "VBox TV Gateway model ";
-  ss << GetBackendName();
-  ss << " @ " << GetBackendHostname() << ":" << m_settings.m_port;
+  ss << GetBackendHostname() << ":" << m_settings.m_port;
 
   return ss.str();
 }
