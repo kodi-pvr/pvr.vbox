@@ -479,6 +479,7 @@ extern "C" {
         event.strPlot = programme->m_description.c_str();
 
         PVR->TransferEpgEntry(handle, &event);
+        it++;
       }
 
       return PVR_ERROR_NO_ERROR;
