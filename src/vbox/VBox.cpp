@@ -103,6 +103,13 @@ void VBox::Initialize()
   }).detach();
 }
 
+bool VBox::ValidateSettings() const
+{
+  return !m_settings.m_hostname.empty() &&
+    m_settings.m_port != 0 &&
+    m_settings.m_timeout != 0;
+}
+
 const Settings& VBox::GetSettings() const
 {
   return m_settings;

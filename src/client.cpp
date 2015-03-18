@@ -97,23 +97,30 @@ extern "C" {
     settings.m_port = g_port;
     settings.m_timeout = g_timeout * 1000;
 
-    // Start the addon
+    // Create the addon
     VBox::Log(LOG_DEBUG, "creating VBox Gateway PVR addon");
     g_status = ADDON_STATUS_UNKNOWN;
     g_vbox = new VBox(settings);
 
-    try {
-      g_vbox->Initialize();
-      g_status = ADDON_STATUS_OK;
+    // Validate settings
+    if (g_vbox->ValidateSettings())
+    {
+      // Start the addon
+      try {
+        g_vbox->Initialize();
+        g_status = ADDON_STATUS_OK;
+      }
+      catch (FirmwareVersionException &e) {
+        XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
+        g_status = ADDON_STATUS_PERMANENT_FAILURE;
+      }
+      catch (VBoxException &e) {
+        VBox::LogException(e);
+        g_status = ADDON_STATUS_LOST_CONNECTION;
+      }
     }
-    catch (FirmwareVersionException &e) {
-      XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
-      g_status = ADDON_STATUS_PERMANENT_FAILURE;
-    }
-    catch (VBoxException &e) {
-      VBox::LogException(e);
-      g_status = ADDON_STATUS_LOST_CONNECTION;
-    }
+    else
+      g_status = ADDON_STATUS_NEED_SETTINGS;
 
     return g_status;
   }

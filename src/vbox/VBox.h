@@ -68,6 +68,7 @@ namespace vbox {
      * Initializes the addon
      */
     void Initialize();
+    bool ValidateSettings() const;
     const Settings& GetSettings() const;
     util::StartupStateHandler& GetStateHandler();
     std::string GetApiBaseUrl() const;
