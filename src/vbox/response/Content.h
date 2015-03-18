@@ -36,10 +36,6 @@ namespace tinyxml2 {
 }
 
 namespace vbox {
-
-  // Forward declarations
-  class Channel;
-
   namespace response {
 
     /**
