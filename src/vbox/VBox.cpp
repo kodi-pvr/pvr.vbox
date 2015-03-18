@@ -163,7 +163,7 @@ const std::vector<ChannelPtr>& VBox::GetChannels() const
   return m_channels;
 }
 
-const ChannelPtr& VBox::GetChannel(unsigned int uniqueId) const
+const Channel* VBox::GetChannel(unsigned int uniqueId) const
 {
   m_stateHandler.WaitForState(StartupState::CHANNELS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
@@ -173,9 +173,9 @@ const ChannelPtr& VBox::GetChannel(unsigned int uniqueId) const
   });
 
   if (it == m_channels.cend())
-    throw VBoxException("Unknown channel");
+    return nullptr;
 
-  return *it;
+  return it->get();
 }
 
 bool VBox::SupportsRecordings() const
@@ -233,7 +233,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
-void VBox::AddTimer(const ChannelPtr &channel, const xmltv::Programme* programme)
+void VBox::AddTimer(const Channel *channel, const xmltv::Programme* programme)
 {
   // Add the timer
   request::Request request("ScheduleProgramRecord");
@@ -264,7 +264,7 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
   return m_recordings;
 }
 
-const xmltv::Schedule* VBox::GetSchedule(const ChannelPtr &channel) const
+const xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
 {
   // Wait until the guide has been retrieved
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);

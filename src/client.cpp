@@ -431,7 +431,7 @@ extern "C" {
     if (it == channels.end())
       return PVR_ERROR_INVALID_PARAMETERS;
 
-    const ChannelPtr &channel = *it;
+    const Channel *channel = it->get();
 
     // Find the event the timer is for
     const xmltv::Programme *programme = g_vbox->GetProgramme(timer.iEpgUid);
@@ -467,53 +467,46 @@ extern "C" {
 
   PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time_t iStart, time_t iEnd)
   {
-    try {
-      const ChannelPtr &channelPtr = g_vbox->GetChannel(channel.iUniqueId);
+    const Channel *channelPtr = g_vbox->GetChannel(channel.iUniqueId);
 
-      // Retrieve the schedule and filter out the programmes that don't fit 
-      // within the start and end times
-      const auto *schedule = g_vbox->GetSchedule(channelPtr);
+    // Retrieve the schedule and filter out the programmes that don't fit 
+    // within the start and end times
+    const auto *schedule = g_vbox->GetSchedule(channelPtr);
 
-      if (!schedule)
-        return PVR_ERROR_INVALID_PARAMETERS;
+    if (!schedule)
+      return PVR_ERROR_INVALID_PARAMETERS;
       
-      std::string xmltvStartTime = xmltv::Utilities::UnixTimeToXmltv(iStart);
-      std::string xmltvEndTime = xmltv::Utilities::UnixTimeToXmltv(iEnd);
+    std::string xmltvStartTime = xmltv::Utilities::UnixTimeToXmltv(iStart);
+    std::string xmltvEndTime = xmltv::Utilities::UnixTimeToXmltv(iEnd);
 
-      auto it = std::find_if(
-        schedule->cbegin(),
-        schedule->cend(),
-        [xmltvStartTime, xmltvEndTime](const xmltv::ProgrammePtr &programme)
-      {
-        return programme->m_startTime >= xmltvStartTime &&
-          programme->m_endTime <= xmltvEndTime;
-      });
-
-      // Transfer the events
-      while (it != schedule->cend())
-      {
-        const auto &programme = *it;
-        EPG_TAG event;
-        memset(&event, 0, sizeof(EPG_TAG));
-
-        event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
-        event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
-        event.iChannelNumber = channel.iChannelNumber; // TODO: May not be correct
-        event.iUniqueBroadcastId = programme->GetUniqueId();
-        event.strTitle = programme->m_title.c_str();
-        event.strPlot = programme->m_description.c_str();
-
-        PVR->TransferEpgEntry(handle, &event);
-        it++;
-      }
-
-      return PVR_ERROR_NO_ERROR;
-    }
-    catch (VBoxException &e)
+    auto it = std::find_if(
+      schedule->cbegin(),
+      schedule->cend(),
+      [xmltvStartTime, xmltvEndTime](const xmltv::ProgrammePtr &programme)
     {
-      g_vbox->LogException(e);
-      return PVR_ERROR_FAILED;
+      return programme->m_startTime >= xmltvStartTime &&
+        programme->m_endTime <= xmltvEndTime;
+    });
+
+    // Transfer the events
+    while (it != schedule->cend())
+    {
+      const auto &programme = *it;
+      EPG_TAG event;
+      memset(&event, 0, sizeof(EPG_TAG));
+
+      event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
+      event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
+      event.iChannelNumber = channel.iChannelNumber; // TODO: May not be correct
+      event.iUniqueBroadcastId = programme->GetUniqueId();
+      event.strTitle = programme->m_title.c_str();
+      event.strPlot = programme->m_description.c_str();
+
+      PVR->TransferEpgEntry(handle, &event);
+      it++;
     }
+
+    return PVR_ERROR_NO_ERROR;
   }
 
   // Unused API methods

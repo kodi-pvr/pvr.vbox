@@ -81,7 +81,7 @@ namespace vbox {
     // Channel methods
     int GetChannelsAmount() const;
     const std::vector<ChannelPtr>& GetChannels() const;
-    const ChannelPtr& GetChannel(unsigned int uniqueId) const;
+    const Channel* GetChannel(unsigned int uniqueId) const;
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -90,11 +90,11 @@ namespace vbox {
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
     bool DeleteRecordingOrTimer(unsigned int id);
-    void AddTimer(const ChannelPtr &channel, const xmltv::Programme* programme);
+    void AddTimer(const Channel *channel, const xmltv::Programme* programme);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
-    const xmltv::Schedule* GetSchedule(const ChannelPtr &channel) const;
+    const xmltv::Schedule* GetSchedule(const Channel *channel) const;
     const xmltv::Programme* GetProgramme(int programmeUniqueId) const;
 
     // Helpers
