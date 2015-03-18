@@ -47,6 +47,7 @@ set(VBOX_SOURCES_VBOX_UTIL
                 src/vbox/util/StartupStateHandler.h)
                  
 set(VBOX_SOURCES_VBOX_XMLTV
+                src/vbox/xmltv/Guide.h
                 src/vbox/xmltv/Programme.h
                 src/vbox/xmltv/Programme.cpp
                 src/vbox/xmltv/Schedule.h
