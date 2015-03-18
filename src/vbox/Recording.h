@@ -83,6 +83,7 @@ namespace vbox {
     std::string m_channelName;
     std::string m_url;
     std::string m_title;
+    std::string m_description;
     time_t m_start;
     time_t m_end;
 

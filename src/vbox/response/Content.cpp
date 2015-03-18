@@ -219,6 +219,9 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
       recording->m_title = "Unnamed recording (channel " + channelName + ")";
   }
 
+  if (xml->FirstChildElement("programme-desc"))
+    recording->m_description = xml->FirstChildElement("programme-desc")->GetText();
+
   if (xml->FirstChildElement("url"))
     recording->m_url = xml->FirstChildElement("url")->GetText();
 

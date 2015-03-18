@@ -312,7 +312,6 @@ extern "C" {
       PVR_RECORDING recording;
       memset(&recording, 0, sizeof(PVR_RECORDING));
 
-      // TODO: Duration, plot
       recording.recordingTime = item->m_start;
       recording.iDuration = static_cast<int>(item->m_end - item->m_start);
 
@@ -327,6 +326,9 @@ extern "C" {
 
       strncpy(recording.strTitle, item->m_title.c_str(),
         sizeof(recording.strTitle));
+
+      strncpy(recording.strPlot, item->m_description.c_str(),
+        sizeof(recording.strPlot));
 
       PVR->TransferRecordingEntry(handle, &recording);
     }
@@ -402,6 +404,9 @@ extern "C" {
 
       strncpy(timer.strTitle, item->m_title.c_str(),
         sizeof(timer.strTitle));
+
+      strncpy(timer.strSummary, item->m_description.c_str(),
+        sizeof(timer.strSummary));
 
       // TODO: Set margins to whatever the API reports
       PVR->TransferTimerEntry(handle, &timer);
