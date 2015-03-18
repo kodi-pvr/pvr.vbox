@@ -88,7 +88,8 @@ extern "C" {
       return ADDON_STATUS_PERMANENT_FAILURE;
     }
 
-    // Read the settings
+    // Read the settings. The addon is restarted whenever a setting is changed 
+    // so we only need to read them here.
     ADDON_ReadSettings();
     Settings settings;
     settings.m_hostname = g_hostname;
@@ -140,7 +141,38 @@ extern "C" {
 
   ADDON_STATUS ADDON_SetSetting(const char *settingName, const void *settingValue)
   {
+#define UPDATE_STR(key, var)\
+  if (!strcmp(settingName, key))\
+  {\
+    if (!strcmp(var.c_str(), (const char*)settingValue))\
+    {\
+      VBox::Log(LOG_INFO, "updated setting %s from '%s' to '%s'",\
+        settingName, var.c_str(), settingValue);\
+      return ADDON_STATUS_NEED_RESTART;\
+    }\
+    return ADDON_STATUS_OK;\
+  }
+
+#define UPDATE_INT(key, type, var)\
+  if (!strcmp(settingName, key))\
+  {\
+    if (var != *(type*)settingValue)\
+    {\
+      VBox::Log(LOG_INFO, "updated setting %s from '%d' to '%d'",\
+        settingName, var, (int)*(type*)settingValue);\
+      return ADDON_STATUS_NEED_RESTART;\
+    }\
+    return ADDON_STATUS_OK;\
+  }
+
+    UPDATE_STR("hostname", g_hostname);
+    UPDATE_STR("external_ip", g_externalIp);
+    UPDATE_INT("port", int, g_port);
+    UPDATE_INT("timeout", int, g_timeout);
+
     return ADDON_STATUS_OK;
+#undef UPDATE_INT
+#undef UPDATE_STR
   }
 
   void ADDON_Stop()
