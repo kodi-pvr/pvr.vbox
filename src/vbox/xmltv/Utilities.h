@@ -43,7 +43,7 @@ namespace vbox {
        */
       static time_t XmltvToUnixTime(const std::string &time)
       {
-        struct tm timeinfo;
+        std::tm timeinfo;
 
         sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d",
           &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday, 
@@ -63,7 +63,7 @@ namespace vbox {
        */
       static std::string UnixTimeToXmltv(const time_t timestamp)
       {
-        struct std::tm tm = *std::localtime(&timestamp);
+        std::tm tm = *std::gmtime(&timestamp);
         std::ostringstream ss;
         ss << std::put_time(&tm, Utilities::XMLTV_DATETIME_FORMAT);
         ss << "+0200";
