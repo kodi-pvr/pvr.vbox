@@ -87,7 +87,7 @@ xmltv::Guide XMLTVResponseContent::GetGuide() const
 
     // Create an empty schedule if this is the first time we've seen this channel
     if (guide.find(channelName) == guide.cend())
-      guide[channelName] = xmltv::CreateSchedule();
+      guide[channelName] = xmltv::SchedulePtr(new xmltv::Schedule);
 
     guide[channelName]->push_back(std::move(programme));
   }
