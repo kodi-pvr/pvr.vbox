@@ -233,13 +233,13 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
-void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime)
+void VBox::AddTimer(const ChannelPtr &channel, const xmltv::Programme* programme)
 {
   // Add the timer
-  request::Request request("ScheduleChannelRecord");
+  request::Request request("ScheduleProgramRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
-  request.AddParameter("StartTime", xmltv::Utilities::UnixTimeToXmltv(startTime));
-  request.AddParameter("EndTime", xmltv::Utilities::UnixTimeToXmltv(endTime));
+  request.AddParameter("ProgramTitle", programme->m_title);
+  request.AddParameter("StartTime", programme->m_startTime);
   PerformRequest(request);
 
   // Refresh the recordings and timers

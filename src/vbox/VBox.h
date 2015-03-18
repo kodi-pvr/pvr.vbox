@@ -90,7 +90,7 @@ namespace vbox {
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
     bool DeleteRecordingOrTimer(unsigned int id);
-    void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime);
+    void AddTimer(const ChannelPtr &channel, const xmltv::Programme* programme);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
