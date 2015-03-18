@@ -64,8 +64,9 @@ namespace vbox {
      */
     bool IsRecording() const
     {
-      return m_state == RecordingState::EXTERNAL || 
-        m_state == RecordingState::SCHEDULED;
+      return m_state == RecordingState::RECORDED || 
+        m_state == RecordingState::RECORDING || 
+        m_state == RecordingState::EXTERNAL;
     }
 
     /**

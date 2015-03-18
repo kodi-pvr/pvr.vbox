@@ -379,8 +379,14 @@ extern "C" {
       {
       case RecordingState::SCHEDULED:
         timer.state = PVR_TIMER_STATE_SCHEDULED;
+        break;
+      case RecordingState::RECORDED:
+      case RecordingState::EXTERNAL:
+        timer.state = PVR_TIMER_STATE_COMPLETED;
+        break;
       case RecordingState::RECORDING:
         timer.state = PVR_TIMER_STATE_RECORDING;
+        break;
       }
 
       // Find the timer's channel and use its unique ID
