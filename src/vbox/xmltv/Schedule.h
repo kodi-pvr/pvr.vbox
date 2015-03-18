@@ -32,11 +32,12 @@
 
 namespace vbox {
   namespace xmltv {
-    typedef std::unique_ptr<std::vector<xmltv::ProgrammePtr>> SchedulePtr;
+    typedef std::vector<xmltv::ProgrammePtr> Schedule;
+    typedef std::unique_ptr<Schedule> SchedulePtr;
 
     static SchedulePtr CreateSchedule()
     {
-      return SchedulePtr(new std::vector<xmltv::ProgrammePtr>);
+      return SchedulePtr(new Schedule);
     }
   }
 }

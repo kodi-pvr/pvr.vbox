@@ -444,13 +444,12 @@ extern "C" {
     try {
       const ChannelPtr &channelPtr = g_vbox->GetChannel(channel.iUniqueId);
 
-      // Ignore of the channel has no schedule
-      if (!g_vbox->HasSchedule(channelPtr))
-        return PVR_ERROR_NO_ERROR;
-
       // Retrieve the schedule and filter out the programmes that don't fit 
       // within the start and end times
-      const auto &schedule = g_vbox->GetSchedule(channelPtr);
+      const auto *schedule = g_vbox->GetSchedule(channelPtr);
+
+      if (!schedule)
+        return PVR_ERROR_INVALID_PARAMETERS;
       
       std::string xmltvStartTime = xmltv::Utilities::UnixTimeToXmltv(iStart);
       std::string xmltvEndTime = xmltv::Utilities::UnixTimeToXmltv(iEnd);

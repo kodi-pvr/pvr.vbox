@@ -264,27 +264,39 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
   return m_recordings;
 }
 
-bool VBox::HasSchedule(const ChannelPtr &channel) const
+const xmltv::Schedule* VBox::GetSchedule(const ChannelPtr &channel) const
 {
   // Wait until the guide has been retrieved
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
-
   std::unique_lock<std::mutex> lock(m_mutex);
-  return m_guide.find(channel->m_xmltvName) != m_guide.cend();
+
+  auto it = m_guide.find(channel->m_xmltvName);
+
+  if (it == m_guide.cend())
+    return nullptr;
+  
+  return it->second.get();
 }
 
-const xmltv::SchedulePtr& VBox::GetSchedule(const ChannelPtr &channel)
+const xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 {
-  // Wait until the guide has been retrieved
-  m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
+  for (const auto &entry : m_guide)
+  {
+    const xmltv::SchedulePtr &schedule = entry.second;
 
-  std::unique_lock<std::mutex> lock(m_mutex);
+    auto it = std::find_if(
+      schedule->cbegin(),
+      schedule->cend(),
+      [programmeUniqueId](const xmltv::ProgrammePtr &programme)
+    {
+      return programme->GetUniqueId() == programmeUniqueId;
+    });
 
-  // Return an empty schedule if no guide data exists for the specified channel
-  if (m_guide.find(channel->m_xmltvName) == m_guide.cend())
-    return xmltv::CreateSchedule();
+    if (it != schedule->cend())
+      return it->get();
+  }
 
-  return m_guide[channel->m_xmltvName];
+  return nullptr;
 }
 
 std::string VBox::GetApiBaseUrl() const
