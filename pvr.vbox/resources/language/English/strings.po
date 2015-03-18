@@ -33,3 +33,7 @@ msgstr ""
 msgctxt "#30003"
 msgid "Response timeout"
 msgstr ""
+
+msgctxt "#30004"
+msgid "External IP"
+msgstr ""

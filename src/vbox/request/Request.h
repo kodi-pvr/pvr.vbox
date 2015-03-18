@@ -22,6 +22,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 namespace vbox {
   namespace request {
@@ -69,6 +70,11 @@ namespace vbox {
        * The request parameters (and their values)
        */
       std::map<std::string, std::string> m_parameters;
+
+      /**
+       * List of methods that can take an optional "ExternalIP" parameter
+       */
+      static const std::vector<std::string> externalCapableMethods;
     };
   }
 }

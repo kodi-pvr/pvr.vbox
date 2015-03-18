@@ -40,6 +40,7 @@ VBox *g_vbox;
 
 // Redeclare extern variables
 std::string g_hostname;
+std::string g_externalIp;
 int g_port;
 int g_timeout;
 
@@ -60,6 +61,7 @@ extern "C" {
     char buffer[1024];
 
     UPDATE_STR(g_hostname, "hostname", buffer, "localhost");
+    UPDATE_STR(g_externalIp, "external_ip", buffer, "");
     UPDATE_INT(g_port, "port", 80);
     UPDATE_INT(g_timeout, "timeout", 60);
 
@@ -90,6 +92,7 @@ extern "C" {
     ADDON_ReadSettings();
     Settings settings;
     settings.m_hostname = g_hostname;
+    settings.m_externalIp = g_externalIp;
     settings.m_port = g_port;
     settings.m_timeout = g_timeout * 1000;
 

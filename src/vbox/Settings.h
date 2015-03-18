@@ -26,6 +26,7 @@ namespace vbox {
   class Settings {
   public:
     std::string m_hostname;
+    std::string m_externalIp;
     int m_port;
     int m_timeout;
   };

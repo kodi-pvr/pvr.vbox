@@ -28,11 +28,24 @@
 using namespace vbox::request;
 using namespace vbox::util;
 
+const std::vector<std::string> Request::externalCapableMethods = {
+  "GetXmltvEntireFile",
+  "GetXmltvSection",
+  "GetXmltvChannelsList",
+  "GetXmltvProgramsList",
+  "GetRecordsList"
+};
+
 Request::Request(const std::string &method)
   : m_method(method)
 {
-  // Add the method parameter
   AddParameter("Method", method);
+
+  // Add the "ExternalIP" parameter appropriate
+  std::string externalIp = g_vbox->GetSettings().m_externalIp;
+
+  if (!externalIp.empty())
+    AddParameter("ExternalIP", externalIp);
 }
 
 std::string Request::GetUrl() const
