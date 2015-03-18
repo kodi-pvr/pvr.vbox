@@ -344,7 +344,10 @@ extern "C" {
       unsigned int id = std::stoul(recording.strRecordingId);
 
       if (g_vbox->DeleteRecordingOrTimer(id))
+      {
+        PVR->TriggerRecordingUpdate();
         return PVR_ERROR_NO_ERROR;
+      }
       else
         return PVR_ERROR_FAILED;
     }
@@ -454,7 +457,10 @@ extern "C" {
   PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)
   {
     if (g_vbox->DeleteRecordingOrTimer(timer.iClientIndex))
+    {
+      PVR->TriggerTimerUpdate();
       return PVR_ERROR_NO_ERROR;
+    }
 
     return PVR_ERROR_FAILED;
   }
