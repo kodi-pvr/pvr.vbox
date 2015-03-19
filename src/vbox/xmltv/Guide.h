@@ -46,7 +46,10 @@ namespace vbox {
       Guide (Guide &&other)
       {
         if (this != &other)
+        {
           m_schedules = std::move(other.m_schedules);
+          m_displayNameMappings = other.m_displayNameMappings;
+        }
       }
 
       /**
@@ -57,6 +60,11 @@ namespace vbox {
         // Add all schedules from the other object
         for (auto &entry : other.GetSchedules())
           AddSchedule(entry.first, std::move(entry.second));
+
+        // Merge the display name mappings
+        m_displayNameMappings.insert(
+          other.m_displayNameMappings.begin(), 
+          other.m_displayNameMappings.end());
 
         return *this;
       }
@@ -86,6 +94,30 @@ namespace vbox {
       void AddProgramme(const std::string &channelId, ProgrammePtr programme);
 
       /**
+       * Adds a new mapping between the display name and the channel ID
+       * @param displayName the display name
+       * @param channelId the channel ID
+       */
+      void AddDisplayNameMapping(const std::string &displayName, const std::string &channelId)
+      {
+        m_displayNameMappings[displayName] = channelId;
+      }
+
+      /**
+       * @param displayName the display name
+       * @return the corresponding channel ID for specified display name
+       */
+      std::string GetChannelId(const std::string &displayName) const
+      {
+        auto it = m_displayNameMappings.find(displayName);
+
+        if (m_displayNameMappings.find(displayName) == m_displayNameMappings.cend())
+          return "";
+
+        return it->first;
+      }
+
+      /**
        * @return the schedules
        */
       Schedules& GetSchedules()
@@ -107,6 +139,11 @@ namespace vbox {
        * The schedules
        */
       Schedules m_schedules;
+
+      /**
+       * Maps a display name to an XMLTV channel ID
+       */
+      std::map<std::string, std::string> m_displayNameMappings;
 
     };
   }

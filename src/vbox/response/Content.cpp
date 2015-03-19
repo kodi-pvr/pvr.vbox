@@ -79,6 +79,16 @@ xmltv::Guide XMLTVResponseContent::GetGuide() const
 {
   xmltv::Guide guide;
 
+  // Populate the lookup table which maps XMLTV IDs to display names
+  for (XMLElement *element = m_content->FirstChildElement("channel");
+    element != NULL; element = element->NextSiblingElement("channel"))
+  {
+    std::string id = element->Attribute("id");
+    std::string displayName = element->FirstChildElement("display-name")->GetText();
+
+    guide.AddDisplayNameMapping(displayName, id);
+  }
+
   for (XMLElement *element = m_content->FirstChildElement("programme");
     element != NULL; element = element->NextSiblingElement("programme"))
   {
