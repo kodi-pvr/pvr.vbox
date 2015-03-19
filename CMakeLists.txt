@@ -44,7 +44,9 @@ set(VBOX_SOURCES_VBOX_RESPONSE
 
 set(VBOX_SOURCES_VBOX_UTIL
                 src/vbox/util/IHashable.h
-                src/vbox/util/StartupStateHandler.h)
+                src/vbox/util/StartupStateHandler.h
+                src/vbox/util/Url.h
+                src/vbox/util/Url.cpp)
                  
 set(VBOX_SOURCES_VBOX_XMLTV
                 src/vbox/xmltv/Guide.h
