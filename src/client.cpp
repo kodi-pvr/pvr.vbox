@@ -491,8 +491,10 @@ extern "C" {
       return PVR_ERROR_FAILED;
     }
 
-    // Make Kodi refresh its list of timers
+    // Make sure Kodi sees the new items
     PVR->TriggerTimerUpdate();
+    PVR->TriggerRecordingUpdate();
+
     return PVR_ERROR_NO_ERROR;
   }
 
