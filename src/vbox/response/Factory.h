@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "../request/Request.h"
+#include "../request/IRequest.h"
 #include "Response.h"
 
 namespace vbox {
@@ -47,7 +47,7 @@ namespace vbox {
        * @param request the request
        * @return the response
        */
-      static ResponsePtr CreateResponse(const request::Request &request) {
+      static ResponsePtr CreateResponse(const request::IRequest &request) {
         std::string method = request.GetMethod();
 
         if (std::find(xmlMethods.begin(), xmlMethods.end(), method) != xmlMethods.end())

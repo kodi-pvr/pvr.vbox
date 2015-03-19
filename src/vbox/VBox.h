@@ -107,7 +107,7 @@ namespace vbox {
     void RetrieveChannels();
     void RetrieveRecordings();
     void RetrieveGuide();
-    response::ResponsePtr PerformRequest(const request::Request &request) const;
+    response::ResponsePtr PerformRequest(const request::IRequest &request) const;
 
     /**
      * The addons settings

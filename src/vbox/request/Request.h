@@ -23,6 +23,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "IRequest.h"
 
 namespace vbox {
   namespace request {
@@ -30,7 +31,7 @@ namespace vbox {
     /**
      * Represents an API request
      */
-    class Request
+    class Request : public IRequest
     {
     public:
       Request(const std::string &method);
@@ -46,18 +47,12 @@ namespace vbox {
       void AddParameter(const std::string &name, int value);
       void AddParameter(const std::string &name, unsigned int value);
 
-      /**
-       * @return the request method
-       */
-      std::string GetMethod() const
+      virtual std::string GetMethod() const override
       {
         return m_method;
       }
 
-      /**
-       * @return the complete URL for the request
-       */
-      std::string GetUrl() const;
+      virtual std::string GetLocation() const;
 
     private:
 

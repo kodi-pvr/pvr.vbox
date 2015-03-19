@@ -48,7 +48,7 @@ Request::Request(const std::string &method)
     AddParameter("ExternalIP", externalIp);
 }
 
-std::string Request::GetUrl() const
+std::string Request::GetLocation() const
 {
   std::string url = g_vbox->GetApiBaseUrl();
 

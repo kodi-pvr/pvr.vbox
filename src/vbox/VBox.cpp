@@ -27,6 +27,7 @@
 #include "Exceptions.h"
 #include "response/Factory.h"
 #include "request/Request.h"
+#include "request/FileRequest.h"
 #include "response/Content.h"
 #include "xmltv/Utilities.h"
 
@@ -398,10 +399,10 @@ void VBox::RetrieveGuide()
   m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
 }
 
-response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
+response::ResponsePtr VBox::PerformRequest(const request::IRequest &request) const
 {
   // Attempt to open a HTTP file handle
-  void *fileHandle = XBMC->OpenFile(request.GetUrl().c_str(), 0x08 /* READ_NO_CACHE */);
+  void *fileHandle = XBMC->OpenFile(request.GetLocation().c_str(), 0x08 /* READ_NO_CACHE */);
 
   if (fileHandle)
   {
