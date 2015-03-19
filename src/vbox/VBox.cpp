@@ -279,17 +279,12 @@ const xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  auto it = m_guide.find(channel->m_xmltvName);
-
-  if (it == m_guide.cend())
-    return nullptr;
-  
-  return it->second.get();
+  return m_guide.GetSchedule(channel->m_xmltvName);
 }
 
 const xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 {
-  for (const auto &entry : m_guide)
+  for (const auto &entry : m_guide.GetSchedules())
   {
     const xmltv::SchedulePtr &schedule = entry.second;
 
@@ -383,14 +378,13 @@ void VBox::RetrieveGuide()
       auto partialGuide = content.GetGuide();
       std::unique_lock<std::mutex> lock(m_mutex);
 
-      for (auto &entry : partialGuide)
-        m_guide[entry.first] = std::move(entry.second);
+      m_guide += partialGuide;
     }
 
     // Loop through the guide once for logging purposes
     std::unique_lock<std::mutex> lock(m_mutex);
 
-    for (const auto &schedule : m_guide)
+    for (const auto &schedule : m_guide.GetSchedules())
     {
       Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->size(),
         schedule.first.c_str());

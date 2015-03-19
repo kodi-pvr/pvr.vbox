@@ -20,11 +20,95 @@
 *
 */
 
-#include "Schedule.h"
+#include <string>
 #include <map>
+#include "Schedule.h"
 
 namespace vbox {
   namespace xmltv {
-    typedef std::map<std::string, xmltv::SchedulePtr> Guide;
+
+    typedef std::map<std::string, xmltv::SchedulePtr> Schedules;
+
+    /**
+     * Represents a set of guide data. A guide has many schedules (one per
+     * channel) and each schedule has many programmes
+     */
+    class Guide
+    {
+    public:
+
+      Guide() {}
+      ~Guide() {}
+
+      /**
+       * Move constructor, needed since we have members containing unique_ptr's
+       */
+      Guide (Guide &&other)
+      {
+        if (this != &other)
+          m_schedules = std::move(other.m_schedules);
+      }
+
+      /**
+       * For combining the other guide into this one
+       */
+      Guide& operator+= (Guide &other)
+      {
+        // Add all schedules from the other object
+        for (auto &entry : other.GetSchedules())
+          AddSchedule(entry.first, std::move(entry.second));
+
+        return *this;
+      }
+
+      /**
+       * @param channelId the channel ID
+       * @return the schedule for the specified channel, or nullptr if the
+       * channel has no schedule
+       */
+      const Schedule* GetSchedule(const std::string &channelId) const;
+
+      /**
+       * Adds the specified schedule on the specified channel
+       * @param channelId the channel name
+       * @param schedule the schedule (ownership is taken)
+       */
+      void AddSchedule(const std::string &channelId, SchedulePtr schedule)
+      {
+        m_schedules[channelId] = std::move(schedule);
+      }
+
+      /**
+       * Adds the specified programme to the specified channel's schedule
+       * @param channelId the channel name
+       * @param programme the program (ownership is taken)
+       */
+      void AddProgramme(const std::string &channelId, ProgrammePtr programme);
+
+      /**
+       * @return the schedules
+       */
+      Schedules& GetSchedules()
+      {
+        return m_schedules;
+      }
+
+      /**
+       * @return the schedules
+       */
+      const Schedules& GetSchedules() const
+      {
+        return m_schedules;
+      }
+
+    private:
+
+      /**
+       * The schedules
+       */
+      Schedules m_schedules;
+
+    };
   }
 }
+

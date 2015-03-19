@@ -24,6 +24,7 @@
 #include "../Channel.h"
 #include "../util/Url.h"
 #include "../xmltv/Utilities.h"
+#include "../xmltv/Guide.h"
 
 using namespace tinyxml2;
 using namespace vbox;
@@ -85,11 +86,8 @@ xmltv::Guide XMLTVResponseContent::GetGuide() const
     std::string channelName = Url::Decode(element->Attribute("channel"));
     xmltv::ProgrammePtr programme = CreateProgramme(element);
 
-    // Create an empty schedule if this is the first time we've seen this channel
-    if (guide.find(channelName) == guide.cend())
-      guide[channelName] = xmltv::SchedulePtr(new xmltv::Schedule);
-
-    guide[channelName]->push_back(std::move(programme));
+    // Add the programme to the guide
+    guide.AddProgramme(channelName, std::move(programme));
   }
 
   return guide;
