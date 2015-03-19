@@ -64,11 +64,14 @@ namespace vbox {
       static std::string UnixTimeToXmltv(const time_t timestamp)
       {
         std::tm tm = *std::gmtime(&timestamp);
-        std::ostringstream ss;
-        ss << std::put_time(&tm, Utilities::XMLTV_DATETIME_FORMAT);
-        ss << "+0200";
+        
+        char buffer[20];
+        strftime(buffer, sizeof(buffer), XMLTV_DATETIME_FORMAT, &tm);
 
-        return ss.str();
+        std::string xmltvTime(buffer);
+        xmltvTime += "+0000";
+
+        return xmltvTime;
       }
     };
   }
