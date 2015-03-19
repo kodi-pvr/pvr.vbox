@@ -65,12 +65,6 @@ namespace vbox {
       virtual ~Response();
 
       /**
-       * Prevent copying and assignment
-       */
-      Response(Response const &) = delete;
-      Response &operator=(Response const &) = delete;
-
-      /**
        * Move constructor. It transfers the ownership of
        * the underlying XML document.
        */
