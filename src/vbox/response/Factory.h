@@ -51,11 +51,11 @@ namespace vbox {
         std::string method = request.GetMethod();
 
         if (std::find(xmlMethods.begin(), xmlMethods.end(), method) != xmlMethods.end())
-          return ResponsePtr(new XMLTVResponse());
+          return ResponsePtr(new XMLTVResponse);
         else if (method == "GetRecordsList")
-          return ResponsePtr(new RecordingResponse());
+          return ResponsePtr(new RecordingResponse);
         else
-          return ResponsePtr(new Response());
+          return ResponsePtr(new Response);
       }
 
     private:
