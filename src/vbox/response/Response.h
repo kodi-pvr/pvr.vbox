@@ -32,6 +32,16 @@ namespace vbox {
     typedef std::unique_ptr<Response> ResponsePtr;
 
     /**
+     * The various response types (indicates what kind of content the response 
+     * will contain)
+     */
+    enum ResponseType {
+      GENERIC = 0,
+      XMLTV,
+      RECORDS
+    };
+
+    /**
      * The possible error codes a response can have
      */
     enum ErrorCode {

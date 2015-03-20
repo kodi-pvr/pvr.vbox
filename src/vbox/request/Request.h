@@ -47,12 +47,8 @@ namespace vbox {
       void AddParameter(const std::string &name, int value);
       void AddParameter(const std::string &name, unsigned int value);
 
-      virtual std::string GetMethod() const override
-      {
-        return m_method;
-      }
-
-      virtual std::string GetLocation() const;
+      virtual vbox::response::ResponseType GetResponseType() const override;
+      virtual std::string GetLocation() const override;
 
     private:
 
@@ -70,6 +66,11 @@ namespace vbox {
        * List of methods that can take an optional "ExternalIP" parameter
        */
       static const std::vector<std::string> externalCapableMethods;
+
+      /**
+       * List of methods that return XMLTV responses
+       */
+      static const std::vector<std::string> xmltvMethods;
     };
   }
 }

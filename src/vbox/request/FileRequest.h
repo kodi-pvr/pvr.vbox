@@ -36,9 +36,10 @@ namespace vbox {
         : m_path(path) {}
       virtual ~FileRequest() {}
       
-      virtual std::string GetMethod() const override
+      virtual response::ResponseType GetResponseType() const
       {
-        return "local";
+        // Currently we always expect local files to contain XMLTV
+        return response::ResponseType::XMLTV;
       }
 
       virtual std::string GetLocation() const override

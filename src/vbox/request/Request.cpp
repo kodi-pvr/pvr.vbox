@@ -27,6 +27,7 @@
 
 using namespace vbox::request;
 using namespace vbox::util;
+using vbox::response::ResponseType;
 
 const std::vector<std::string> Request::externalCapableMethods = {
   "GetXmltvEntireFile",
@@ -34,6 +35,13 @@ const std::vector<std::string> Request::externalCapableMethods = {
   "GetXmltvChannelsList",
   "GetXmltvProgramsList",
   "GetRecordsList"
+};
+
+const std::vector<std::string> Request::xmltvMethods = {
+  "GetXmltvEntireFile",
+  "GetXmltvSection",
+  "GetXmltvChannelsList",
+  "GetXmltvProgramsList",
 };
 
 Request::Request(const std::string &method)
@@ -46,6 +54,17 @@ Request::Request(const std::string &method)
 
   if (!externalIp.empty())
     AddParameter("ExternalIP", externalIp);
+}
+
+ResponseType Request::GetResponseType() const
+{
+  // Determine the response type based on the method name
+  if (std::find(xmltvMethods.cbegin(), xmltvMethods.cend(), m_method) != xmltvMethods.cend())
+    return ResponseType::XMLTV;
+  else if (m_method == "GetRecordsList")
+    return ResponseType::RECORDS;
+
+  return ResponseType::GENERIC;
 }
 
 std::string Request::GetLocation() const

@@ -21,6 +21,7 @@
 */
 
 #include <string>
+#include "../response/Response.h"
 
 namespace vbox {
   namespace request {
@@ -34,10 +35,9 @@ namespace vbox {
       virtual ~IRequest() {};
 
       /**
-       * @return the request method. The method is used by the factory to 
-       * determine the type of response implementation to use.
+       * @return the type of response this request leads to
        */
-      virtual std::string GetMethod() const = 0;
+      virtual response::ResponseType GetResponseType() const = 0;
 
       /**
        * @return the request location

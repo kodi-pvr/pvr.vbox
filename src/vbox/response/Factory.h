@@ -22,8 +22,6 @@
 
 #include <memory>
 #include <string>
-#include <vector>
-#include <algorithm>
 #include "../request/IRequest.h"
 #include "Response.h"
 
@@ -42,37 +40,23 @@ namespace vbox {
       Factory() = delete;
 
       /**
-       * Factory method for creating response objects. The request is used to
-       * determine what kind of response is called for.
+       * Factory method for creating response objects
        * @param request the request
        * @return the response
        */
-      static ResponsePtr CreateResponse(const request::IRequest &request) {
-        std::string method = request.GetMethod();
-
-        if (std::find(xmlMethods.begin(), xmlMethods.end(), method) != xmlMethods.end())
+      static ResponsePtr CreateResponse(const request::IRequest &request)
+      {
+        switch (request.GetResponseType())
+        {
+        case ResponseType::XMLTV:
           return ResponsePtr(new XMLTVResponse);
-        else if (method == "GetRecordsList")
+        case ResponseType::RECORDS:
           return ResponsePtr(new RecordingResponse);
-        else
+        case ResponseType::GENERIC:
+        default:
           return ResponsePtr(new Response);
+        }
       }
-
-    private:
-
-      /**
-       * List of methods that return XMLTV responses. These include "local" 
-       * which is the method used by FileRequest.
-       */
-      static const std::vector<std::string> xmlMethods;
-    };
-
-    const std::vector<std::string> Factory::xmlMethods = {
-      "GetXmltvEntireFile",
-      "GetXmltvSection",
-      "GetXmltvChannelsList",
-      "GetXmltvProgramsList",
-      "local"
     };
   }
 }
