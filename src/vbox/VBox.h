@@ -107,6 +107,7 @@ namespace vbox {
     void RetrieveChannels();
     void RetrieveRecordings();
     void RetrieveGuide();
+    void LogGuideStatistics(const xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::IRequest &request) const;
 
     /**

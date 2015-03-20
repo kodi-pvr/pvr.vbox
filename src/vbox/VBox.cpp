@@ -382,14 +382,7 @@ void VBox::RetrieveGuide()
       m_guide += partialGuide;
     }
 
-    // Loop through the guide once for logging purposes
-    std::unique_lock<std::mutex> lock(m_mutex);
-
-    for (const auto &schedule : m_guide.GetSchedules())
-    {
-      Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->size(),
-        schedule.first.c_str());
-    }
+    LogGuideStatistics(m_guide);
   }
   catch (VBoxException &e)
   {
@@ -397,6 +390,17 @@ void VBox::RetrieveGuide()
   }
 
   m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
+}
+
+void VBox::LogGuideStatistics(const xmltv::Guide &guide) const
+{
+  std::unique_lock<std::mutex> lock(m_mutex);
+
+  for (const auto &schedule : guide.GetSchedules())
+  {
+    Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->size(),
+      schedule.first.c_str());
+  }
 }
 
 response::ResponsePtr VBox::PerformRequest(const request::IRequest &request) const
