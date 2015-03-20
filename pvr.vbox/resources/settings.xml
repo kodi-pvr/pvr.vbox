@@ -6,4 +6,9 @@
     <setting id="port" type="number" label="30002" default="80" />
     <setting id="timeout" type="number" label="30003" default="60" />
   </category>
+
+  <category label="30100">
+    <setting id="external_xmltv_path" type="file" label="30101" default="" />
+    <setting id="prefer_external_xmltv" type="bool" label="30102" default="true" />
+  </category>
 </settings>

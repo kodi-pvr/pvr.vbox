@@ -108,6 +108,11 @@ void VBox::Initialize()
     RetrieveChannels();
     RetrieveRecordings();
     RetrieveGuide();
+
+    // Retrieve the external guide if configured
+    if (!m_settings.m_externalXmltvPath.empty())
+      RetrieveExternalGuide();
+
   }).detach();
 }
 
@@ -276,11 +281,27 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
 
 const xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
 {
-  // Wait until the guide has been retrieved
+  // Load the schedule
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  return m_guide.GetSchedule(channel->m_xmltvName);
+  auto *schedule = m_guide.GetSchedule(channel->m_xmltvName);
+
+  // Try to use the external guide data if a) it's loaded, b) the user prefers 
+  // it or c) if no scehdule was found
+  if (m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED &&
+    (m_settings.m_preferExternalXmltv || !schedule))
+  {
+    std::string xmltvName = m_externalGuide.GetChannelId(channel->m_name);
+
+    if (!xmltvName.empty())
+    {
+      Log(LOG_DEBUG, "Using external guide data for channel %s", channel->m_name.c_str());
+      schedule = m_externalGuide.GetSchedule(xmltvName);
+    }
+  }
+
+  return schedule;
 }
 
 const xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
@@ -390,6 +411,35 @@ void VBox::RetrieveGuide()
   }
 
   m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
+}
+
+void VBox::RetrieveExternalGuide()
+{
+  Log(LOG_INFO, "Loading external guide data");
+  request::FileRequest request(m_settings.m_externalXmltvPath);
+  response::ResponsePtr response = PerformRequest(request);
+  response::XMLTVResponseContent content(response->GetReplyElement());
+
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_externalGuide = std::move(content.GetGuide());
+  }
+
+  LogGuideStatistics(m_externalGuide);
+  m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
+  
+  TriggerGuideUpdate();
+}
+
+void VBox::TriggerGuideUpdate() const
+{
+  std::unique_lock<std::mutex> lock(m_mutex);
+
+  for (const auto &channel : m_channels)
+  {
+    Log(LOG_DEBUG, "Triggering EPG update of channel %s", channel->m_name.c_str());
+    PVR->TriggerEpgUpdate(channel->GetUniqueId());
+  }
 }
 
 void VBox::LogGuideStatistics(const xmltv::Guide &guide) const

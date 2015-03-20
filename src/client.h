@@ -43,3 +43,5 @@ extern std::string g_hostname;
 extern std::string g_externalIp;
 extern int g_port;
 extern int g_timeout;
+extern std::string g_externalXmltvPath;
+extern bool g_preferExternalXmltv;

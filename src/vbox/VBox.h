@@ -107,6 +107,8 @@ namespace vbox {
     void RetrieveChannels();
     void RetrieveRecordings();
     void RetrieveGuide();
+    void RetrieveExternalGuide();
+    void TriggerGuideUpdate() const;
     void LogGuideStatistics(const xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::IRequest &request) const;
 
@@ -140,6 +142,11 @@ namespace vbox {
      * schedule for the channel
      */
     xmltv::Guide m_guide;
+
+    /**
+     * The external guide data
+     */
+    xmltv::Guide m_externalGuide;
 
     /**
      * The external media status

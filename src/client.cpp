@@ -43,6 +43,8 @@ std::string g_hostname;
 std::string g_externalIp;
 int g_port;
 int g_timeout;
+std::string g_externalXmltvPath;
+bool g_preferExternalXmltv;
 
 extern "C" {
 
@@ -64,6 +66,8 @@ extern "C" {
     UPDATE_STR(g_externalIp, "external_ip", buffer, "");
     UPDATE_INT(g_port, "port", 80);
     UPDATE_INT(g_timeout, "timeout", 60);
+    UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
+    UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", true);
 
 #undef UPDATE_INT
 #undef UPDATE_STR
@@ -96,6 +100,8 @@ extern "C" {
     settings.m_externalIp = g_externalIp;
     settings.m_port = g_port;
     settings.m_timeout = g_timeout * 1000;
+    settings.m_externalXmltvPath = g_externalXmltvPath;
+    settings.m_preferExternalXmltv = g_preferExternalXmltv;
 
     // Create the addon
     VBox::Log(LOG_DEBUG, "creating VBox Gateway PVR addon");
