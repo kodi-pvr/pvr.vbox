@@ -60,7 +60,7 @@ extern "C" {
 
     char buffer[1024];
 
-    UPDATE_STR(g_hostname, "hostname", buffer, "localhost");
+    UPDATE_STR(g_hostname, "hostname", buffer, "");
     UPDATE_STR(g_externalIp, "external_ip", buffer, "");
     UPDATE_INT(g_port, "port", 80);
     UPDATE_INT(g_timeout, "timeout", 60);
