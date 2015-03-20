@@ -32,6 +32,8 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/VBox.cpp)
                       
 set(VBOX_SOURCES_VBOX_REQUEST 
+                src/vbox/request/FileRequest.h
+                src/vbox/request/IRequest.h
                 src/vbox/request/Request.h
                 src/vbox/request/Request.cpp)
                  
@@ -50,6 +52,7 @@ set(VBOX_SOURCES_VBOX_UTIL
                  
 set(VBOX_SOURCES_VBOX_XMLTV
                 src/vbox/xmltv/Guide.h
+                src/vbox/xmltv/Guide.cpp
                 src/vbox/xmltv/Programme.h
                 src/vbox/xmltv/Programme.cpp
                 src/vbox/xmltv/Schedule.h
