@@ -43,7 +43,7 @@ namespace vbox {
       /**
        * Move constructor, needed since we have members containing unique_ptr's
        */
-      Guide (Guide &&other)
+      Guide(Guide &&other)
       {
         if (this != &other)
         {
