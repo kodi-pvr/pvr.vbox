@@ -61,8 +61,9 @@ namespace vbox {
     private:
 
       /**
-      * List of methods that return XMLTV responses
-      */
+       * List of methods that return XMLTV responses. These include "local" 
+       * which is the method used by FileRequest.
+       */
       static const std::vector<std::string> xmlMethods;
     };
 
@@ -70,7 +71,8 @@ namespace vbox {
       "GetXmltvEntireFile",
       "GetXmltvSection",
       "GetXmltvChannelsList",
-      "GetXmltvProgramsList"
+      "GetXmltvProgramsList",
+      "local"
     };
   }
 }

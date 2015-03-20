@@ -21,28 +21,33 @@
 */
 
 #include <string>
+#include "IRequest.h"
 
 namespace vbox {
   namespace request {
 
     /**
-     * Interface for requests
+     * Represents a local file request
      */
-    class IRequest
+    class FileRequest : public IRequest
     {
     public:
-      virtual ~IRequest() {};
+      FileRequest(const std::string &path) 
+        : m_path(path) {}
+      virtual ~FileRequest() {}
+      
+      virtual std::string GetMethod() const override
+      {
+        return "local";
+      }
 
-      /**
-       * @return the request method. The method is used by the factory to 
-       * determine the type of response implementation to use.
-       */
-      virtual std::string GetMethod() const = 0;
+      virtual std::string GetLocation() const override
+      {
+        return m_path;
+      }
 
-      /**
-       * @return the request location
-       */
-      virtual std::string GetLocation() const = 0;
+    private:
+      std::string m_path;
     };
   }
 }
