@@ -53,12 +53,27 @@ namespace vbox {
       }
 
       /**
+       * Assignment operator, needed since we have members containing 
+       * unique_ptr's
+       */
+      Guide& operator= (Guide &other)
+      {
+        if (this != &other)
+        {
+          m_schedules = std::move(other.m_schedules);
+          m_displayNameMappings = other.m_displayNameMappings;
+        }
+
+        return *this;
+      }
+
+      /**
        * For combining the other guide into this one
        */
       Guide& operator+= (Guide &other)
       {
         // Add all schedules from the other object
-        for (auto &entry : other.GetSchedules())
+        for (auto &entry : other.m_schedules)
           AddSchedule(entry.first, std::move(entry.second));
 
         // Merge the display name mappings
@@ -114,15 +129,7 @@ namespace vbox {
         if (m_displayNameMappings.find(displayName) == m_displayNameMappings.cend())
           return "";
 
-        return it->first;
-      }
-
-      /**
-       * @return the schedules
-       */
-      Schedules& GetSchedules()
-      {
-        return m_schedules;
+        return it->second;
       }
 
       /**
