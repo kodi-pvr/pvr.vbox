@@ -19,10 +19,11 @@
 *
 */
 
+#include "VBox.h"
 #include <string>
 #include <sstream>
 #include <thread>
-#include "VBox.h"
+#include <algorithm>
 #include "../client.h"
 #include "Exceptions.h"
 #include "response/Factory.h"
