@@ -10,9 +10,9 @@
   </requires>
   <extension
     point="xbmc.pvrclient"
-    library_linux="pvr.vbox.pvr"
-    library_osx="pvr.vbox.pvr"
-    library_freebsd="pvr.vbox.pvr"
+    library_linux="pvr.vbox.so"
+    library_osx="pvr.vbox.dylib"
+    library_freebsd="pvr.vbox.so"
     library_wingl="pvr.vbox.dll"
     library_windx="pvr.vbox.dll"
     library_android="pvr.vbox.so"/>
