@@ -550,10 +550,25 @@ extern "C" {
 
       event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
       event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
-      event.iChannelNumber = channel.iChannelNumber; // TODO: May not be correct
+      event.iChannelNumber = channel.iChannelNumber;
       event.iUniqueBroadcastId = programme->GetUniqueId();
       event.strTitle = programme->m_title.c_str();
       event.strPlot = programme->m_description.c_str();
+      event.strDirector = xmltv::Utilities::ConcatenateStringList(programme->GetDirectors()).c_str();
+      event.strWriter = xmltv::Utilities::ConcatenateStringList(programme->GetWriters()).c_str();
+      event.iYear = programme->m_year;
+      event.strGenreDescription = xmltv::Utilities::ConcatenateStringList(programme->GetCategories()).c_str();
+      event.strEpisodeName = programme->m_subTitle.c_str();
+
+      // Extract up to five cast members only
+      std::vector<std::string> actorNames;
+      const auto &actors = programme->GetActors();
+      int numActors = std::min(static_cast<int>(actors.size()), 5);
+
+      for (int i = 0; i < numActors; i++)
+        actorNames.push_back(actors.at(i).name);
+
+      event.strCast = xmltv::Utilities::ConcatenateStringList(actorNames).c_str();
 
       PVR->TransferEpgEntry(handle, &event);
       it++;

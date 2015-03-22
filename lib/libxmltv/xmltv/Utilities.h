@@ -24,6 +24,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
 namespace xmltv {
   class Utilities
@@ -88,5 +89,14 @@ namespace xmltv {
       * @return the decoded string
       */
     static std::string UrlDecode(const std::string &string);
+
+    /**
+     * Concatenates the contents of vector with the specified separator
+     * @param vector the vector
+     * @param separator the separator
+     * @return a concatenated string
+     */
+    static std::string ConcatenateStringList(const std::vector<std::string> &vector, 
+      const std::string &separator = ", ");
   };
 }

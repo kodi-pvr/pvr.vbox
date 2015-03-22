@@ -20,6 +20,8 @@
 */
 
 #include "Utilities.h"
+#include <algorithm>
+#include <iterator>
 
 using namespace xmltv;
 
@@ -82,4 +84,21 @@ std::string Utilities::UrlEncode(const std::string &value)
   }
 
   return escaped.str();
+}
+
+// Borrowed from http://stackoverflow.com/a/8581865
+std::string Utilities::ConcatenateStringList(const std::vector<std::string> &vector,
+  const std::string &separator /* = ", "*/)
+{
+  std::ostringstream oss;
+
+  if (!vector.empty())
+  {
+    std::copy(vector.begin(), vector.end() - 1,
+      std::ostream_iterator<std::string>(oss, separator.c_str()));
+
+    oss << vector.back();
+  }
+
+  return oss.str();
 }

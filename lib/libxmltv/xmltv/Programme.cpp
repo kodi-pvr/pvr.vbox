@@ -33,12 +33,98 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   m_endTime = xml->Attribute("stop");
   m_channelName = Utilities::UrlDecode(xml->Attribute("channel"));
 
-  // Add title and description, if present
-  const XMLElement *title = xml->FirstChildElement("title");
-  if (title)
-    m_title = title->GetText();
+  // Title
+  const XMLElement *element = xml->FirstChildElement("title");
+  if (element)
+    m_title = element->GetText();
 
-  const XMLElement *description = xml->FirstChildElement("desc");
-  if (description)
-    m_description = description->GetText();
+  // Subtitle
+  element = xml->FirstChildElement("sub-title");
+  if (element)
+    m_subTitle = element->GetText();
+
+  // Description
+  element = xml->FirstChildElement("desc");
+  if (element)
+    m_description = element->GetText();
+
+  // Credits
+  element = xml->FirstChildElement("credits");
+  if (element)
+    ParseCredits(element);
+
+  // Date
+  element = xml->FirstChildElement("date");
+  if (element)
+    element->QueryIntText(&m_year);
+
+  // Categories. Skip "movie" and "series" since most people treat categories 
+  // as genres
+  for (element = xml->FirstChildElement("category");
+    element != NULL; element = element->NextSiblingElement("category"))
+  {
+    auto *category = element->GetText();
+    if (!category)
+      continue;
+
+    std::string genre(category);
+    if (genre == "movie" || genre == "series")
+      continue;
+
+    m_categories.push_back(genre);
+  }
+
+  // Star rating
+  element = xml->FirstChildElement("star-rating");
+  if (element)
+  {
+    element = element->FirstChildElement("value");
+    if (element)
+      m_starRating = element->GetText();
+  }
+}
+
+void Programme::ParseCredits(const XMLElement *creditsElement)
+{
+  // Actors
+  for (const XMLElement *element = creditsElement->FirstChildElement("actor");
+    element != NULL; element = element->NextSiblingElement("actor"))
+  {
+    Actor actor;
+    actor.name = element->GetText();
+
+    // Not all actors have a role attribute
+    auto *role = element->Attribute("role");
+    if (role)
+      actor.role = role;
+
+    m_credits.actors.push_back(actor);
+  }
+
+  // Directors
+  for (const XMLElement *element = creditsElement->FirstChildElement("director");
+    element != NULL; element = element->NextSiblingElement("director"))
+  {
+    auto *director = element->GetText();
+    if (director)
+      m_credits.directors.push_back(director);
+  }
+
+  // Producers
+  for (const XMLElement *element = creditsElement->FirstChildElement("producer");
+    element != NULL; element = element->NextSiblingElement("producer"))
+  {
+    auto *producer = element->GetText();
+    if (producer)
+      m_credits.producers.push_back(producer);
+  }
+
+  // Writers
+  for (const XMLElement *element = creditsElement->FirstChildElement("writer");
+    element != NULL; element = element->NextSiblingElement("writer"))
+  {
+    auto *writer = element->GetText();
+    if (writer)
+      m_credits.writers.push_back(writer);
+  }
 }

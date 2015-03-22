@@ -21,6 +21,7 @@
 */
 
 #include <string>
+#include <vector>
 #include <memory>
 #include <functional>
 
@@ -35,6 +36,29 @@ namespace xmltv {
   class Programme;
   typedef std::unique_ptr<Programme> ProgrammePtr;
 
+  /**
+   * Represents an actor
+   */
+  struct Actor
+  {
+    std::string role;
+    std::string name;
+  };
+
+  /**
+   * Represents the credits for a programme (actors, director etc.)
+   */
+  struct Credits
+  {
+    std::vector<std::string> directors;
+    std::vector<Actor> actors;
+    std::vector<std::string> producers;
+    std::vector<std::string> writers;
+  };
+
+  /**
+   * Represents a single programme/event
+   */
   class Programme
   {
   public:
@@ -55,10 +79,48 @@ namespace xmltv {
       return std::abs(uniqueId);
     }
 
+    const std::vector<std::string>& GetDirectors() const
+    {
+      return m_credits.directors;
+    }
+
+    const std::vector<Actor>& GetActors() const
+    {
+      return m_credits.actors;
+    }
+
+    const std::vector<std::string>& GetProducers() const
+    {
+      return m_credits.producers;
+    }
+
+    const std::vector<std::string>& GetWriters() const
+    {
+      return m_credits.writers;
+    }
+
+    const std::vector<std::string>& GetCategories() const
+    {
+      return m_categories;
+    }
+
     std::string m_startTime;
     std::string m_endTime;
     std::string m_channelName;
     std::string m_title;
     std::string m_description;
+    std::string m_subTitle;
+    int m_year;
+    std::string m_starRating;
+
+  private:
+
+    /**
+     * Parses the credits from the specified <credits> element
+     */
+    void ParseCredits(const tinyxml2::XMLElement *creditsElement);
+
+    Credits m_credits;
+    std::vector<std::string> m_categories;
   };
 }
