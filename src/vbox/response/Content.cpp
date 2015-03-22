@@ -103,25 +103,6 @@ xmltv::Guide XMLTVResponseContent::GetGuide() const
   return guide;
 }
 
-xmltv::SchedulePtr XMLTVResponseContent::GetSchedule(const ChannelPtr &channel) const
-{
-  xmltv::SchedulePtr schedule(new std::vector<xmltv::ProgrammePtr>);
-
-  for (XMLElement *element = m_content->FirstChildElement("programme");
-    element != NULL; element = element->NextSiblingElement("programme"))
-  {
-    // Skip programmes that are not for this channel
-    std::string channelName = Url::Decode(element->Attribute("channel"));
-    if (channelName != channel->m_xmltvName)
-      continue;
-
-    xmltv::ProgrammePtr programme = CreateProgramme(element);
-    schedule->push_back(std::move(programme));
-  }
-
-  return schedule;
-}
-
 ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) const
 {
   // Extract data from the various <display-name> elements

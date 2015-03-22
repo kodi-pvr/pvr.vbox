@@ -96,14 +96,6 @@ namespace vbox {
        */
       xmltv::Guide GetGuide() const;
 
-      /**
-       * Returns the complete schedule (all programmes) for the specified 
-       * channel
-       * @param channel the channel
-       * @return the schedule
-       */
-      xmltv::SchedulePtr GetSchedule(const ChannelPtr &channel) const;
-
     private:
       ChannelPtr CreateChannel(const tinyxml2::XMLElement *xml) const;
       xmltv::ProgrammePtr CreateProgramme(const tinyxml2::XMLElement *xml) const;
