@@ -20,8 +20,8 @@
 */
 
 #include "Request.h"
-#include "../util/Url.h"
 #include "../../client.h"
+#include "libxmltv/xmltv/Utilities.h"
 #include <sstream>
 #include <iomanip>
 
@@ -74,7 +74,7 @@ std::string Request::GetLocation() const
   // Append parameters (including method)
   if (m_parameters.size() > 0)
     for (auto const &parameter : m_parameters)
-      url += "&" + parameter.first + "=" + Url::Encode(parameter.second);
+      url += "&" + parameter.first + "=" + ::xmltv::Utilities::UrlEncode(parameter.second);
 
   return url;
 }

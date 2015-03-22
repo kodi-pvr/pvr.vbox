@@ -20,8 +20,35 @@
 */
 
 #include "Guide.h"
+#include "Utilities.h"
+#include "tinyxml2.h"
 
-using namespace vbox::xmltv;
+using namespace xmltv;
+using namespace tinyxml2;
+
+Guide::Guide(const XMLElement *m_content)
+{
+  // Populate the lookup table which maps XMLTV IDs to display names
+  for (const XMLElement *element = m_content->FirstChildElement("channel");
+    element != NULL; element = element->NextSiblingElement("channel"))
+  {
+    std::string id = element->Attribute("id");
+    std::string displayName = element->FirstChildElement("display-name")->GetText();
+
+    AddDisplayNameMapping(displayName, id);
+  }
+
+  for (const XMLElement *element = m_content->FirstChildElement("programme");
+    element != NULL; element = element->NextSiblingElement("programme"))
+  {
+    // Extract the channel name and the programme
+    std::string channelName = Utilities::UrlDecode(element->Attribute("channel"));
+    xmltv::ProgrammePtr programme(new Programme(element));
+
+    // Add the programme to the guide
+    AddProgramme(channelName, std::move(programme));
+  }
+}
 
 const Schedule* Guide::GetSchedule(const std::string &channelId) const
 {

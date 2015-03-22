@@ -1,6 +1,5 @@
 /*
-*      Copyright (C) 2005-2013 Team XBMC
-*      http://xbmc.org
+*      Copyright (C) 2015 Sam Stenvall
 *
 *  This Program is free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
@@ -20,14 +19,14 @@
 *
 */
 
-#include "Url.h"
-#include "kodi/util/StringUtils.h"
+#include "Utilities.h"
 
-using namespace vbox::util;
+using namespace xmltv;
 
-std::string Url::Decode(const std::string& strURLData)
-//modified to be more accomodating - if a non hex value follows a % take the characters directly and don't raise an error.
-// However % characters should really be escaped like any other non safe character (www.rfc-editor.org/rfc/rfc1738.txt)
+const char* Utilities::XMLTV_DATETIME_FORMAT = "%Y%m%d%H%M%S";
+
+// Borrowed from https://github.com/xbmc/xbmc/blob/master/xbmc/URL.cpp
+std::string Utilities::UrlDecode(const std::string& strURLData)
 {
   std::string strResult;
   /* result will always be less than source */
@@ -59,20 +58,28 @@ std::string Url::Decode(const std::string& strURLData)
   }
   return strResult;
 }
-std::string Url::Encode(const std::string& strURLData)
+
+// Adapted from http://stackoverflow.com/a/17708801
+std::string Utilities::UrlEncode(const std::string &value)
 {
-  std::string strResult;
-  /* wonder what a good value is here is, depends on how often it occurs */
-  strResult.reserve(strURLData.length() * 2);
-  for (size_t i = 0; i < strURLData.size(); ++i)
+  std::ostringstream escaped;
+  escaped.fill('0');
+  escaped << std::hex;
+
+  for (auto i = value.cbegin(), n = value.cend(); i != n; ++i)
   {
-    const char kar = strURLData[i];
-    // Don't URL encode "-_.!()" according to RFC1738
-    // TODO: Update it to "-_.~" after Gotham according to RFC3986
-    if (StringUtils::isasciialphanum(kar) || kar == '-' || kar == '.' || kar == '_' || kar == '!' || kar == '(' || kar == ')')
-      strResult.push_back(kar);
-    else
-      strResult += StringUtils::Format("%%%02.2x", (unsigned int)((unsigned char)kar)); // TODO: Change to "%%%02.2X" after Gotham
+    std::string::value_type c = (*i);
+
+    // Keep alphanumeric and other accepted characters intact
+    if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
+    {
+      escaped << c;
+      continue;
+    }
+
+    // Any other characters are percent-encoded
+    escaped << '%' << std::setw(2) << int((unsigned char)c);
   }
-  return strResult;
+
+  return escaped.str();
 }

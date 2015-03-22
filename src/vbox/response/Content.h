@@ -25,9 +25,7 @@
 #include <vector>
 #include "../Channel.h"
 #include "../Recording.h"
-#include "../xmltv/Programme.h"
-#include "../xmltv/Schedule.h"
-#include "../xmltv/Guide.h"
+#include "libxmltv/xmltv/Guide.h"
 #include <memory>
 
 namespace tinyxml2 {
@@ -94,11 +92,10 @@ namespace vbox {
        * Returns the complete guide
        * @return the guide
        */
-      xmltv::Guide GetGuide() const;
+      ::xmltv::Guide GetGuide() const;
 
     private:
       ChannelPtr CreateChannel(const tinyxml2::XMLElement *xml) const;
-      xmltv::ProgrammePtr CreateProgramme(const tinyxml2::XMLElement *xml) const;
 
     };
 

@@ -12,7 +12,8 @@ find_package(TinyXML2 REQUIRED)
 
 include_directories(${kodiplatform_INCLUDE_DIRS}
                     ${KODI_INCLUDE_DIR}
-                    ${TINYXML2_INCLUDE_DIRS})
+                    ${TINYXML2_INCLUDE_DIRS}
+                    ${PROJECT_SOURCE_DIR}/lib)
 
 # Sources and headers
 set(VBOX_SOURCES 
@@ -21,7 +22,6 @@ set(VBOX_SOURCES
 
 set(VBOX_SOURCES_VBOX
                 src/vbox/Channel.h
-                src/vbox/Channel.cpp
                 src/vbox/Exceptions.h
                 src/vbox/Recording.h
                 src/vbox/Recording.cpp
@@ -45,26 +45,13 @@ set(VBOX_SOURCES_VBOX_RESPONSE
                 src/vbox/response/Response.cpp)
 
 set(VBOX_SOURCES_VBOX_UTIL
-                src/vbox/util/IHashable.h
-                src/vbox/util/StartupStateHandler.h
-                src/vbox/util/Url.h
-                src/vbox/util/Url.cpp)
-                 
-set(VBOX_SOURCES_VBOX_XMLTV
-                src/vbox/xmltv/Guide.h
-                src/vbox/xmltv/Guide.cpp
-                src/vbox/xmltv/Programme.h
-                src/vbox/xmltv/Programme.cpp
-                src/vbox/xmltv/Schedule.h
-                src/vbox/xmltv/Utilities.h
-                src/vbox/xmltv/Utilities.cpp)
+                src/vbox/util/StartupStateHandler.h)
 
 source_group("Source Files" FILES ${VBOX_SOURCES})
 source_group("Source Files\\vbox" FILES ${VBOX_SOURCES_VBOX})
 source_group("Source Files\\vbox\\request" FILES ${VBOX_SOURCES_VBOX_REQUEST})
 source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
 source_group("Source Files\\vbox\\util" FILES ${VBOX_SOURCES_VBOX_UTIL})
-source_group("Source Files\\vbox\\xmltv" FILES ${VBOX_SOURCES_VBOX_XMLTV})
                  
 # Resource files
 set(VBOX_RESOURCES 
@@ -82,10 +69,12 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX_REQUEST}
                 ${VBOX_SOURCES_VBOX_RESPONSE}
                 ${VBOX_SOURCES_VBOX_UTIL}
-                ${VBOX_SOURCES_VBOX_XMLTV}
                 ${VBOX_RESOURCES})
 
-set(DEPLIBS ${kodiplatform_LIBRARIES} ${TINYXML2_LIBRARIES})
+# Add static libraries
+add_subdirectory(lib/libxmltv)
+
+set(DEPLIBS ${kodiplatform_LIBRARIES} ${TINYXML2_LIBRARIES} libxmltv)
 build_addon(pvr.vbox VBOX DEPLIBS)
 
 include(CPack)

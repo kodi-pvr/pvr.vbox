@@ -33,9 +33,9 @@
 #include "request/Request.h"
 #include "response/Response.h"
 #include "util/StartupStateHandler.h"
-#include "xmltv/Programme.h"
-#include "xmltv/Schedule.h"
-#include "xmltv/Guide.h"
+#include "libxmltv/xmltv/Programme.h"
+#include "libxmltv/xmltv/Schedule.h"
+#include "libxmltv/xmltv/Guide.h"
 
 namespace vbox {
 
@@ -91,12 +91,12 @@ namespace vbox {
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
     bool DeleteRecordingOrTimer(unsigned int id);
-    void AddTimer(const Channel *channel, const xmltv::Programme* programme);
+    void AddTimer(const Channel *channel, const ::xmltv::Programme* programme);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
-    const xmltv::Schedule* GetSchedule(const Channel *channel) const;
-    const xmltv::Programme* GetProgramme(int programmeUniqueId) const;
+    const ::xmltv::Schedule* GetSchedule(const Channel *channel) const;
+    const ::xmltv::Programme* GetProgramme(int programmeUniqueId) const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -109,7 +109,7 @@ namespace vbox {
     void RetrieveGuide();
     void RetrieveExternalGuide();
     void TriggerGuideUpdate() const;
-    void LogGuideStatistics(const xmltv::Guide &guide) const;
+    void LogGuideStatistics(const ::xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::IRequest &request) const;
 
     /**
@@ -141,12 +141,12 @@ namespace vbox {
      * The guide data. The XMLTV channel name is the key, the value is the 
      * schedule for the channel
      */
-    xmltv::Guide m_guide;
+    ::xmltv::Guide m_guide;
 
     /**
      * The external guide data
      */
-    xmltv::Guide m_externalGuide;
+    ::xmltv::Guide m_externalGuide;
 
     /**
      * The external media status

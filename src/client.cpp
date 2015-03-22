@@ -25,7 +25,7 @@
 #include "client.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
-#include "vbox/xmltv/Utilities.h"
+#include "libxmltv/xmltv/Utilities.h"
 
 using namespace ADDON;
 using namespace vbox;

@@ -1,3 +1,4 @@
+#pragma once
 /*
 *      Copyright (C) 2015 Sam Stenvall
 *
@@ -19,11 +20,17 @@
 *
 */
 
-#include "Channel.h"
+#include "Programme.h"
+#include <vector>
+#include <memory>
 
-using namespace vbox;
+// Visual Studio can't handle type names longer than 255 characters in debug 
+// mode, disable that warning since it's not important
+#ifdef _MSC_VER
+#pragma warning(disable : 4503)
+#endif
 
-std::string Channel::GetHashContents() const
-{
-  return m_uniqueId;
+namespace xmltv {
+  typedef std::vector<ProgrammePtr> Schedule;
+  typedef std::unique_ptr<Schedule> SchedulePtr;
 }

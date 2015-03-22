@@ -30,7 +30,7 @@
 #include "request/Request.h"
 #include "request/FileRequest.h"
 #include "response/Content.h"
-#include "xmltv/Utilities.h"
+#include "libxmltv/xmltv/Utilities.h"
 
 using namespace ADDON;
 using namespace vbox;
@@ -249,7 +249,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
-void VBox::AddTimer(const Channel *channel, const xmltv::Programme* programme)
+void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
 {
   // Add the timer
   request::Request request("ScheduleProgramRecord");
@@ -280,7 +280,7 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
   return m_recordings;
 }
 
-const xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
+const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
 {
   // Load the schedule
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
@@ -305,16 +305,16 @@ const xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
   return schedule;
 }
 
-const xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
+const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 {
   for (const auto &entry : m_guide.GetSchedules())
   {
-    const xmltv::SchedulePtr &schedule = entry.second;
+    const ::xmltv::SchedulePtr &schedule = entry.second;
 
     auto it = std::find_if(
       schedule->cbegin(),
       schedule->cend(),
-      [programmeUniqueId](const xmltv::ProgrammePtr &programme)
+      [programmeUniqueId](const ::xmltv::ProgrammePtr &programme)
     {
       return programme->GetUniqueId() == programmeUniqueId;
     });

@@ -1,4 +1,3 @@
-#pragma once
 /*
 *      Copyright (C) 2015 Sam Stenvall
 *
@@ -20,30 +19,26 @@
 *
 */
 
-#include <string>
-#include <memory>
-#include "../util/IHashable.h"
+#include "Programme.h"
+#include "Utilities.h"
+#include "tinyxml2.h"
 
-namespace vbox {
-  namespace xmltv {
-    
-    class Programme;
-    typedef std::unique_ptr<Programme> ProgrammePtr;
+using namespace xmltv;
+using namespace tinyxml2;
 
-    class Programme : public util::IHashable
-    {
-    public:
-      Programme(const std::string &startTime, const std::string &endTime, const std::string &channelName);
-      ~Programme() {}
+Programme::Programme(const tinyxml2::XMLElement *xml)
+{
+  // Construct a basic event
+  m_startTime = xml->Attribute("start");
+  m_endTime = xml->Attribute("stop");
+  m_channelName = Utilities::UrlDecode(xml->Attribute("channel"));
 
-      std::string m_startTime;
-      std::string m_endTime;
-      std::string m_channelName;
-      std::string m_title;
-      std::string m_description;
+  // Add title and description, if present
+  const XMLElement *title = xml->FirstChildElement("title");
+  if (title)
+    m_title = title->GetText();
 
-    protected:
-      std::string GetHashContents() const override;
-    };
-  }
+  const XMLElement *description = xml->FirstChildElement("desc");
+  if (description)
+    m_description = description->GetText();
 }

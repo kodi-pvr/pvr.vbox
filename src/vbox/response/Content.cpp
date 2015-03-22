@@ -22,14 +22,12 @@
 #include "Content.h"
 #include <tinyxml2.h>
 #include "../Channel.h"
-#include "../util/Url.h"
-#include "../xmltv/Utilities.h"
-#include "../xmltv/Guide.h"
+#include "libxmltv/xmltv/Utilities.h"
+#include "libxmltv/xmltv/Guide.h"
 
 using namespace tinyxml2;
 using namespace vbox;
 using namespace vbox::response;
-using namespace vbox::util;
 
 std::string Content::GetString(const std::string &parameter) const
 {
@@ -75,32 +73,9 @@ std::vector<ChannelPtr> XMLTVResponseContent::GetChannels() const
   return channels;
 }
 
-xmltv::Guide XMLTVResponseContent::GetGuide() const
+::xmltv::Guide XMLTVResponseContent::GetGuide() const
 {
-  xmltv::Guide guide;
-
-  // Populate the lookup table which maps XMLTV IDs to display names
-  for (XMLElement *element = m_content->FirstChildElement("channel");
-    element != NULL; element = element->NextSiblingElement("channel"))
-  {
-    std::string id = element->Attribute("id");
-    std::string displayName = element->FirstChildElement("display-name")->GetText();
-
-    guide.AddDisplayNameMapping(displayName, id);
-  }
-
-  for (XMLElement *element = m_content->FirstChildElement("programme");
-    element != NULL; element = element->NextSiblingElement("programme"))
-  {
-    // Extract the channel name and the programme
-    std::string channelName = Url::Decode(element->Attribute("channel"));
-    xmltv::ProgrammePtr programme = CreateProgramme(element);
-
-    // Add the programme to the guide
-    guide.AddProgramme(channelName, std::move(programme));
-  }
-
-  return guide;
+  return ::xmltv::Guide(m_content);
 }
 
 ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) const
@@ -115,7 +90,7 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
   std::string uniqueId = displayElement->GetText();
   displayElement = displayElement->NextSiblingElement("display-name");
   std::string encryption = displayElement->GetText();
-  std::string xmltvName = Url::Decode(xml->Attribute("id"));
+  std::string xmltvName = ::xmltv::Utilities::UrlDecode(xml->Attribute("id"));
 
   // Create the channel with some basic information
   ChannelPtr channel(new Channel(uniqueId, xmltvName, name,
@@ -142,26 +117,6 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
   return channel;
 }
 
-xmltv::ProgrammePtr XMLTVResponseContent::CreateProgramme(const tinyxml2::XMLElement *xml) const
-{
-  // Construct a basic event
-  std::string startTime = xml->Attribute("start");
-  std::string endTime = xml->Attribute("stop");
-  std::string channel = Url::Decode(xml->Attribute("channel"));
-  xmltv::ProgrammePtr programme(new xmltv::Programme(startTime, endTime, channel));
-
-  // Add title and description, if present
-  const XMLElement *title = xml->FirstChildElement("title");
-  if (title)
-    programme->m_title = title->GetText();
-
-  const XMLElement *description = xml->FirstChildElement("desc");
-  if (description)
-    programme->m_description = description->GetText();
-
-  return programme;
-}
-
 std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
 {
   std::vector<RecordingPtr> recordings;
@@ -179,7 +134,7 @@ std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
 RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
-  std::string channelId = Url::Decode(xml->Attribute("channel"));
+  std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
   std::string channelName = xml->FirstChildElement("channel-name")->GetText();
   unsigned int id;
   xml->FirstChildElement("record-id")->QueryUnsignedText(&id);

@@ -22,7 +22,7 @@
 
 #include <string>
 #include <memory>
-#include "util/IHashable.h"
+#include <functional>
 
 namespace vbox {
 
@@ -32,7 +32,7 @@ namespace vbox {
   /**
   * Represents a channel
   */
-  class Channel : public util::IHashable
+  class Channel
   {
   public:
     Channel(const std::string &uniqueId, const std::string &xmltvName,
@@ -40,6 +40,16 @@ namespace vbox {
       : m_uniqueId(uniqueId), m_xmltvName(xmltvName), m_name(name),
       m_url(url), m_radio(false), m_encrypted(false) {}
     ~Channel() {}
+
+    /**
+    * @return a unique ID of this object based on the hash content
+    */
+    unsigned int GetUniqueId() const
+    {
+      std::hash<std::string> hasher;
+      int uniqueId = hasher(m_uniqueId);
+      return std::abs(uniqueId);
+    }
     
     /**
     * The index of the channel, as it appears in the API results. Needed for
@@ -58,9 +68,6 @@ namespace vbox {
     bool m_radio;
     std::string m_url;
     bool m_encrypted;
-
-  protected:
-    std::string GetHashContents() const override;
 
   private:
     /**

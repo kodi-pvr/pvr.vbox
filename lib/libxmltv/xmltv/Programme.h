@@ -20,19 +20,45 @@
 *
 */
 
-#include "Programme.h"
-#include <vector>
+#include <string>
 #include <memory>
+#include <functional>
 
-// Visual Studio can't handle type names longer than 255 characters in debug 
-// mode, disable that warning since it's not important
-#ifdef _MSC_VER
-#pragma warning(disable : 4503)
-#endif
+// Forward declarations
+namespace tinyxml2
+{
+  class XMLElement;
+}
 
-namespace vbox {
-  namespace xmltv {
-    typedef std::vector<xmltv::ProgrammePtr> Schedule;
-    typedef std::unique_ptr<Schedule> SchedulePtr;
-  }
+namespace xmltv {
+    
+  class Programme;
+  typedef std::unique_ptr<Programme> ProgrammePtr;
+
+  class Programme
+  {
+  public:
+
+    /**
+     * Creates a programme from the specified <programme> element
+     */
+    Programme(const tinyxml2::XMLElement *xml);
+    virtual ~Programme() {}
+
+    /**
+    * @return a unique ID of this object based on the hash content
+    */
+    unsigned int GetUniqueId() const
+    {
+      std::hash<std::string> hasher;
+      int uniqueId = hasher(m_channelName + m_startTime + m_endTime);
+      return std::abs(uniqueId);
+    }
+
+    std::string m_startTime;
+    std::string m_endTime;
+    std::string m_channelName;
+    std::string m_title;
+    std::string m_description;
+  };
 }
