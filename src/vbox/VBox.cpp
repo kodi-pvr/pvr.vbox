@@ -422,8 +422,9 @@ void VBox::RetrieveExternalGuide()
   response::XMLTVResponseContent content(response->GetReplyElement());
 
   {
+    auto externalGuide = content.GetGuide();
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_externalGuide = std::move(content.GetGuide());
+    m_externalGuide = externalGuide;
   }
 
   LogGuideStatistics(m_externalGuide);
