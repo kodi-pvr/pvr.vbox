@@ -17,7 +17,7 @@ This addon has been built from the ground up using C++11. The main functionality
 
 The addon communicates with a VBox gateway using the gateway's HTTP API. Since the structure of the responses vary a little bit, a factory is used to construct meaningful objects to represent the various responses. All response-related code is located under the `vbox::response` namespace.
 
-The addon requires XMLTV parsing since that's the format the gateway provides EPG data over. The classes and utilities for handling this are located under `vbox::xmltv`.
+The addon requires XMLTV parsing since that's the format the gateway provides EPG data over. The classes and utilities for handling this are shipped as a separate library (libxmltv) and available through the `xmltv` namespace.
 
 The `vbox::VBox` class which `client.cpp` interfaces with is designed so that an exception of base type `VBoxException` (which is an extension of `std::runtime_error`) is thrown whenever ever a request fails. A request can fail for various reasons:
 
