@@ -41,7 +41,7 @@ std::string Content::GetString(const std::string &parameter) const
 
 int Content::GetInteger(const std::string &parameter) const
 {
-  int value;
+  int value = 0;
 
   XMLElement *element = GetParameterElement(parameter);
   if (element)
@@ -136,7 +136,7 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   // Extract mandatory properties
   std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
   std::string channelName = xml->FirstChildElement("channel-name")->GetText();
-  unsigned int id;
+  unsigned int id = 0;
   xml->FirstChildElement("record-id")->QueryUnsignedText(&id);
   RecordingState state = GetState(xml->FirstChildElement("state")->GetText());
 

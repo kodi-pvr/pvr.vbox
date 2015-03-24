@@ -67,8 +67,8 @@ namespace vbox
     static SoftwareVersion ParseString(const std::string &string);
 
   private:
-    unsigned int m_major;
-    unsigned int m_minor;
-    unsigned int m_revision;
+    unsigned int m_major = 0;
+    unsigned int m_minor = 0;
+    unsigned int m_revision = 0;
   };
 }
