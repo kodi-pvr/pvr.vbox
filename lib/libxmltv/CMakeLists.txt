@@ -24,4 +24,7 @@ source_group("Resource Files" FILES ${XMLTV_RESOURCES})
 list(APPEND XMLTV_SOURCES
     ${XMLTV_RESOURCES})
 
+# Create position-independent code (non-Windows	)
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
 add_library(libxmltv STATIC ${XMLTV_SOURCES})
