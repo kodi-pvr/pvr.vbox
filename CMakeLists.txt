@@ -72,7 +72,7 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_RESOURCES})
 
 # Add static libraries
-add_subdirectory(lib/libxmltv)
+add_subdirectory(lib/xmltv)
 
 set(DEPLIBS ${kodiplatform_LIBRARIES} ${TINYXML2_LIBRARIES} libxmltv)
 build_addon(pvr.vbox VBOX DEPLIBS)

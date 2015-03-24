@@ -4,13 +4,13 @@ cmake_minimum_required(VERSION 2.6)
 
 # Source files
 set(XMLTV_SOURCES 
-                  xmltv/Guide.h
-                  xmltv/Guide.cpp
-                  xmltv/Programme.h
-                  xmltv/Programme.cpp
-                  xmltv/Schedule.h
-                  xmltv/Utilities.h
-                  xmltv/Utilities.cpp)
+                  Guide.h
+                  Guide.cpp
+                  Programme.h
+                  Programme.cpp
+                  Schedule.h
+                  Utilities.h
+                  Utilities.cpp)
 
 source_group("Source Files" FILES ${XMLTV_SOURCES})
 

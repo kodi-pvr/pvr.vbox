@@ -21,7 +21,7 @@
 
 #include "Request.h"
 #include "../../client.h"
-#include "libxmltv/xmltv/Utilities.h"
+#include "xmltv/Utilities.h"
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
