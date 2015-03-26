@@ -34,7 +34,6 @@
 
 using namespace ADDON;
 using namespace vbox;
-using namespace vbox::util;
 
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.46.20";
 

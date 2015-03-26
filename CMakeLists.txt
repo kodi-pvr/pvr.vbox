@@ -28,6 +28,7 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/Settings.h
                 src/vbox/SoftwareVersion.h
                 src/vbox/SoftwareVersion.cpp
+                src/vbox/StartupStateHandler.h
                 src/vbox/VBox.h
                 src/vbox/VBox.cpp)
                       
@@ -44,14 +45,10 @@ set(VBOX_SOURCES_VBOX_RESPONSE
                 src/vbox/response/Response.h
                 src/vbox/response/Response.cpp)
 
-set(VBOX_SOURCES_VBOX_UTIL
-                src/vbox/util/StartupStateHandler.h)
-
 source_group("Source Files" FILES ${VBOX_SOURCES})
 source_group("Source Files\\vbox" FILES ${VBOX_SOURCES_VBOX})
 source_group("Source Files\\vbox\\request" FILES ${VBOX_SOURCES_VBOX_REQUEST})
 source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
-source_group("Source Files\\vbox\\util" FILES ${VBOX_SOURCES_VBOX_UTIL})
                  
 # Resource files
 set(VBOX_RESOURCES 
@@ -68,7 +65,6 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX} 
                 ${VBOX_SOURCES_VBOX_REQUEST}
                 ${VBOX_SOURCES_VBOX_RESPONSE}
-                ${VBOX_SOURCES_VBOX_UTIL}
                 ${VBOX_RESOURCES})
 
 # Add static libraries

@@ -251,7 +251,7 @@ extern "C" {
 
     // Wait for initialization until we decide if we support recordings or not.
     // Recording is only possible when external media is present
-    if (g_vbox->GetStateHandler().WaitForState(util::StartupState::INITIALIZED)
+    if (g_vbox->GetStateHandler().WaitForState(StartupState::INITIALIZED)
       && g_vbox->SupportsRecordings())
     {
       pCapabilities->bSupportsRecordings = true;

@@ -32,7 +32,7 @@
 #include "SoftwareVersion.h"
 #include "request/Request.h"
 #include "response/Response.h"
-#include "util/StartupStateHandler.h"
+#include "StartupStateHandler.h"
 #include "xmltv/Programme.h"
 #include "xmltv/Schedule.h"
 #include "xmltv/Guide.h"
@@ -70,7 +70,7 @@ namespace vbox {
     void Initialize();
     bool ValidateSettings() const;
     const Settings& GetSettings() const;
-    util::StartupStateHandler& GetStateHandler();
+    StartupStateHandler& GetStateHandler();
     std::string GetApiBaseUrl() const;
 
     // General API methods
@@ -156,7 +156,7 @@ namespace vbox {
     /**
      * Handler for the startup state
      */
-    util::StartupStateHandler m_stateHandler;
+    StartupStateHandler m_stateHandler;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings

@@ -27,7 +27,6 @@
 #include <iomanip>
 
 using namespace vbox::request;
-using namespace vbox::util;
 using vbox::response::ResponseType;
 
 const std::vector<std::string> Request::externalCapableMethods = {
