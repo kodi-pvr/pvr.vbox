@@ -111,7 +111,7 @@ void VBox::Initialize()
     RetrieveGuide();
 
     // Retrieve the external guide if configured
-    if (!m_settings.m_externalXmltvPath.empty())
+    if (m_settings.m_useExternalXmltv)
       RetrieveExternalGuide();
 
   }).detach();

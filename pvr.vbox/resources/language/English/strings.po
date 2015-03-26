@@ -43,9 +43,13 @@ msgid "EPG"
 msgstr ""
 
 msgctxt "#30101"
-msgid "External XMLTV path"
+msgid "Use external XMLTV"
 msgstr ""
 
 msgctxt "#30102"
+msgid "External XMLTV path"
+msgstr ""
+
+msgctxt "#30103"
 msgid "Prefer external EPG over OTA"
 msgstr ""

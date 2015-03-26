@@ -29,6 +29,7 @@ namespace vbox {
     std::string m_externalIp;
     int m_port;
     int m_timeout;
+    bool m_useExternalXmltv;
     std::string m_externalXmltvPath;
     bool m_preferExternalXmltv;
   };
