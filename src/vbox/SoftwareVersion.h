@@ -31,6 +31,13 @@ namespace vbox
   {
   public:
 
+    bool operator== (const SoftwareVersion &other) const
+    {
+      return m_major == other.m_major &&
+        m_minor == other.m_minor &&
+        m_revision == other.m_revision;
+    }
+
     bool operator> (const SoftwareVersion &other) const
     {
       return m_major > other.m_major || 
@@ -40,9 +47,7 @@ namespace vbox
 
     bool operator< (const SoftwareVersion &other) const
     {
-      return m_major < other.m_major ||
-        m_minor < other.m_minor ||
-        m_revision < other.m_revision;
+      return !(*this > other) && !(*this == other);
     }
 
     bool operator>= (const SoftwareVersion &other) const
