@@ -36,9 +36,7 @@ CHelper_libXBMC_pvr   *PVR = NULL;
 
 // Initialize globals
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
-VBox *g_vbox;
-
-// Redeclare extern variables
+VBox *g_vbox = nullptr;
 std::string g_hostname;
 std::string g_externalIp;
 int g_port;

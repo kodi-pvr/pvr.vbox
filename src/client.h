@@ -37,11 +37,3 @@ extern CHelper_libXBMC_pvr          *PVR;
 // Globals
 extern ADDON_STATUS g_status;
 extern vbox::VBox *g_vbox;
-
-// Settings
-extern std::string g_hostname;
-extern std::string g_externalIp;
-extern int g_port;
-extern int g_timeout;
-extern std::string g_externalXmltvPath;
-extern bool g_preferExternalXmltv;
