@@ -50,13 +50,12 @@ namespace vbox {
     /**
       * Initializes the handler. The state is set to UNINITIALIZED by default.
       */
-    StartupStateHandler(const int timeoutMs)
-      : m_timeout(timeoutMs), m_state(StartupState::UNINITIALIZED) { }
+    StartupStateHandler()
+      : m_state(StartupState::UNINITIALIZED) { }
     ~StartupStateHandler() {};
 
     /**
-      * Waits for the specified state. The duration of the wait is determined
-      * by the addon timeout setting.
+      * Waits for the specified state.
       *
       * @param state the desired state
       * @return whether the state was reached before the timeout
@@ -66,7 +65,9 @@ namespace vbox {
       std::unique_lock<std::mutex> lock(m_mutex);
 
       // Wait for the state to change
-      m_condition.wait_for(lock, std::chrono::milliseconds(m_timeout), [this, state]() {
+      m_condition.wait_for(lock, std::chrono::seconds(STATE_WAIT_TIMEOUT), 
+        [this, state]()
+      {
         return m_state >= state;
       });
 
@@ -101,9 +102,10 @@ namespace vbox {
   private:
 
     /**
-      * The timeout to use when waiting for states
-      */
-    int m_timeout;
+     * The maximum amount of seconds to block while waiting for a state 
+     * change
+     */
+    const static int STATE_WAIT_TIMEOUT = 120;
 
     /**
       * The current state

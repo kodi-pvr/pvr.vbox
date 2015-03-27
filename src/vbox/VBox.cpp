@@ -38,8 +38,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.46.20";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_stateHandler(settings.m_timeout),
-  m_currentChannel(nullptr)
+  : m_settings(settings), m_currentChannel(nullptr)
 {
 }
 
@@ -155,9 +154,11 @@ void VBox::BackgroundUpdater()
 
 bool VBox::ValidateSettings() const
 {
-  return !m_settings.m_hostname.empty() &&
-    m_settings.m_port != 0 &&
-    m_settings.m_timeout != 0;
+  // Check connection settings
+  if (m_settings.m_hostname.empty() || m_settings.m_port == 0)
+    return false;
+
+  return true;
 }
 
 const Settings& VBox::GetSettings() const
