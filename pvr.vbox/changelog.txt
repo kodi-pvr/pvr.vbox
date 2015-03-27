@@ -1,2 +1,2 @@
-1.0.0
-- initial release
+0.9.0
+  - initial release
