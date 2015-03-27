@@ -1,7 +1,5 @@
 # VBox Gateway PVR Client
 
-Warning: this addon is still work in progress!
-
 This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
 
 ### Settings
