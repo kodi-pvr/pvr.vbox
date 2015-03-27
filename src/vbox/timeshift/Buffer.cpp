@@ -1,4 +1,3 @@
-#pragma once
 /*
 *      Copyright (C) 2015 Sam Stenvall
 *
@@ -20,19 +19,20 @@
 *
 */
 
-#include <string>
+#include "Buffer.h"
 
-namespace vbox {
-  class Settings {
-  public:
-    std::string m_hostname;
-    std::string m_externalIp;
-    int m_port;
-    int m_timeout;
-    bool m_useExternalXmltv;
-    std::string m_externalXmltvPath;
-    bool m_preferExternalXmltv;
-    bool m_timeshiftEnabled;
-    std::string m_timeshiftBufferPath;
-  };
+using namespace vbox::timeshift;
+
+Buffer::~Buffer()
+{
+  XBMC->CloseFile(m_inputHandle);
+}
+
+bool Buffer::Open(const std::string inputUrl)
+{
+  // Remember the start time and open the input
+  m_startTime = time(nullptr);
+  m_inputHandle = XBMC->OpenFile(inputUrl.c_str(), 0x08 /*READ_NO_CACHE*/);
+
+  return m_inputHandle != nullptr;
 }

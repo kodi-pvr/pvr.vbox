@@ -37,8 +37,9 @@ using namespace vbox;
 
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.46.20";
 
-VBox::VBox(const Settings &settings) :
-m_settings(settings), m_stateHandler(settings.m_timeout)
+VBox::VBox(const Settings &settings)
+  : m_settings(settings), m_stateHandler(settings.m_timeout),
+  m_currentChannel(nullptr)
 {
 }
 
@@ -191,6 +192,16 @@ const Channel* VBox::GetChannel(unsigned int uniqueId) const
     return nullptr;
 
   return it->get();
+}
+
+const Channel* VBox::GetCurrentChannel() const
+{
+  return m_currentChannel;
+}
+
+void VBox::SetCurrentChannel(const Channel* channel)
+{
+  m_currentChannel = channel;
 }
 
 bool VBox::SupportsRecordings() const

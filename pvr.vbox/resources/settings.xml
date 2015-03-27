@@ -12,4 +12,9 @@
     <setting id="external_xmltv_path" type="file" label="30102" default="" enable="eq(-1,true)" />
     <setting id="prefer_external_xmltv" type="bool" label="30103" default="true" enable="eq(-2,true)" />
   </category>
+  
+  <category label="30200">
+    <setting id="timeshift_enabled" type="bool" label="30201" default="false" />
+    <setting id="timeshift_path" type="folder" label="30202" default="special://userdata/addon_data/pvr.vbox" option="writeable" enable="eq(-1,true)" />
+  </category>
 </settings>

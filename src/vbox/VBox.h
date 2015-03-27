@@ -83,6 +83,8 @@ namespace vbox {
     int GetChannelsAmount() const;
     const std::vector<ChannelPtr>& GetChannels() const;
     const Channel* GetChannel(unsigned int uniqueId) const;
+    const Channel* GetCurrentChannel() const;
+    void SetCurrentChannel(const Channel* channel);
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -157,6 +159,11 @@ namespace vbox {
      * Handler for the startup state
      */
     StartupStateHandler m_stateHandler;
+
+    /**
+     * The currently active channel, or nullptr if none is active at the moment
+     */
+    const Channel* m_currentChannel;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings

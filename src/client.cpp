@@ -25,6 +25,8 @@
 #include "client.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
+#include "vbox/timeshift/DummyBuffer.h"
+#include "vbox/timeshift/FilesystemBuffer.h"
 #include "xmltv/Utilities.h"
 
 using namespace ADDON;
@@ -37,6 +39,7 @@ CHelper_libXBMC_pvr   *PVR = NULL;
 // Initialize globals
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
 VBox *g_vbox = nullptr;
+timeshift::Buffer *timeshiftBuffer = nullptr;
 std::string g_hostname;
 std::string g_externalIp;
 int g_port;
@@ -44,6 +47,8 @@ int g_timeout;
 bool g_useExternalXmltv;
 std::string g_externalXmltvPath;
 bool g_preferExternalXmltv;
+bool g_timeshiftEnabled;
+std::string g_timeshiftBufferPath;
 
 extern "C" {
 
@@ -68,6 +73,8 @@ extern "C" {
     UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", true);
+    UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
+    UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
 #undef UPDATE_INT
 #undef UPDATE_STR
@@ -103,6 +110,8 @@ extern "C" {
     settings.m_useExternalXmltv = g_useExternalXmltv;
     settings.m_externalXmltvPath = g_externalXmltvPath;
     settings.m_preferExternalXmltv = g_preferExternalXmltv;
+    settings.m_timeshiftEnabled = g_timeshiftEnabled;
+    settings.m_timeshiftBufferPath = g_timeshiftBufferPath;
 
     // Create the addon
     VBox::Log(LOG_DEBUG, "creating VBox Gateway PVR addon");
@@ -231,7 +240,7 @@ extern "C" {
     pCapabilities->bSupportsRadio = true;
     pCapabilities->bSupportsChannelGroups = false;
     pCapabilities->bSupportsEPG = true;
-    pCapabilities->bHandlesInputStream = false; // TODO: Implement
+    pCapabilities->bHandlesInputStream = true;
 
     // Recording capability is determined further down, we'll assume false 
     // in case the real capabilities cannot be determined for some reason
@@ -242,7 +251,6 @@ extern "C" {
     pCapabilities->bSupportsRecordingsUndelete = false;
     pCapabilities->bSupportsChannelScan = false;
     pCapabilities->bSupportsChannelSettings = false;
-    pCapabilities->bHandlesInputStream = false;
     pCapabilities->bHandlesDemuxing = false;
     pCapabilities->bSupportsRecordingFolders = false;
     pCapabilities->bSupportsRecordingPlayCount = false;
@@ -319,8 +327,6 @@ extern "C" {
         sizeof(channel.strChannelName));
       strncpy(channel.strIconPath, item->m_iconUrl.c_str(),
         sizeof(channel.strIconPath));
-      strncpy(channel.strStreamURL, item->m_url.c_str(),
-        sizeof(channel.strStreamURL));
 
       // Set stream format for TV channels
       if (!item->m_radio)
@@ -578,7 +584,97 @@ extern "C" {
     return PVR_ERROR_NO_ERROR;
   }
 
-  // Unused API methods
+  bool OpenLiveStream(const PVR_CHANNEL &channel)
+  {
+    // Find the channel
+    const Channel* channelPtr = g_vbox->GetChannel(channel.iUniqueId);
+    
+    if (!channelPtr)
+      return false;
+
+    // Reset the buffer
+    SAFE_DELETE(timeshiftBuffer);
+
+    // Create and open a new timeshift buffer
+    if (g_vbox->GetSettings().m_timeshiftEnabled)
+    {
+      const std::string &bufferPath = g_vbox->GetSettings().m_timeshiftBufferPath;
+      timeshiftBuffer = new timeshift::FilesystemBuffer(bufferPath);
+    }
+    else
+      timeshiftBuffer = new timeshift::DummyBuffer();
+    
+    // Remember the current channel if the buffer was successfully opened
+    if (timeshiftBuffer->Open(channelPtr->m_url))
+    {
+      g_vbox->SetCurrentChannel(channelPtr);
+      return true;
+    }
+
+    // Close the buffer if it failed to open
+    SAFE_DELETE(timeshiftBuffer);
+    return false;
+  }
+
+  void CloseLiveStream(void)
+  {
+    SAFE_DELETE(timeshiftBuffer);
+
+    // Unset the current channel
+    g_vbox->SetCurrentChannel(nullptr);
+  }
+
+  int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)
+  {
+    return timeshiftBuffer->Read(pBuffer, iBufferSize);
+  }
+
+  long long PositionLiveStream(void)
+  {
+    return timeshiftBuffer->Position();
+  }
+
+  long long LengthLiveStream(void)
+  {
+    return timeshiftBuffer->Length();
+  }
+
+  long long SeekLiveStream(long long iPosition, int iWhence /* = SEEK_SET */)
+  {
+    return timeshiftBuffer->Seek(iPosition, iWhence);
+  }
+
+  int GetCurrentClientChannel(void)
+  {
+    // TODO: Investigate whether Kodi actually uses this method anymore
+    const Channel *channel = g_vbox->GetCurrentChannel();
+
+    if (channel)
+      return channel->GetUniqueId();
+    
+    return -1;
+  }
+
+  bool CanPauseStream(void)
+  {
+    return g_vbox->GetSettings().m_timeshiftEnabled;
+  }
+
+  bool CanSeekStream(void)
+  {
+    return g_vbox->GetSettings().m_timeshiftEnabled;
+  }
+
+  time_t GetBufferTimeStart()
+  {
+    return timeshiftBuffer->GetStartTime();
+  }
+
+  time_t GetBufferTimeEnd()
+  {
+    return timeshiftBuffer->GetEndTime();
+  }
+
   // Management methods
   PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &item) { return PVR_ERROR_NOT_IMPLEMENTED; }
@@ -606,13 +702,7 @@ extern "C" {
   long long LengthRecordedStream(void) { return 0; }
 
   // Channel stream methods
-  bool OpenLiveStream(const PVR_CHANNEL &channel) { return false; }
-  void CloseLiveStream(void) {}
   bool SwitchChannel(const PVR_CHANNEL &channel) { CloseLiveStream(); return OpenLiveStream(channel); }
-  int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize) { return 0; }
-  long long SeekLiveStream(long long iPosition, int iWhence /* = SEEK_SET */) { return -1; }
-  long long PositionLiveStream(void) { return -1; }
-  long long LengthLiveStream(void) { return -1; }
 
   // Demuxer methods
   void DemuxReset(void) {}
@@ -636,15 +726,10 @@ extern "C" {
 
   // Timeshift methods
   void PauseStream(bool bPaused) {}
-  bool CanPauseStream(void) { return false; }
-  bool CanSeekStream(void) { return false; }
   bool SeekTime(int, bool, double*) { return false; }
   void SetSpeed(int) {};
   time_t GetPlayingTime() { return 0; }
-  time_t GetBufferTimeStart() { return 0; }
-  time_t GetBufferTimeEnd() { return 0; }
 
   // Deprecated (unused)
   const char * GetLiveStreamURL(const PVR_CHANNEL &channel) { return ""; }
-  int GetCurrentClientChannel(void) { return -1; }
 }

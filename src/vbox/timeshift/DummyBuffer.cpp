@@ -1,4 +1,3 @@
-#pragma once
 /*
 *      Copyright (C) 2015 Sam Stenvall
 *
@@ -20,19 +19,16 @@
 *
 */
 
-#include <string>
+#include "DummyBuffer.h"
 
-namespace vbox {
-  class Settings {
-  public:
-    std::string m_hostname;
-    std::string m_externalIp;
-    int m_port;
-    int m_timeout;
-    bool m_useExternalXmltv;
-    std::string m_externalXmltvPath;
-    bool m_preferExternalXmltv;
-    bool m_timeshiftEnabled;
-    std::string m_timeshiftBufferPath;
-  };
+using namespace vbox::timeshift;
+
+int DummyBuffer::Read(byte *buffer, size_t length)
+{
+  return XBMC->ReadFile(m_inputHandle, buffer, length);
+}
+
+int64_t DummyBuffer::Seek(int64_t position, int whence)
+{
+  return XBMC->SeekFile(m_inputHandle, position, whence);
 }

@@ -53,3 +53,15 @@ msgstr ""
 msgctxt "#30103"
 msgid "Prefer external EPG over OTA"
 msgstr ""
+
+msgctxt "#30200"
+msgid "Timeshift"
+msgstr ""
+
+msgctxt "#30201"
+msgid "Enable timeshifting"
+msgstr ""
+
+msgctxt "#30202"
+msgid "Timeshift buffer path"
+msgstr ""
