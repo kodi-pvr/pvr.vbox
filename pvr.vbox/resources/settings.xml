@@ -7,7 +7,7 @@
   </category>
 
   <category label="30100">
-	<setting id="use_external_xmltv" type="bool" label="30101" default="false" />
+	  <setting id="use_external_xmltv" type="bool" label="30101" default="false" />
     <setting id="external_xmltv_path" type="file" label="30102" default="" enable="eq(-1,true)" />
     <setting id="prefer_external_xmltv" type="bool" label="30103" default="true" enable="eq(-2,true)" />
   </category>
