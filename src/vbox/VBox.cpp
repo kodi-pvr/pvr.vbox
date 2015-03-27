@@ -158,6 +158,14 @@ bool VBox::ValidateSettings() const
   if (m_settings.m_hostname.empty() || m_settings.m_port == 0)
     return false;
 
+  // Check guide settings
+  if (m_settings.m_useExternalXmltv && m_settings.m_externalXmltvPath.empty())
+    return false;
+
+  // Check timeshift settings
+  if (m_settings.m_timeshiftEnabled && !XBMC->CanOpenDirectory(m_settings.m_timeshiftBufferPath.c_str()))
+    return false;
+
   return true;
 }
 
