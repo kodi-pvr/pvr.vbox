@@ -41,6 +41,8 @@ The `vbox::VBox` class which `client.cpp` interfaces with is designed so that an
 * the request failed to execute, i.e. the backend was unavailable
 * the XML parsing failed, i.e. the response was invalid
 * the request succeeded but the response represented an error
+ 
+The code for the timeshift buffer is fairly generic and at some point it will probably move out of the `vbox` namespace, since it doesn't depend on it in any way. Currently there is a base class for all buffers and two implementations, a `FilesystemBuffer` which buffers the data to a file on disc, and a `DummyBuffer` which just relays the read operations to the underlying input handle. This is required since Kodi uses a different code paths depending on whether clients handle input streams on their own or not, and we need this particular code path.
 
 ### Useful links
 
