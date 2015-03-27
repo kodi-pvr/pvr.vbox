@@ -50,6 +50,17 @@ int Content::GetInteger(const std::string &parameter) const
   return value;
 }
 
+unsigned int Content::GetUnsignedInteger(const std::string &parameter) const
+{
+  unsigned int value = 0;
+
+  XMLElement *element = GetParameterElement(parameter);
+  if (element)
+    element->QueryUnsignedText(&value);
+
+  return value;
+}
+
 tinyxml2::XMLElement* Content::GetParameterElement(const std::string &parameter) const
 {
   return m_content->FirstChildElement(parameter.c_str());

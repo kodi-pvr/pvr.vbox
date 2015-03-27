@@ -60,6 +60,13 @@ namespace vbox {
       */
       int GetInteger(const std::string &parameter) const;
 
+      /**
+       * Returns the specified parameter as an unsigned integer
+       * @param name the parameter
+       * @return the value
+       */
+      unsigned int GetUnsignedInteger(const std::string &parameter) const;
+
     protected:
 
       /**
