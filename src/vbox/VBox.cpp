@@ -22,7 +22,7 @@
 #include "VBox.h"
 #include <string>
 #include <sstream>
-#include <thread>
+#include <chrono>
 #include <algorithm>
 #include "../client.h"
 #include "Exceptions.h"
@@ -45,6 +45,11 @@ VBox::VBox(const Settings &settings)
 
 VBox::~VBox()
 {
+  // Wait for the background thread to stop
+  m_active = false;
+
+  if (m_backgroundThread.joinable())
+    m_backgroundThread.join();
 }
 
 void VBox::Initialize()
@@ -104,17 +109,48 @@ void VBox::Initialize()
   // Consider the addon initialized
   m_stateHandler.EnterState(StartupState::INITIALIZED);
 
-  // Import channels, recordings and guide data asynchronously
-  std::thread([=]() {
-    RetrieveChannels();
-    RetrieveRecordings();
-    RetrieveGuide();
+  // Start the background updater thread
+  m_active = true;
+  m_backgroundThread = std::thread([this]()
+  {
+    BackgroundUpdater();
+  });
+}
 
-    // Retrieve the external guide if configured
-    if (m_settings.m_useExternalXmltv)
+void VBox::BackgroundUpdater()
+{
+  // Keep count of how many times the loop has run so we can perform some 
+  // tasks only on some iterations
+  static unsigned int lapCounter = 1;
+
+  // Retrieve everything in order once before starting the loop
+  RetrieveChannels();
+  RetrieveRecordings();
+  RetrieveGuide();
+
+  if (m_settings.m_useExternalXmltv)
+    RetrieveExternalGuide();
+
+  while (m_active)
+  {
+    // Update recordings every iteration
+    RetrieveRecordings();
+
+    //// Update channels every six iterations = 30 seocnds
+    if (lapCounter % 6 == 0)
+      RetrieveChannels();
+
+    // Update the internal guide data every 12 * 60 iterations = 1 hour
+    if (lapCounter % (12 * 60) == 0)
+      RetrieveGuide();
+
+    // Update the external guide data every 12 * 60 * 12 = 12 hours
+    if (m_settings.m_useExternalXmltv && lapCounter % (12 * 60 * 12) == 0)
       RetrieveExternalGuide();
 
-  }).detach();
+    lapCounter++;
+    Sleep(5000); // for some infinitely retarded reason, std::thread::sleep_for doesn't work
+  }
 }
 
 bool VBox::ValidateSettings() const
@@ -379,7 +415,8 @@ void VBox::RetrieveChannels()
     LogException(e);
   }
 
-  m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
+  if (m_stateHandler.GetState() < StartupState::CHANNELS_LOADED)
+    m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
 }
 
 void VBox::RetrieveRecordings()
@@ -402,7 +439,8 @@ void VBox::RetrieveRecordings()
     }
   }
 
-  m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
+  if (m_stateHandler.GetState() < StartupState::RECORDINGS_LOADED)
+    m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
 }
 
 void VBox::RetrieveGuide()
@@ -442,7 +480,8 @@ void VBox::RetrieveGuide()
     LogException(e);
   }
 
-  m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
+  if (m_stateHandler.GetState() < StartupState::GUIDE_LOADED)
+    m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
 }
 
 void VBox::RetrieveExternalGuide()
@@ -459,7 +498,9 @@ void VBox::RetrieveExternalGuide()
   }
 
   LogGuideStatistics(m_externalGuide);
-  m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
+
+  if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
+    m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
   
   TriggerGuideUpdate();
 }

@@ -24,6 +24,8 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <thread>
+#include <atomic>
 #include <libXBMC_addon.h>
 #include "Channel.h"
 #include "ChannelStreamingStatus.h"
@@ -108,10 +110,12 @@ namespace vbox {
 
   private:
     
+    void BackgroundUpdater();
     void RetrieveChannels();
     void RetrieveRecordings();
     void RetrieveGuide();
     void RetrieveExternalGuide();
+
     void TriggerGuideUpdate() const;
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::IRequest &request) const;
@@ -161,6 +165,16 @@ namespace vbox {
      * Handler for the startup state
      */
     StartupStateHandler m_stateHandler;
+
+    /**
+     * The background update thread
+     */
+    std::thread m_backgroundThread;
+
+    /**
+     * Controls whether the background update thread should keep running or not
+     */
+    std::atomic<bool> m_active;
 
     /**
      * The currently active channel, or nullptr if none is active at the moment
