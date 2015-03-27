@@ -26,6 +26,7 @@
 #include <mutex>
 #include <libXBMC_addon.h>
 #include "Channel.h"
+#include "ChannelStreamingStatus.h"
 #include "Recording.h"
 #include "Exceptions.h"
 #include "Settings.h"
@@ -85,6 +86,7 @@ namespace vbox {
     const Channel* GetChannel(unsigned int uniqueId) const;
     const Channel* GetCurrentChannel() const;
     void SetCurrentChannel(const Channel* channel);
+    ChannelStreamingStatus GetChannelStreamingStatus(const Channel* channel) const;
 
     // Recording methods
     bool SupportsRecordings() const;

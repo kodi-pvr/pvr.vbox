@@ -204,6 +204,27 @@ void VBox::SetCurrentChannel(const Channel* channel)
   m_currentChannel = channel;
 }
 
+ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) const
+{
+  ChannelStreamingStatus status;
+
+  request::Request request("QueryChannelStreamingStatus");
+  request.AddParameter("ChannelID", channel->m_xmltvName);
+  response::ResponsePtr response = PerformRequest(request);
+  response::Content content(response->GetReplyElement());
+
+  status.SetServiceId(content.GetUnsignedInteger("SID"));
+  status.SetTunerId(content.GetString("TunerID"));
+  status.SetTunerType(content.GetString("TunerType"));
+  status.m_lockStatus = content.GetString("LockStatus");
+  status.m_frequency = content.GetString("Frequency");
+  status.SetRfLevel(content.GetString("RFLevel"));
+  status.m_signalQuality = content.GetUnsignedInteger("SignalQuality");
+  status.SetBer(content.GetString("BER"));
+
+  return status;
+}
+
 bool VBox::SupportsRecordings() const
 {
   return m_externalMediaStatus.present;

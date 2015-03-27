@@ -22,6 +22,8 @@ set(VBOX_SOURCES
 
 set(VBOX_SOURCES_VBOX
                 src/vbox/Channel.h
+                src/vbox/ChannelStreamingStatus.h
+                src/vbox/ChannelStreamingStatus.cpp
                 src/vbox/Exceptions.h
                 src/vbox/Recording.h
                 src/vbox/Recording.cpp
