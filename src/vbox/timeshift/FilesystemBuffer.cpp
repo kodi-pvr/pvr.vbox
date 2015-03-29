@@ -20,6 +20,7 @@
 */
 
 #include "FilesystemBuffer.h"
+#include "kodi/util/timeutils.h"
 
 using namespace vbox::timeshift;
 
@@ -57,6 +58,10 @@ bool FilesystemBuffer::Open(const std::string inputUrl)
   {
     ConsumeInput();
   });
+
+  // Since the input thread can never run faster than us, give it a small head 
+  // start
+  usleep(250 * 1000);
 
   return true;
 }
