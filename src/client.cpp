@@ -188,10 +188,10 @@ extern "C" {
     UPDATE_STR("hostname", g_hostname);
     UPDATE_STR("external_ip", g_externalIp);
     UPDATE_INT("port", int, g_port);
-    UPDATE_INT("use_external_xmltv", int, g_useExternalXmltv);
+    UPDATE_INT("use_external_xmltv", bool, g_useExternalXmltv);
     UPDATE_STR("external_xmltv_path", g_externalXmltvPath);
-    UPDATE_INT("prefer_external_xmltv", int, g_preferExternalXmltv);
-    UPDATE_INT("timeshift_enabled", int, g_timeshiftEnabled);
+    UPDATE_INT("prefer_external_xmltv", bool, g_preferExternalXmltv);
+    UPDATE_INT("timeshift_enabled", bool, g_timeshiftEnabled);
     UPDATE_STR("timeshift_path", g_timeshiftBufferPath);
 
     return ADDON_STATUS_OK;
