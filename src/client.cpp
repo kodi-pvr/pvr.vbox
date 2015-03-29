@@ -597,8 +597,6 @@ extern "C" {
       signalStatus.iSNR = static_cast<int>(status.m_signalQuality) * 655;
       signalStatus.iBER = status.GetBer();
 
-      g_vbox->Log(LOG_INFO, "STATUS: signal %d, snr %d", signalStatus.iSignal, signalStatus.iSNR);
-
       strncpy(signalStatus.strAdapterName,
         status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName));
 
