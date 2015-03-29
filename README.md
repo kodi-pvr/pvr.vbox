@@ -1,6 +1,6 @@
-# VBox Gateway PVR Client
+# VBox Home TV Gateway PVR Client
 
-This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
+This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi TV Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
 
 ### Settings
 
@@ -32,7 +32,7 @@ I'm assuming here that you'll check out all source code into `C:\Projects`, you'
 
 This addon has been built from the ground up using C++11. The main functionality is contained within the `vbox` namespace, the only file outside that is `client.cpp` which bridges the gap between the Kodi API and the API used by the main library class, `vbox::VBox`. The idea is to keep the addon code as decoupled from Kodi as possible.
 
-The addon communicates with a VBox gateway using the gateway's HTTP API. Since the structure of the responses vary a little bit, a factory is used to construct meaningful objects to represent the various responses. All response-related code is located under the `vbox::response` namespace.
+The addon communicates with a VBox TV Gateway using the TV gateway's HTTP API. Since the structure of the responses vary a little bit, a factory is used to construct meaningful objects to represent the various responses. All response-related code is located under the `vbox::response` namespace.
 
 The addon requires XMLTV parsing since that's the format the gateway provides EPG data over. The classes and utilities for handling this are shipped as a separate library (libxmltv) and available through the `xmltv` namespace.
 
@@ -48,6 +48,7 @@ The code for the timeshift buffer is fairly generic and at some point it will pr
 
 * [Kodi's PVR user support] (http://forum.kodi.tv/forumdisplay.php?fid=167)
 * [Kodi's PVR development support] (http://forum.kodi.tv/forumdisplay.php?fid=136)
+* [Kodi's about VBox TV Gateway] (http://kodi.wiki/view/VBox_Home_TV_Gateway)
 
 ###  License
 
