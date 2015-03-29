@@ -86,8 +86,8 @@ namespace vbox {
     int GetChannelsAmount() const;
     const std::vector<ChannelPtr>& GetChannels() const;
     const Channel* GetChannel(unsigned int uniqueId) const;
-    const Channel* GetCurrentChannel() const;
-    void SetCurrentChannel(const Channel* channel);
+    const Channel& GetCurrentChannel() const;
+    void SetCurrentChannel(const Channel &channel);
     ChannelStreamingStatus GetChannelStreamingStatus(const Channel* channel) const;
 
     // Recording methods
@@ -177,9 +177,10 @@ namespace vbox {
     std::atomic<bool> m_active;
 
     /**
-     * The currently active channel, or nullptr if none is active at the moment
+     * The currently active channel, or the last active channel when no 
+     * channel is playing
      */
-    const Channel* m_currentChannel;
+    Channel m_currentChannel;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings

@@ -587,36 +587,33 @@ extern "C" {
 
   PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   {
-    const Channel *currentChannel = g_vbox->GetCurrentChannel();
+    const Channel &currentChannel = g_vbox->GetCurrentChannel();
 
-    if (currentChannel)
-    {
-      try {
-        ChannelStreamingStatus status = g_vbox->GetChannelStreamingStatus(currentChannel);
+    try {
+      ChannelStreamingStatus status = g_vbox->GetChannelStreamingStatus(&currentChannel);
 
-        // Adjust for Kodi's weird handling of the signal strength
-        signalStatus.iSignal = static_cast<int>(status.GetSignalStrength()) * 655; 
-        signalStatus.iSNR = static_cast<int>(status.m_signalQuality) * 655;
-        signalStatus.iBER = status.GetBer();
+      // Adjust for Kodi's weird handling of the signal strength
+      signalStatus.iSignal = static_cast<int>(status.GetSignalStrength()) * 655; 
+      signalStatus.iSNR = static_cast<int>(status.m_signalQuality) * 655;
+      signalStatus.iBER = status.GetBer();
 
-        g_vbox->Log(LOG_INFO, "STATUS: signal %d, snr %d", signalStatus.iSignal, signalStatus.iSNR);
+      g_vbox->Log(LOG_INFO, "STATUS: signal %d, snr %d", signalStatus.iSignal, signalStatus.iSNR);
 
-        strncpy(signalStatus.strAdapterName,
-          status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName));
+      strncpy(signalStatus.strAdapterName,
+        status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName));
 
-        strncpy(signalStatus.strAdapterStatus,
-          status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus));
+      strncpy(signalStatus.strAdapterStatus,
+        status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus));
         
-        strncpy(signalStatus.strServiceName,
-          status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName));
+      strncpy(signalStatus.strServiceName,
+        status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName));
 
-        strncpy(signalStatus.strMuxName,
-          status.m_frequency.c_str(), sizeof(signalStatus.strMuxName));
-      }
-      catch (VBoxException &e)
-      {
-        g_vbox->LogException(e);
-      }
+      strncpy(signalStatus.strMuxName,
+        status.m_frequency.c_str(), sizeof(signalStatus.strMuxName));
+    }
+    catch (VBoxException &e)
+    {
+      g_vbox->LogException(e);
     }
 
     return PVR_ERROR_NO_ERROR;
@@ -645,7 +642,7 @@ extern "C" {
     // Remember the current channel if the buffer was successfully opened
     if (timeshiftBuffer->Open(channelPtr->m_url))
     {
-      g_vbox->SetCurrentChannel(channelPtr);
+      g_vbox->SetCurrentChannel(*channelPtr);
       return true;
     }
 
@@ -657,9 +654,6 @@ extern "C" {
   void CloseLiveStream(void)
   {
     SAFE_DELETE(timeshiftBuffer);
-
-    // Unset the current channel
-    g_vbox->SetCurrentChannel(nullptr);
   }
 
   int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)
@@ -685,12 +679,7 @@ extern "C" {
   int GetCurrentClientChannel(void)
   {
     // TODO: Investigate whether Kodi actually uses this method anymore
-    const Channel *channel = g_vbox->GetCurrentChannel();
-
-    if (channel)
-      return channel->GetUniqueId();
-    
-    return -1;
+    return g_vbox->GetCurrentChannel().GetUniqueId();
   }
 
   bool CanPauseStream(void)

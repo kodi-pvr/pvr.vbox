@@ -39,7 +39,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.46.20";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr)
+  : m_settings(settings), m_currentChannel("dummy", "dummy", "dummy", "dummy")
 {
 }
 
@@ -240,12 +240,12 @@ const Channel* VBox::GetChannel(unsigned int uniqueId) const
   return it->get();
 }
 
-const Channel* VBox::GetCurrentChannel() const
+const Channel& VBox::GetCurrentChannel() const
 {
   return m_currentChannel;
 }
 
-void VBox::SetCurrentChannel(const Channel* channel)
+void VBox::SetCurrentChannel(const Channel &channel)
 {
   m_currentChannel = channel;
 }
