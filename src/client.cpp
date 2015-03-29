@@ -344,8 +344,8 @@ extern "C" {
 
   PVR_ERROR GetDriveSpace(long long *iTotal, long long *iUsed)
   {
-    *iTotal = g_vbox->GetRecordingTotalSpace();
-    *iUsed = g_vbox->GetRecordingUsedSpace();
+    *iTotal = g_vbox->GetRecordingTotalSpace() / 1024;
+    *iUsed = g_vbox->GetRecordingUsedSpace() / 1024;
 
     return PVR_ERROR_NO_ERROR;
   }
