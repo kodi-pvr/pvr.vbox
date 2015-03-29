@@ -300,19 +300,32 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 {
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
 
-  // The request fails if the recording doesn't exist
+  // Find the recording/timer
+  auto it = std::find_if(m_recordings.begin(), m_recordings.end(), 
+    [id](const RecordingPtr &recording)
+  {
+    return recording->m_id == id;
+  });
+
+  if (it == m_recordings.end())
+    return false;
+
+  // Determine the request method to use. If a recording is active we want to 
+  // cancel it instead of deleting it
+  std::string requestMethod = "DeleteRecord";
+
+  if ((*it)->GetState() == RecordingState::RECORDING)
+    requestMethod = "CancelRecord";
+
+  // The request fails if the item doesn't exist
   try {
-    request::Request request("DeleteRecord");
+    request::Request request(requestMethod);
     request.AddParameter("RecordID", id);
     response::ResponsePtr response = PerformRequest(request);
 
-    // Delete the recording from memory too
+    // Delete the item from memory too
     std::unique_lock<std::mutex> lock(m_mutex);
     
-    auto it = std::find_if(m_recordings.begin(), m_recordings.end(), [id](const RecordingPtr &recording) {
-      return recording->m_id == id;
-    });
-
     if (it != m_recordings.end())
       m_recordings.erase(it);
 
