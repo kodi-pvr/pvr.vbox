@@ -20,6 +20,7 @@
 */
 
 #include "Guide.h"
+#include <algorithm>
 #include "Utilities.h"
 #include "tinyxml2.h"
 
@@ -56,6 +57,27 @@ const Schedule* Guide::GetSchedule(const std::string &channelId) const
 
   if (it != m_schedules.cend())
     return it->second.get();
+
+  return nullptr;
+}
+
+const Programme* Guide::GetProgramme(int programmeUniqueId) const
+{
+  for (const auto &entry : m_schedules)
+  {
+    const ::xmltv::SchedulePtr &schedule = entry.second;
+
+    auto it = std::find_if(
+      schedule->cbegin(),
+      schedule->cend(),
+      [programmeUniqueId](const ProgrammePtr &programme)
+    {
+      return programme->GetUniqueId() == programmeUniqueId;
+    });
+
+    if (it != schedule->cend())
+      return it->get();
+  }
 
   return nullptr;
 }

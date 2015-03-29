@@ -397,23 +397,7 @@ const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
 
 const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 {
-  for (const auto &entry : m_guide.GetSchedules())
-  {
-    const ::xmltv::SchedulePtr &schedule = entry.second;
-
-    auto it = std::find_if(
-      schedule->cbegin(),
-      schedule->cend(),
-      [programmeUniqueId](const ::xmltv::ProgrammePtr &programme)
-    {
-      return programme->GetUniqueId() == programmeUniqueId;
-    });
-
-    if (it != schedule->cend())
-      return it->get();
-  }
-
-  return nullptr;
+  return m_guide.GetProgramme(programmeUniqueId);
 }
 
 std::string VBox::GetApiBaseUrl() const

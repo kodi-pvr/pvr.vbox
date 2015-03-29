@@ -23,6 +23,7 @@
 #include <string>
 #include <map>
 #include "Schedule.h"
+#include "Programme.h"
 
 // Forward declarations
 namespace tinyxml2
@@ -104,6 +105,12 @@ namespace xmltv {
       * channel has no schedule
       */
     const Schedule* GetSchedule(const std::string &channelId) const;
+
+    /**
+     * @param programmeUniqueId the unique ID of the programme
+     * @return the programme, or nullptr if not found
+     */
+    const Programme* GetProgramme(int programmeUniqueId) const;
 
     /**
       * Adds the specified schedule on the specified channel
