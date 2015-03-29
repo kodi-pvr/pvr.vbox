@@ -62,6 +62,7 @@ source_group("Source Files\\vbox\\timeshift" FILES ${VBOX_SOURCES_VBOX_TIMESHIFT
                  
 # Resource files
 set(VBOX_RESOURCES 
+                README.md
                 pvr.vbox/addon.xml
                 pvr.vbox/changelog.txt
                 pvr.vbox/icon.png
