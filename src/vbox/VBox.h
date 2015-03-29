@@ -26,6 +26,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <functional>
 #include <libXBMC_addon.h>
 #include "Channel.h"
 #include "ChannelStreamingStatus.h"
@@ -108,6 +109,12 @@ namespace vbox {
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
     static void LogException(VBoxException &e);
+
+    // Event handlers
+    std::function<void()> OnChannelsUpdated;
+    std::function<void()> OnRecordingsUpdated;
+    std::function<void()> OnTimersUpdated;
+    std::function<void()> OnGuideUpdated;
 
   private:
     

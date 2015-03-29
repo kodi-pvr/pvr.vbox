@@ -122,6 +122,16 @@ extern "C" {
       try {
         g_vbox->Initialize();
         g_status = ADDON_STATUS_OK;
+
+        // Attach event handlers
+        g_vbox->OnChannelsUpdated = []() { PVR->TriggerChannelUpdate(); };
+        g_vbox->OnRecordingsUpdated = []() { PVR->TriggerRecordingUpdate(); };
+        g_vbox->OnTimersUpdated = []() { PVR->TriggerTimerUpdate(); };
+        g_vbox->OnGuideUpdated = []()
+        {
+          for (const auto &channel : g_vbox->GetChannels())
+            PVR->TriggerEpgUpdate(channel->GetUniqueId());
+        };
       }
       catch (FirmwareVersionException &e) {
         XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
@@ -400,10 +410,7 @@ extern "C" {
       unsigned int id = std::stoul(recording.strRecordingId);
 
       if (g_vbox->DeleteRecordingOrTimer(id))
-      {
-        PVR->TriggerRecordingUpdate();
         return PVR_ERROR_NO_ERROR;
-      }
       else
         return PVR_ERROR_FAILED;
     }
@@ -512,20 +519,13 @@ extern "C" {
       return PVR_ERROR_FAILED;
     }
 
-    // Make sure Kodi sees the new items
-    PVR->TriggerTimerUpdate();
-    PVR->TriggerRecordingUpdate();
-
     return PVR_ERROR_NO_ERROR;
   }
 
   PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)
   {
     if (g_vbox->DeleteRecordingOrTimer(timer.iClientIndex))
-    {
-      PVR->TriggerTimerUpdate();
       return PVR_ERROR_NO_ERROR;
-    }
 
     return PVR_ERROR_FAILED;
   }

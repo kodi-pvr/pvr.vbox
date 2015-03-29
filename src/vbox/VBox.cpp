@@ -135,18 +135,28 @@ void VBox::BackgroundUpdater()
   {
     // Update recordings every iteration
     RetrieveRecordings();
+    OnRecordingsUpdated();
 
     //// Update channels every six iterations = 30 seocnds
     if (lapCounter % 6 == 0)
+    {
       RetrieveChannels();
+      OnChannelsUpdated();
+    }
 
     // Update the internal guide data every 12 * 60 iterations = 1 hour
     if (lapCounter % (12 * 60) == 0)
+    {
       RetrieveGuide();
+      OnGuideUpdated();
+    }
 
     // Update the external guide data every 12 * 60 * 12 = 12 hours
     if (m_settings.m_useExternalXmltv && lapCounter % (12 * 60 * 12) == 0)
+    {
       RetrieveExternalGuide();
+      OnGuideUpdated();
+    }
 
     lapCounter++;
     usleep(5000 * 1000); // for some infinitely retarded reason, std::thread::sleep_for doesn't work
@@ -329,6 +339,10 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
     if (it != m_recordings.end())
       m_recordings.erase(it);
 
+    // Fire events
+    OnRecordingsUpdated();
+    OnTimersUpdated();
+
     return true;
   }
   catch (VBoxException &e)
@@ -350,6 +364,9 @@ void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
 
   // Refresh the recordings and timers
   RetrieveRecordings();
+  OnRecordingsUpdated();
+}
+
 void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
 {
   // Add the timer
@@ -361,6 +378,7 @@ void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
 
   // Refresh the recordings and timers
   RetrieveRecordings();
+  OnTimersUpdated();
 }
 
 int VBox::GetTimersAmount() const
