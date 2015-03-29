@@ -24,6 +24,7 @@
 #include <sstream>
 #include <chrono>
 #include <algorithm>
+#include "kodi/util/timeutils.h"
 #include "../client.h"
 #include "Exceptions.h"
 #include "response/Factory.h"
@@ -148,7 +149,7 @@ void VBox::BackgroundUpdater()
       RetrieveExternalGuide();
 
     lapCounter++;
-    Sleep(5000); // for some infinitely retarded reason, std::thread::sleep_for doesn't work
+    usleep(5000 * 1000); // for some infinitely retarded reason, std::thread::sleep_for doesn't work
   }
 }
 
