@@ -124,7 +124,6 @@ namespace vbox {
     void RetrieveGuide();
     void RetrieveExternalGuide();
 
-    void TriggerGuideUpdate() const;
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::IRequest &request) const;
 

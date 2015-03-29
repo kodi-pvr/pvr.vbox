@@ -537,19 +537,6 @@ void VBox::RetrieveExternalGuide()
 
   if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
     m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
-  
-  TriggerGuideUpdate();
-}
-
-void VBox::TriggerGuideUpdate() const
-{
-  std::unique_lock<std::mutex> lock(m_mutex);
-
-  for (const auto &channel : m_channels)
-  {
-    Log(LOG_DEBUG, "Triggering EPG update of channel %s", channel->m_name.c_str());
-    PVR->TriggerEpgUpdate(channel->GetUniqueId());
-  }
 }
 
 void VBox::LogGuideStatistics(const xmltv::Guide &guide) const
