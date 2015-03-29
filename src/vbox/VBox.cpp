@@ -350,6 +350,17 @@ void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
 
   // Refresh the recordings and timers
   RetrieveRecordings();
+void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
+{
+  // Add the timer
+  request::Request request("ScheduleChannelRecord");
+  request.AddParameter("ChannelID", channel->m_xmltvName);
+  request.AddParameter("StartTime", ::xmltv::Utilities::UnixTimeToXmltv(startTime));
+  request.AddParameter("EndTime", ::xmltv::Utilities::UnixTimeToXmltv(endTime));
+  PerformRequest(request);
+
+  // Refresh the recordings and timers
+  RetrieveRecordings();
 }
 
 int VBox::GetTimersAmount() const

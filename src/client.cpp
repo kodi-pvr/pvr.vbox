@@ -492,12 +492,19 @@ extern "C" {
     // Find the event the timer is for
     const xmltv::Programme *programme = g_vbox->GetProgramme(timer.iEpgUid);
 
-    if (!programme)
-      return PVR_ERROR_INVALID_PARAMETERS;
-
-    // Add the timer
     try {
-      g_vbox->AddTimer(channel, programme);
+      if (programme)
+        g_vbox->AddTimer(channel, programme);
+      else
+      {
+        // Set start time to now if it's missing
+        time_t startTime = timer.startTime;
+
+        if (startTime == 0)
+          startTime = time(nullptr);
+
+        g_vbox->AddTimer(channel, startTime, timer.endTime);
+      }
     }
     catch (VBoxException &e)
     {
