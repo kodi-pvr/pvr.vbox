@@ -49,6 +49,7 @@ The code for the timeshift buffer is fairly generic and at some point it will pr
 * [Kodi's PVR user support] (http://forum.kodi.tv/forumdisplay.php?fid=167)
 * [Kodi's PVR development support] (http://forum.kodi.tv/forumdisplay.php?fid=136)
 * [Kodi's about VBox TV Gateway] (http://kodi.wiki/view/VBox_Home_TV_Gateway)
+* [Coverity Scan for pvr.vbox] (https://scan.coverity.com/projects/4605?tab=overview)
 
 ###  License
 
