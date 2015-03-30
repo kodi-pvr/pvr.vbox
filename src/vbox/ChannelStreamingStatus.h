@@ -31,7 +31,9 @@ namespace vbox {
   class ChannelStreamingStatus
   {
   public:
-    ChannelStreamingStatus() {};
+    ChannelStreamingStatus() 
+      : m_signalQuality(0), m_sid(0) {};
+
     ~ChannelStreamingStatus() {};
 
     /**
