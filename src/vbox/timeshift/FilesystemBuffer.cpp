@@ -24,6 +24,9 @@
 
 using namespace vbox::timeshift;
 
+const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
+const int FilesystemBuffer::READ_TIMEOUT = 10;
+
 FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
   : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr)
 {

@@ -105,7 +105,7 @@ namespace vbox {
      * The maximum amount of seconds to block while waiting for a state 
      * change
      */
-    const static int STATE_WAIT_TIMEOUT = 120;
+    const static int STATE_WAIT_TIMEOUT;
 
     /**
       * The current state
