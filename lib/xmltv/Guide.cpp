@@ -33,7 +33,7 @@ Guide::Guide(const XMLElement *m_content)
   for (const XMLElement *element = m_content->FirstChildElement("channel");
     element != NULL; element = element->NextSiblingElement("channel"))
   {
-    std::string id = element->Attribute("id");
+    std::string id = Utilities::UrlDecode(element->Attribute("id"));
     std::string displayName = element->FirstChildElement("display-name")->GetText();
 
     AddDisplayNameMapping(displayName, id);
