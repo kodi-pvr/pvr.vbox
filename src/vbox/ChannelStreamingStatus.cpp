@@ -1,4 +1,3 @@
-#pragma once
 /*
 *      Copyright (C) 2015 Sam Stenvall
 *
