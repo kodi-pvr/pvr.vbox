@@ -261,14 +261,18 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) c
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
 
-  status.SetServiceId(content.GetUnsignedInteger("SID"));
-  status.SetTunerId(content.GetString("TunerID"));
-  status.SetTunerType(content.GetString("TunerType"));
-  status.m_lockStatus = content.GetString("LockStatus");
-  status.m_frequency = content.GetString("Frequency");
-  status.SetRfLevel(content.GetString("RFLevel"));
-  status.m_signalQuality = content.GetUnsignedInteger("SignalQuality");
-  status.SetBer(content.GetString("BER"));
+  // Only attempt to parse the status if streaming is active
+  if (content.GetString("Active") == "YES")
+  {
+    status.SetServiceId(content.GetUnsignedInteger("SID"));
+    status.SetTunerId(content.GetString("TunerID"));
+    status.SetTunerType(content.GetString("TunerType"));
+    status.m_lockStatus = content.GetString("LockStatus");
+    status.m_frequency = content.GetString("Frequency");
+    status.SetRfLevel(content.GetString("RFLevel"));
+    status.m_signalQuality = content.GetUnsignedInteger("SignalQuality");
+    status.SetBer(content.GetString("BER"));
+  }
 
   return status;
 }
