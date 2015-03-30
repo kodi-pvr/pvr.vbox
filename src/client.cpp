@@ -569,12 +569,17 @@ extern "C" {
       event.iUniqueBroadcastId = programme->GetUniqueId();
       event.strTitle = programme->m_title.c_str();
       event.strPlot = programme->m_description.c_str();
-      event.strDirector = xmltv::Utilities::ConcatenateStringList(programme->GetDirectors()).c_str();
-      event.strWriter = xmltv::Utilities::ConcatenateStringList(programme->GetWriters()).c_str();
       event.iYear = programme->m_year;
-      event.strGenreDescription = xmltv::Utilities::ConcatenateStringList(programme->GetCategories()).c_str();
       event.strEpisodeName = programme->m_subTitle.c_str();
 
+      std::string directors = xmltv::Utilities::ConcatenateStringList(programme->GetDirectors());
+      std::string writers = xmltv::Utilities::ConcatenateStringList(programme->GetWriters());
+      std::string genres = xmltv::Utilities::ConcatenateStringList(programme->GetCategories());
+
+      event.strDirector = directors.c_str();
+      event.strWriter = writers.c_str();
+      event.strGenreDescription = genres.c_str();
+      
       // Extract up to five cast members only
       std::vector<std::string> actorNames;
       const auto &actors = programme->GetActors();
