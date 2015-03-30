@@ -37,7 +37,7 @@
 using namespace ADDON;
 using namespace vbox;
 
-const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.46.20";
+const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.47.105";
 
 VBox::VBox(const Settings &settings)
   : m_settings(settings), m_currentChannel("dummy", "dummy", "dummy", "dummy")
