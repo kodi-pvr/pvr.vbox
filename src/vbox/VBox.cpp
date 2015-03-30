@@ -426,7 +426,12 @@ const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 
 std::string VBox::GetApiBaseUrl() const
 {
-  return "http://" + m_settings.m_hostname + "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
+  std::stringstream ss;
+  ss << "http://" << m_settings.m_hostname;
+  ss << ":" << m_settings.m_port;
+  ss << "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
+
+  return ss.str();
 }
 
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
