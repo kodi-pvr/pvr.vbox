@@ -42,6 +42,11 @@ namespace vbox {
     std::string GetServiceName() const;
 
     /**
+     * @return the mux name (XXX MHz (MODULATION))
+     */
+    std::string GetMuxName() const;
+
+    /**
      * @return the tuner name
      */
     std::string GetTunerName() const;
@@ -83,6 +88,7 @@ namespace vbox {
 
   public:
     std::string m_lockStatus;
+    std::string m_modulation;
     std::string m_frequency;
     unsigned int m_signalQuality;
 

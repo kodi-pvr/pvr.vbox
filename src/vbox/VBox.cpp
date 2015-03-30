@@ -268,6 +268,7 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) c
     status.SetTunerId(content.GetString("TunerID"));
     status.SetTunerType(content.GetString("TunerType"));
     status.m_lockStatus = content.GetString("LockStatus");
+    status.m_modulation = content.GetString("Modulation");
     status.m_frequency = content.GetString("Frequency");
     status.SetRfLevel(content.GetString("RFLevel"));
     status.m_signalQuality = content.GetUnsignedInteger("SignalQuality");

@@ -614,7 +614,7 @@ extern "C" {
         status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName));
 
       strncpy(signalStatus.strMuxName,
-        status.m_frequency.c_str(), sizeof(signalStatus.strMuxName));
+        status.GetMuxName().c_str(), sizeof(signalStatus.strMuxName));
     }
     catch (VBoxException &e)
     {

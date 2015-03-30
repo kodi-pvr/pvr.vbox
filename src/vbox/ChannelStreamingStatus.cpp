@@ -34,6 +34,14 @@ std::string ChannelStreamingStatus::GetServiceName() const
   return ss.str();
 }
 
+std::string ChannelStreamingStatus::GetMuxName() const
+{
+  std::stringstream ss;
+  ss << m_frequency << " (" << m_modulation << ")";
+
+  return ss.str();
+}
+
 std::string ChannelStreamingStatus::GetTunerName() const
 {
   std::stringstream ss;
