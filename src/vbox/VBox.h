@@ -119,10 +119,10 @@ namespace vbox {
   private:
     
     void BackgroundUpdater();
-    void RetrieveChannels();
-    void RetrieveRecordings();
-    void RetrieveGuide();
-    void RetrieveExternalGuide();
+    void RetrieveChannels(bool triggerEvent = true);
+    void RetrieveRecordings(bool triggerEvent = true);
+    void RetrieveGuide(bool triggerEvent = true);
+    void RetrieveExternalGuide(bool triggerEvent = true);
 
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::IRequest &request) const;

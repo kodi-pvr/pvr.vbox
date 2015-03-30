@@ -27,6 +27,7 @@
 #include "kodi/util/timeutils.h"
 #include "../client.h"
 #include "Exceptions.h"
+#include "Utilities.h"
 #include "response/Factory.h"
 #include "request/Request.h"
 #include "request/FileRequest.h"
@@ -123,10 +124,11 @@ void VBox::BackgroundUpdater()
   // tasks only on some iterations
   static unsigned int lapCounter = 1;
 
-  // Retrieve everything in order once before starting the loop
-  RetrieveChannels();
-  RetrieveRecordings();
-  RetrieveGuide();
+  // Retrieve everything in order once before starting the loop, without 
+  // triggering the event handlers
+  RetrieveChannels(false);
+  RetrieveRecordings(false);
+  RetrieveGuide(false);
 
   if (m_settings.m_useExternalXmltv)
     RetrieveExternalGuide();
@@ -135,28 +137,18 @@ void VBox::BackgroundUpdater()
   {
     // Update recordings every iteration
     RetrieveRecordings();
-    OnRecordingsUpdated();
 
-    //// Update channels every six iterations = 30 seocnds
+    // Update channels every six iterations = 30 seocnds
     if (lapCounter % 6 == 0)
-    {
       RetrieveChannels();
-      OnChannelsUpdated();
-    }
 
     // Update the internal guide data every 12 * 60 iterations = 1 hour
     if (lapCounter % (12 * 60) == 0)
-    {
       RetrieveGuide();
-      OnGuideUpdated();
-    }
 
     // Update the external guide data every 12 * 60 * 12 = 12 hours
     if (m_settings.m_useExternalXmltv && lapCounter % (12 * 60 * 12) == 0)
-    {
       RetrieveExternalGuide();
-      OnGuideUpdated();
-    }
 
     lapCounter++;
     usleep(5000 * 1000); // for some infinitely retarded reason, std::thread::sleep_for doesn't work
@@ -364,7 +356,6 @@ void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
 
   // Refresh the recordings and timers
   RetrieveRecordings();
-  OnRecordingsUpdated();
 }
 
 void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
@@ -378,7 +369,6 @@ void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
 
   // Refresh the recordings and timers
   RetrieveRecordings();
-  OnTimersUpdated();
 }
 
 int VBox::GetTimersAmount() const
@@ -434,7 +424,7 @@ std::string VBox::GetApiBaseUrl() const
   return "http://" + m_settings.m_hostname + "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 }
 
-void VBox::RetrieveChannels()
+void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
 {
   try {
     request::Request request("GetXmltvChannelsList");
@@ -443,8 +433,17 @@ void VBox::RetrieveChannels()
     response::ResponsePtr response = PerformRequest(request);
     response::XMLTVResponseContent content(response->GetReplyElement());
 
+    // Swap and notify if the contents have changed
+    auto channels = content.GetChannels();
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_channels = std::move(content.GetChannels());
+
+    if (!utilities::deref_equals(m_channels, channels))
+    {
+      m_channels = std::move(channels);
+
+      if (triggerEvent)
+        OnChannelsUpdated();
+    }
   }
   catch (VBoxException &e)
   {
@@ -455,7 +454,7 @@ void VBox::RetrieveChannels()
     m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
 }
 
-void VBox::RetrieveRecordings()
+void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
 {
   // Only attempt to retrieve recordings when external media is present
   if (m_externalMediaStatus.present)
@@ -466,8 +465,21 @@ void VBox::RetrieveRecordings()
       response::ResponsePtr response = PerformRequest(request);
       response::RecordingResponseContent content(response->GetReplyElement());
 
+      // Compare the results
+      auto recordings = content.GetRecordings();
       std::unique_lock<std::mutex> lock(m_mutex);
-      m_recordings = std::move(content.GetRecordings());
+
+      // Swap and notify if the contents have changed
+      if (!utilities::deref_equals(m_recordings, recordings))
+      {
+        m_recordings = std::move(content.GetRecordings());
+
+        if (triggerEvent)
+        {
+          OnRecordingsUpdated();
+          OnTimersUpdated();
+        }
+      }
     }
     catch (VBoxException &e)
     {
@@ -479,7 +491,7 @@ void VBox::RetrieveRecordings()
     m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
 }
 
-void VBox::RetrieveGuide()
+void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 {
   Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
 
@@ -493,6 +505,8 @@ void VBox::RetrieveGuide()
       lastChannelIndex = m_channels.size();
     }
 
+    xmltv::Guide guide;
+
     for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += 10)
     {
       int toIndex = std::min(fromIndex + 9, lastChannelIndex);
@@ -504,12 +518,17 @@ void VBox::RetrieveGuide()
       response::XMLTVResponseContent content(response->GetReplyElement());
 
       auto partialGuide = content.GetGuide();
-      std::unique_lock<std::mutex> lock(m_mutex);
-
-      m_guide += partialGuide;
+      guide += partialGuide;
     }
 
-    LogGuideStatistics(m_guide);
+    LogGuideStatistics(guide);
+
+    // Swap the guide with the new one
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_guide = std::move(guide);
+
+    if (triggerEvent)
+      OnGuideUpdated();
   }
   catch (VBoxException &e)
   {
@@ -520,7 +539,7 @@ void VBox::RetrieveGuide()
     m_stateHandler.EnterState(StartupState::GUIDE_LOADED);
 }
 
-void VBox::RetrieveExternalGuide()
+void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
 {
   Log(LOG_INFO, "Loading external guide data");
   request::FileRequest request(m_settings.m_externalXmltvPath);
@@ -534,6 +553,9 @@ void VBox::RetrieveExternalGuide()
   }
 
   LogGuideStatistics(m_externalGuide);
+
+  if (triggerEvent)
+    OnGuideUpdated();
 
   if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
     m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);

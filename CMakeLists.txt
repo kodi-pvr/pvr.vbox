@@ -31,6 +31,7 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/SoftwareVersion.h
                 src/vbox/SoftwareVersion.cpp
                 src/vbox/StartupStateHandler.h
+                src/vbox/Utilities.h
                 src/vbox/VBox.h
                 src/vbox/VBox.cpp)
                       

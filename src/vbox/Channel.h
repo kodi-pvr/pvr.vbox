@@ -41,6 +41,24 @@ namespace vbox {
       m_url(url), m_radio(false), m_encrypted(false) {}
     ~Channel() {}
 
+    bool operator== (const Channel &other)
+    {
+      return m_index == other.m_index &&
+        m_xmltvName == other.m_xmltvName &&
+        m_name == other.m_name &&
+        m_number == other.m_number &&
+        m_iconUrl == other.m_iconUrl &&
+        m_radio == other.m_radio &&
+        m_url == other.m_url &&
+        m_encrypted == other.m_encrypted &&
+        m_uniqueId == other.m_uniqueId;
+    }
+
+    bool operator!= (const Channel &other)
+    {
+      return !(*this == other);
+    }
+
     /**
     * @return a unique ID of this object based on the hash content
     */

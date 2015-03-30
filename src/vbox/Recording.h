@@ -48,6 +48,24 @@ namespace vbox {
       const std::string &channelName, RecordingState state);
     ~Recording();
 
+    bool operator== (const Recording &other)
+    {
+      return m_id == other.m_id &&
+        m_channelId == other.m_channelId &&
+        m_channelName == other.m_channelName &&
+        m_url == other.m_url &&
+        m_title == other.m_title &&
+        m_description == other.m_description &&
+        m_start == other.m_start &&
+        m_end == other.m_end &&
+        m_state == other.m_state;
+    }
+
+    bool operator!= (const Recording &other)
+    {
+      return !(*this == other);
+    }
+
     /**
      * Whether this object represents a timer
      * @return true if timer
