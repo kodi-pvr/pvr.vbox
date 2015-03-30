@@ -1,2 +1,14 @@
+0.9.2
+	- changed the update loop to only trigger updates when something has actually changed
+	- changed the minimum VBox software version to 2.47.105
+	- show modulation in the signal status
+
+0.9.1
+	- fixed initial stuttering when timeshift is enabled
+	- fixed signal status being broken after a few seconds
+	- fixed recordings being accidentally removed when cancelled
+	- fixed scheduling recordings for channels without EPG data or with only external EPG data
+	- added proper way to notify Kodi of any changes retrieved during the update loop
+
 0.9.0
-  - initial release
+	- initial release
