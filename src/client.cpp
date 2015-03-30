@@ -583,7 +583,8 @@ extern "C" {
       for (int i = 0; i < numActors; i++)
         actorNames.push_back(actors.at(i).name);
 
-      event.strCast = xmltv::Utilities::ConcatenateStringList(actorNames).c_str();
+      std::string cast = xmltv::Utilities::ConcatenateStringList(actorNames);
+      event.strCast = cast.c_str();
 
       PVR->TransferEpgEntry(handle, &event);
       it++;
