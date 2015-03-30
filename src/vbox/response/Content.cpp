@@ -152,9 +152,18 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   // Extract mandatory properties
   std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
   std::string channelName = xml->FirstChildElement("channel-name")->GetText();
-  unsigned int id = 0;
-  xml->FirstChildElement("record-id")->QueryUnsignedText(&id);
   RecordingState state = GetState(xml->FirstChildElement("state")->GetText());
+
+  // Determine an ID for the recording. External recordings don't have an ID so 
+  // we need to make something up
+  unsigned int id = 0;
+  static unsigned int fakeId = 10000;
+
+  const XMLElement *recordElement = xml->FirstChildElement("record-id");
+  if (recordElement)
+    recordElement->QueryUnsignedText(&id);
+  else
+    id = fakeId++;
 
   // Construct the object
   RecordingPtr recording(new Recording(id, channelId, channelName, state));
