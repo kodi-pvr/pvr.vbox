@@ -44,7 +44,8 @@ namespace vbox {
       const static int INPUT_READ_LENGTH = 32768;
       const static int READ_TIMEOUT = 10;
 
-      Buffer() {};
+      Buffer() 
+        : m_inputHandle(nullptr), m_startTime(0) {};
       virtual ~Buffer();
 
       /**

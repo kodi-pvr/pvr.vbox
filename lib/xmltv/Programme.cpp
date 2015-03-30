@@ -27,6 +27,7 @@ using namespace xmltv;
 using namespace tinyxml2;
 
 Programme::Programme(const tinyxml2::XMLElement *xml)
+  : m_year(0)
 {
   // Construct a basic event
   m_startTime = xml->Attribute("start");

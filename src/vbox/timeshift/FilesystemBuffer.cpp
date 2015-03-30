@@ -25,6 +25,7 @@
 using namespace vbox::timeshift;
 
 FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
+  : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr)
 {
   m_bufferPath = bufferPath + "buffer.ts";
 }
