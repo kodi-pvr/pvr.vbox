@@ -530,7 +530,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
     // Swap the guide with the new one
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_guide = std::move(guide);
+    m_guide = guide;
 
     if (triggerEvent)
       OnGuideUpdated();

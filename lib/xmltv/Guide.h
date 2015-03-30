@@ -71,15 +71,13 @@ namespace xmltv {
       * Assignment operator, needed since we have members containing 
       * unique_ptr's
       */
-    Guide& operator= (Guide &other)
+    void operator= (Guide &other)
     {
       if (this != &other)
       {
         m_schedules = std::move(other.m_schedules);
         m_displayNameMappings = other.m_displayNameMappings;
       }
-
-      return *this;
     }
 
     /**

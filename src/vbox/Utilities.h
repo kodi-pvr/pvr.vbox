@@ -36,7 +36,7 @@ namespace utilities {
       left.begin(),
       left.end(),
       right.begin(),
-      [](const Container::value_type &leftItem, const Container::value_type &rightItem)
+      [](const typename Container::value_type &leftItem, const typename Container::value_type &rightItem)
     {
       return *leftItem == *rightItem;
     }));
