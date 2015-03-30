@@ -31,7 +31,7 @@ using namespace vbox::response;
 
 std::string Content::GetString(const std::string &parameter) const
 {
-  XMLElement *element = GetParameterElement(parameter);
+  const XMLElement *element = GetParameterElement(parameter);
   
   if (element && element->GetText())
     return std::string(element->GetText());
@@ -43,7 +43,7 @@ int Content::GetInteger(const std::string &parameter) const
 {
   int value = 0;
 
-  XMLElement *element = GetParameterElement(parameter);
+  const XMLElement *element = GetParameterElement(parameter);
   if (element)
     element->QueryIntText(&value);
 
