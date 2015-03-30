@@ -27,7 +27,8 @@ const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
 const int FilesystemBuffer::READ_TIMEOUT = 10;
 
 FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
-  : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr)
+  : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr),
+  m_readPosition(0), m_writePosition(0)
 {
   m_bufferPath = bufferPath + "buffer.ts";
 }
