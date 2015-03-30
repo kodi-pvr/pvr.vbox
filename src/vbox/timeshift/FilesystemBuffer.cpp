@@ -20,7 +20,6 @@
 */
 
 #include "FilesystemBuffer.h"
-#include "kodi/util/timeutils.h"
 
 using namespace vbox::timeshift;
 
@@ -63,10 +62,6 @@ bool FilesystemBuffer::Open(const std::string inputUrl)
     ConsumeInput();
   });
 
-  // Since the input thread can never run faster than us, give it a small head 
-  // start
-  usleep(250 * 1000);
-
   return true;
 }
 
@@ -76,7 +71,7 @@ int FilesystemBuffer::Read(byte *buffer, size_t length)
   int64_t requiredLength = Position() + length;
 
   std::unique_lock<std::mutex> lock(m_mutex);
-  m_condition.wait_for(lock, std::chrono::milliseconds(READ_TIMEOUT),
+  m_condition.wait_for(lock, std::chrono::seconds(READ_TIMEOUT),
     [this, requiredLength]()
   {
     return Length() >= requiredLength;
