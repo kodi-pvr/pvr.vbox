@@ -25,7 +25,7 @@
 #include <vector>
 #include "../Channel.h"
 #include "../Recording.h"
-#include "xmltv/Guide.h"
+#include "../../xmltv/Guide.h"
 #include <memory>
 
 namespace tinyxml2 {

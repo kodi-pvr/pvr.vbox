@@ -32,7 +32,7 @@
 #include "request/Request.h"
 #include "request/FileRequest.h"
 #include "response/Content.h"
-#include "xmltv/Utilities.h"
+#include "../xmltv/Utilities.h"
 
 using namespace ADDON;
 using namespace vbox;

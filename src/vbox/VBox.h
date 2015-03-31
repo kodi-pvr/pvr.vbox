@@ -37,9 +37,9 @@
 #include "request/Request.h"
 #include "response/Response.h"
 #include "StartupStateHandler.h"
-#include "xmltv/Programme.h"
-#include "xmltv/Schedule.h"
-#include "xmltv/Guide.h"
+#include "../xmltv/Programme.h"
+#include "../xmltv/Schedule.h"
+#include "../xmltv/Guide.h"
 
 namespace vbox {
 

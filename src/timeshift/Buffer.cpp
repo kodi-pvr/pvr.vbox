@@ -21,7 +21,7 @@
 
 #include "Buffer.h"
 
-using namespace vbox::timeshift;
+using namespace timeshift;
 
 Buffer::~Buffer()
 {

@@ -12,8 +12,7 @@ find_package(TinyXML2 REQUIRED)
 
 include_directories(${kodiplatform_INCLUDE_DIRS}
                     ${KODI_INCLUDE_DIR}
-                    ${TINYXML2_INCLUDE_DIRS}
-                    ${PROJECT_SOURCE_DIR}/lib)
+                    ${TINYXML2_INCLUDE_DIRS})
 
 # Sources and headers
 set(VBOX_SOURCES 
@@ -49,18 +48,28 @@ set(VBOX_SOURCES_VBOX_RESPONSE
                 src/vbox/response/Response.h
                 src/vbox/response/Response.cpp)
 
-set(VBOX_SOURCES_VBOX_TIMESHIFT 
-                src/vbox/timeshift/Buffer.h
-                src/vbox/timeshift/Buffer.cpp
-                src/vbox/timeshift/DummyBuffer.h
-                src/vbox/timeshift/FilesystemBuffer.h
-                src/vbox/timeshift/FilesystemBuffer.cpp)
+set(VBOX_SOURCES_TIMESHIFT 
+                src/timeshift/Buffer.h
+                src/timeshift/Buffer.cpp
+                src/timeshift/DummyBuffer.h
+                src/timeshift/FilesystemBuffer.h
+                src/timeshift/FilesystemBuffer.cpp)
+                
+set(VBOX_SOURCES_XMLTV 
+                src/xmltv/Guide.h
+                src/xmltv/Guide.cpp
+                src/xmltv/Programme.h
+                src/xmltv/Programme.cpp
+                src/xmltv/Schedule.h
+                src/xmltv/Utilities.h
+                src/xmltv/Utilities.cpp)
 
 source_group("Source Files" FILES ${VBOX_SOURCES})
 source_group("Source Files\\vbox" FILES ${VBOX_SOURCES_VBOX})
 source_group("Source Files\\vbox\\request" FILES ${VBOX_SOURCES_VBOX_REQUEST})
 source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
-source_group("Source Files\\vbox\\timeshift" FILES ${VBOX_SOURCES_VBOX_TIMESHIFT})
+source_group("Source Files\\timeshift" FILES ${VBOX_SOURCES_TIMESHIFT})
+source_group("Source Files\\xmltv" FILES ${VBOX_SOURCES_XMLTV})
                  
 # Resource files
 set(VBOX_RESOURCES 
@@ -78,13 +87,11 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX} 
                 ${VBOX_SOURCES_VBOX_REQUEST}
                 ${VBOX_SOURCES_VBOX_RESPONSE}
-                ${VBOX_SOURCES_VBOX_TIMESHIFT}
+                ${VBOX_SOURCES_TIMESHIFT}
+                ${VBOX_SOURCES_XMLTV}
                 ${VBOX_RESOURCES})
 
-# Add static libraries
-add_subdirectory(lib/xmltv)
-
-set(DEPLIBS ${kodiplatform_LIBRARIES} ${TINYXML2_LIBRARIES} libxmltv)
+set(DEPLIBS ${kodiplatform_LIBRARIES} ${TINYXML2_LIBRARIES})
 build_addon(pvr.vbox VBOX DEPLIBS)
 
 include(CPack)

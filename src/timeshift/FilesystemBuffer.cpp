@@ -21,7 +21,7 @@
 
 #include "FilesystemBuffer.h"
 
-using namespace vbox::timeshift;
+using namespace timeshift;
 
 const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
 const int FilesystemBuffer::READ_TIMEOUT = 10;

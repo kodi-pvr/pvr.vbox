@@ -22,7 +22,7 @@
 #include "Response.h"
 #include "../Exceptions.h"
 #include "../VBox.h"
-#include "../lib/xmltv/Utilities.h"
+#include "../../xmltv/Utilities.h"
 
 using namespace tinyxml2;
 using namespace vbox::response;

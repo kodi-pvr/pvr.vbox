@@ -25,8 +25,8 @@
 #include "client.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
-#include "vbox/timeshift/DummyBuffer.h"
-#include "vbox/timeshift/FilesystemBuffer.h"
+#include "timeshift/DummyBuffer.h"
+#include "timeshift/FilesystemBuffer.h"
 #include "xmltv/Utilities.h"
 
 using namespace ADDON;

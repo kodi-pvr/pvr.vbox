@@ -22,8 +22,8 @@
 #include "Content.h"
 #include <tinyxml2.h>
 #include "../Channel.h"
-#include "xmltv/Utilities.h"
-#include "xmltv/Guide.h"
+#include "../../xmltv/Utilities.h"
+#include "../../xmltv/Guide.h"
 
 using namespace tinyxml2;
 using namespace vbox;
