@@ -27,6 +27,9 @@ using namespace vbox;
 
 std::string ChannelStreamingStatus::GetServiceName() const
 {
+  if (!m_active)
+    return "";
+
   std::stringstream ss;
   ss << "SID " << m_sid;
 
@@ -35,6 +38,9 @@ std::string ChannelStreamingStatus::GetServiceName() const
 
 std::string ChannelStreamingStatus::GetMuxName() const
 {
+  if (!m_active)
+    return "";
+
   std::stringstream ss;
   ss << m_frequency << " (" << m_modulation << ")";
 
@@ -43,6 +49,9 @@ std::string ChannelStreamingStatus::GetMuxName() const
 
 std::string ChannelStreamingStatus::GetTunerName() const
 {
+  if (!m_active)
+    return "";
+
   std::stringstream ss;
   ss << m_tunerType << " tuner #" << m_tunerId;
 

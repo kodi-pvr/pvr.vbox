@@ -262,8 +262,11 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) c
   response::Content content(response->GetReplyElement());
 
   // Only attempt to parse the status if streaming is active
-  if (content.GetString("Active") == "YES")
+  std::string active = content.GetString("Active");
+
+  if (active == "YES")
   {
+    status.m_active = true;
     status.SetServiceId(content.GetUnsignedInteger("SID"));
     status.SetTunerId(content.GetString("TunerID"));
     status.SetTunerType(content.GetString("TunerType"));

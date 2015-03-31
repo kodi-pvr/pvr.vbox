@@ -32,7 +32,7 @@ namespace vbox {
   {
   public:
     ChannelStreamingStatus() 
-      : m_signalQuality(0), m_sid(0) {};
+      : m_active(false), m_signalQuality(0), m_sid(0) {};
 
     ~ChannelStreamingStatus() {};
 
@@ -87,6 +87,7 @@ namespace vbox {
     }
 
   public:
+    bool m_active;
     std::string m_lockStatus;
     std::string m_modulation;
     std::string m_frequency;
