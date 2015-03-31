@@ -174,7 +174,7 @@ extern "C" {
 #define UPDATE_STR(key, var)\
   if (!strcmp(settingName, key))\
   {\
-    if (!strcmp(var.c_str(), (const char*)settingValue))\
+    if (var != std::string(static_cast<const char*>(settingValue)))\
     {\
       VBox::Log(LOG_INFO, "updated setting %s from '%s' to '%s'",\
         settingName, var.c_str(), settingValue);\
@@ -195,14 +195,16 @@ extern "C" {
     return ADDON_STATUS_OK;\
   }
 
-    UPDATE_STR("hostname", g_hostname);
-    UPDATE_STR("external_ip", g_externalIp);
-    UPDATE_INT("port", int, g_port);
-    UPDATE_INT("use_external_xmltv", bool, g_useExternalXmltv);
-    UPDATE_STR("external_xmltv_path", g_externalXmltvPath);
-    UPDATE_INT("prefer_external_xmltv", bool, g_preferExternalXmltv);
-    UPDATE_INT("timeshift_enabled", bool, g_timeshiftEnabled);
-    UPDATE_STR("timeshift_path", g_timeshiftBufferPath);
+    const vbox::Settings &settings = g_vbox->GetSettings();
+
+    UPDATE_STR("hostname", settings.m_hostname);
+    UPDATE_STR("external_ip", settings.m_externalIp);
+    UPDATE_INT("port", int, settings.m_port);
+    UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);
+    UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
+    UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
+    UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
+    UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
 
     return ADDON_STATUS_OK;
 #undef UPDATE_INT
