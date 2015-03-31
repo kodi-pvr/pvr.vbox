@@ -1,3 +1,10 @@
+0.9.4
+	- fixed compatibility with older tinyxml2 libraries
+	- fixed Debian packaging
+	- reshuffled some code
+	- fixed bogus signal status values between channel switches
+	- fixed a bug which caused the addon to require a restart everytime the addon settings dialog was opened and closed
+
 0.9.3
 	- greatly improve Linux compatibility
 	- fixed a bunch of issues found by static analysis
