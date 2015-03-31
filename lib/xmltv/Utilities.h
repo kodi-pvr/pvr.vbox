@@ -26,6 +26,10 @@
 #include <iomanip>
 #include <vector>
 
+namespace tinyxml2 {
+  class XMLElement;
+}
+
 namespace xmltv {
   class Utilities
   {
@@ -73,6 +77,18 @@ namespace xmltv {
 
       return xmltvTime;
     }
+
+    /**
+     * Parses the contents of the specified element into an integer. We need 
+     * this for backward-compatibility with older versions of tinyxml2.
+     */
+    static int QueryIntText(const tinyxml2::XMLElement *element);
+
+    /**
+     * Parses the contents of the specified element into an unsigned integer. 
+     * We need this for backward-compatibility with older versions of tinyxml2.
+     */
+    static unsigned int QueryUnsignedText(const tinyxml2::XMLElement *element);
 
     /**
      * URL-encodes the specified string

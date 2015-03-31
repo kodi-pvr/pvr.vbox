@@ -57,7 +57,7 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   // Date
   element = xml->FirstChildElement("date");
   if (element)
-    element->QueryIntText(&m_year);
+    m_year = Utilities::QueryIntText(element);
 
   // Categories. Skip "movie" and "series" since most people treat categories 
   // as genres

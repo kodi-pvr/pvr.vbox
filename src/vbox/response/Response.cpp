@@ -22,6 +22,7 @@
 #include "Response.h"
 #include "../Exceptions.h"
 #include "../VBox.h"
+#include "../lib/xmltv/Utilities.h"
 
 using namespace tinyxml2;
 using namespace vbox::response;
@@ -62,7 +63,7 @@ void Response::ParseStatus()
   // Not all response types always return the status element
   if (statusElement)
   {
-    statusElement->FirstChildElement("ErrorCode")->QueryIntText(&errorCode);
+    errorCode = xmltv::Utilities::QueryIntText(statusElement->FirstChildElement("ErrorCode"));
     errorDescription = statusElement->FirstChildElement("ErrorDescription")->GetText();
 
     m_error.code = static_cast<ErrorCode>(errorCode);

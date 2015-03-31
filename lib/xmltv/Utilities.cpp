@@ -20,6 +20,7 @@
 */
 
 #include "Utilities.h"
+#include "tinyxml2.h"
 #include <algorithm>
 #include <iterator>
 
@@ -59,6 +60,42 @@ std::string Utilities::UrlDecode(const std::string& strURLData)
     else strResult += kar;
   }
   return strResult;
+}
+
+int Utilities::QueryIntText(const tinyxml2::XMLElement *element)
+{
+  int value = 0;
+
+  if (element->GetText())
+  {
+    try {
+      std::string content = element->GetText();
+      value = std::stoi(content);
+    }
+    catch (std::invalid_argument) {
+
+    }
+  }
+
+  return value;
+}
+
+unsigned int Utilities::QueryUnsignedText(const tinyxml2::XMLElement *element)
+{
+  unsigned int value = 0;
+
+  if (element->GetText())
+  {
+    try {
+      std::string content = element->GetText();
+      value = std::stoul(content);
+    }
+    catch (std::invalid_argument) {
+
+    }
+  }
+
+  return value;
 }
 
 // Adapted from http://stackoverflow.com/a/17708801

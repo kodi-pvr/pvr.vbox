@@ -45,7 +45,7 @@ int Content::GetInteger(const std::string &parameter) const
 
   const XMLElement *element = GetParameterElement(parameter);
   if (element)
-    element->QueryIntText(&value);
+    value = xmltv::Utilities::QueryIntText(element);
 
   return value;
 }
@@ -56,7 +56,7 @@ unsigned int Content::GetUnsignedInteger(const std::string &parameter) const
 
   XMLElement *element = GetParameterElement(parameter);
   if (element)
-    element->QueryUnsignedText(&value);
+    value = xmltv::Utilities::QueryUnsignedText(element);
 
   return value;
 }
@@ -161,7 +161,7 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
 
   const XMLElement *recordElement = xml->FirstChildElement("record-id");
   if (recordElement)
-    recordElement->QueryUnsignedText(&id);
+    id = xmltv::Utilities::QueryIntText(recordElement);
   else
     id = fakeId++;
 
