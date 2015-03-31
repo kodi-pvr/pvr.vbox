@@ -1,1 +1,13 @@
+# Usually the CMake build directory
 build/
+
+# Debian packaging files
+debian/files
+debian/kodi-pvr-vbox-dbg.debhelper.log
+debian/kodi-pvr-vbox-dbg.substvars
+debian/kodi-pvr-vbox-dbg/
+debian/kodi-pvr-vbox.debhelper.log
+debian/kodi-pvr-vbox.substvars
+debian/kodi-pvr-vbox/
+debian/tmp/
+obj-x86_64-linux-gnu/

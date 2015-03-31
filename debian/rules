@@ -13,14 +13,10 @@
 	dh $@ 
 
 override_dh_auto_configure:
-#don't use USE_LTO, it breaks the build	
-	dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=1 -DCMAKE_INSTALL_PREFIX=/usr
+	dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=1 -DUSE_LTO=1
 
 override_dh_strip:
-	dh_strip --dbg-package=xbmc-pvr-argustv-dbg
-
-override_dh_auto_install:
-	dh_auto_install --destdir=debian/xbmc-pvr-argustv
+	dh_strip -pkodi-pvr-vbox --dbg-package=kodi-pvr-vbox-dbg
 
 override_dh_installdocs:
-	dh_installdocs --link-doc=xbmc-pvr-argustv
+	dh_installdocs --link-doc=kodi-pvr-vbox

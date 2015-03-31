@@ -1,23 +1,22 @@
-Source: xbmc-pvr-argustv
+Source: kodi-pvr-vbox
 Priority: extra
-Maintainer: Arne Morten Kvarving <arne.morten.kvarving@sintef.no>
-Build-Depends: debhelper (>= 8.0.0), cmake, xbmc-pvr-dev,
-               libxbmcplatform-dev, xbmc-addon-dev, libjsoncpp-dev
-Standards-Version: 3.9.2
+Maintainer: Sam Stenvall <sam.stenvall@kodi.tv>
+Build-Depends: debhelper (>= 9.0.0), cmake, libtinyxml2-dev, 
+               kodi-pvr-dev, libkodiplatform-dev, kodi-addon-dev
+Standards-Version: 3.9.4
 Section: libs
-Homepage: <insert the upstream URL, if relevant>
+Homepage: https://github.com/Jalle19/pvr.vbox
 
-Package: xbmc-pvr-argustv
-Section: libs
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: ArgusTV PVR for XBMC
- ArgusTV PVR for XBMC
-
-Package: xbmc-pvr-argustv-dbg
+Package: kodi-pvr-vbox
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: debug symbols for ArgusTV PVR for XBMC
- debug symbols for ArgusTV PVR for XBMC
+Description: VBox Home TV Gateway PVR client for Kodi
+ VBox Home TV Gateway PVR client for Kodi
 
+Package: kodi-pvr-vbox-dbg
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: debug symbols for VBox Home TV Gateway PVR client for Kodi
+ debug symbols for VBox Home TV Gateway PVR client for Kodi
