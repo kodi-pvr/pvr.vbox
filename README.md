@@ -23,9 +23,7 @@ I'm assuming here that you'll check out all source code into `C:\Projects`, you'
 3. This step has to be done once only. Go to `C:\Projects\xbmc\project\cmake\addons\addons`. You'll see there's a folder for each binary addon. You'll need to copy one of the existing PVR addons and rename the folder to `pvr.vbox`. Inside the folder, rename the `pvr.*.txt` file to `pvr.vbox.txt` and change its contents to the following: `pvr.vbox file://C:/Projects/pvr.vbox`
 4. Open a command prompt (or Powershell) and browse to `C:\Projects\xbmc\tools\windows`. From here, run `prepare-binary-addons-dev.bat clean` and then `prepare-binary-addons-dev.bat pvr.vbox`.
 5. Go to `C:\Projects\xbmc\project\cmake\addons\build` and open and build the `kodi-addons.sln` solution.
-6. Open the Kodi solution (`C:\Projects\xbmc\project\VS2010Express\XBMC for Windows.sln`), right-click the solution and choose to add an existing project. Change the file filter to include all files, then add `C:\Projects\xbmc\project\cmake\addons\build\pvr.vbox-prefix\src\pvr.vbox-build\pvr.vbox.sln`.
-7. Build only the `libxmltv` and `pvr.vbox` projects (unless you want to build Kodi yourself, in which case you'll need to do a lot more work).
-8. The addon DLL is built and located in `C:\Projects\xbmc\project\cmake\addons\build\pvr.vbox-prefix\src\pvr.vbox-build\Debug`. For now you'll have to additionally copy the contents of `C:\Projects\pvr.vbox\pvr.vbox` to this directory. Now you have a complete addon and you can either copy or symlink this directory into `%APPDATA%\Kodi\addons` (make sure it's named `pvr.vbox`, not `Debug`).
+8. The addon DLL is built and located in `C:\Projects\xbmc\addons`. If you run Kodi now from inside Visual Studio the addon will appear automatically under "System addons". If you don't want to bother compiling Kodi from source, install it as you normally would and copy the `pvr.vbox` into `%APPDATA%\Kodi\addons`.
 9. Run Kodi, configure and enable the addon, then enable Live TV.
 
 ### Architecture
