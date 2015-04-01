@@ -26,6 +26,11 @@ using namespace timeshift;
 const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
 const int FilesystemBuffer::READ_TIMEOUT = 10;
 
+// Fix a stupid #define on Windows which causes XBMC->DeleteFile() to break
+#ifdef _WIN32
+#undef DeleteFile
+#endif // _WIN32
+
 FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
   : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr),
   m_readPosition(0), m_writePosition(0)
@@ -35,6 +40,8 @@ FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
 
 FilesystemBuffer::~FilesystemBuffer()
 {
+  // Remove the buffer file so it doesn't take up space once Kodi has exited
+  XBMC->DeleteFile(m_bufferPath.c_str());
 }
 
 bool FilesystemBuffer::Open(const std::string inputUrl)
