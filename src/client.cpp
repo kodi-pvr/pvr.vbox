@@ -39,7 +39,7 @@ CHelper_libXBMC_pvr   *PVR = NULL;
 // Initialize globals
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
 VBox *g_vbox = nullptr;
-timeshift::Buffer *timeshiftBuffer = nullptr;
+timeshift::Buffer *g_timeshiftBuffer = nullptr;
 std::string g_hostname;
 std::string g_externalIp;
 int g_port;
@@ -135,9 +135,9 @@ extern "C" {
 
         // Create the timeshift buffer
         if (settings.m_timeshiftEnabled)
-          timeshiftBuffer = new timeshift::FilesystemBuffer(settings.m_timeshiftBufferPath);
+          g_timeshiftBuffer = new timeshift::FilesystemBuffer(settings.m_timeshiftBufferPath);
         else
-          timeshiftBuffer = new timeshift::DummyBuffer();
+          g_timeshiftBuffer = new timeshift::DummyBuffer();
       }
       catch (FirmwareVersionException &e) {
         XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
@@ -162,7 +162,7 @@ extern "C" {
   void ADDON_Destroy()
   {
     SAFE_DELETE(g_vbox);
-    SAFE_DELETE(timeshiftBuffer);
+    SAFE_DELETE(g_timeshiftBuffer);
     g_status = ADDON_STATUS_UNKNOWN;
   } 
 
@@ -648,7 +648,7 @@ extern "C" {
       return false;
 
     // Remember the current channel if the buffer was successfully opened
-    if (timeshiftBuffer->Open(channelPtr->m_url))
+    if (g_timeshiftBuffer->Open(channelPtr->m_url))
     {
       g_vbox->SetCurrentChannel(*channelPtr);
       return true;
@@ -659,27 +659,27 @@ extern "C" {
 
   void CloseLiveStream(void)
   {
-    timeshiftBuffer->Close();
+    g_timeshiftBuffer->Close();
   }
 
   int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)
   {
-    return timeshiftBuffer->Read(pBuffer, iBufferSize);
+    return g_timeshiftBuffer->Read(pBuffer, iBufferSize);
   }
 
   long long PositionLiveStream(void)
   {
-    return timeshiftBuffer->Position();
+    return g_timeshiftBuffer->Position();
   }
 
   long long LengthLiveStream(void)
   {
-    return timeshiftBuffer->Length();
+    return g_timeshiftBuffer->Length();
   }
 
   long long SeekLiveStream(long long iPosition, int iWhence /* = SEEK_SET */)
   {
-    return timeshiftBuffer->Seek(iPosition, iWhence);
+    return g_timeshiftBuffer->Seek(iPosition, iWhence);
   }
 
   int GetCurrentClientChannel(void)
@@ -700,12 +700,12 @@ extern "C" {
 
   time_t GetBufferTimeStart()
   {
-    return timeshiftBuffer->GetStartTime();
+    return g_timeshiftBuffer->GetStartTime();
   }
 
   time_t GetBufferTimeEnd()
   {
-    return timeshiftBuffer->GetEndTime();
+    return g_timeshiftBuffer->GetEndTime();
   }
 
   // Management methods
