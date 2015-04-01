@@ -1,3 +1,5 @@
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/4605/badge.svg)](https://scan.coverity.com/projects/4605)
+
 # VBox Home TV Gateway PVR Client
 
 This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi TV Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
