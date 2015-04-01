@@ -31,7 +31,7 @@ namespace timeshift {
   class DummyBuffer : public Buffer
   {
   public:
-    DummyBuffer() {}
+    DummyBuffer() : Buffer() {}
     virtual ~DummyBuffer() {}
 
     virtual int Read(byte *buffer, size_t length) override
