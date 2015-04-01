@@ -23,11 +23,6 @@
 
 using namespace timeshift;
 
-Buffer::~Buffer()
-{
-  XBMC->CloseFile(m_inputHandle);
-}
-
 bool Buffer::Open(const std::string inputUrl)
 {
   // Remember the start time and open the input
@@ -35,4 +30,9 @@ bool Buffer::Open(const std::string inputUrl)
   m_inputHandle = XBMC->OpenFile(inputUrl.c_str(), 0x08 /*READ_NO_CACHE*/);
 
   return m_inputHandle != nullptr;
+}
+
+void Buffer::Close()
+{
+  XBMC->CloseFile(m_inputHandle);
 }

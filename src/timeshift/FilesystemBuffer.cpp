@@ -35,16 +35,6 @@ FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
 
 FilesystemBuffer::~FilesystemBuffer()
 {
-  // Wait for the input thread to terminate
-  m_active = false;
-
-  if (m_inputThread.joinable())
-    m_inputThread.join();
-
-  // Close the input and output handles
-  std::unique_lock<std::mutex> lock(m_mutex);
-  XBMC->CloseFile(m_outputReadHandle);
-  XBMC->CloseFile(m_outputWriteHandle);
 }
 
 bool FilesystemBuffer::Open(const std::string inputUrl)
@@ -64,6 +54,34 @@ bool FilesystemBuffer::Open(const std::string inputUrl)
   });
 
   return true;
+}
+
+void FilesystemBuffer::Close()
+{
+  // Wait for the input thread to terminate
+  m_active = false;
+
+  if (m_inputThread.joinable())
+    m_inputThread.join();
+
+  Reset();
+  Buffer::Close();
+}
+
+void FilesystemBuffer::Reset()
+{
+  // Close any open handles
+  std::unique_lock<std::mutex> lock(m_mutex);
+
+  if (m_outputReadHandle)
+    XBMC->CloseFile(m_outputReadHandle);
+
+  if (m_outputWriteHandle)
+    XBMC->CloseFile(m_outputWriteHandle);
+
+  // Reset
+  m_outputReadHandle = m_outputWriteHandle = nullptr;
+  m_readPosition = m_writePosition = 0;
 }
 
 int FilesystemBuffer::Read(byte *buffer, size_t length)

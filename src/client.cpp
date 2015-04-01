@@ -132,6 +132,12 @@ extern "C" {
           for (const auto &channel : g_vbox->GetChannels())
             PVR->TriggerEpgUpdate(channel->GetUniqueId());
         };
+
+        // Create the timeshift buffer
+        if (settings.m_timeshiftEnabled)
+          timeshiftBuffer = new timeshift::FilesystemBuffer(settings.m_timeshiftBufferPath);
+        else
+          timeshiftBuffer = new timeshift::DummyBuffer();
       }
       catch (FirmwareVersionException &e) {
         XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
@@ -156,6 +162,7 @@ extern "C" {
   void ADDON_Destroy()
   {
     SAFE_DELETE(g_vbox);
+    SAFE_DELETE(timeshiftBuffer);
     g_status = ADDON_STATUS_UNKNOWN;
   } 
 
@@ -640,18 +647,6 @@ extern "C" {
     if (!channelPtr)
       return false;
 
-    // Reset the buffer
-    SAFE_DELETE(timeshiftBuffer);
-
-    // Create and open a new timeshift buffer
-    if (g_vbox->GetSettings().m_timeshiftEnabled)
-    {
-      const std::string &bufferPath = g_vbox->GetSettings().m_timeshiftBufferPath;
-      timeshiftBuffer = new timeshift::FilesystemBuffer(bufferPath);
-    }
-    else
-      timeshiftBuffer = new timeshift::DummyBuffer();
-    
     // Remember the current channel if the buffer was successfully opened
     if (timeshiftBuffer->Open(channelPtr->m_url))
     {
@@ -659,14 +654,12 @@ extern "C" {
       return true;
     }
 
-    // Close the buffer if it failed to open
-    SAFE_DELETE(timeshiftBuffer);
     return false;
   }
 
   void CloseLiveStream(void)
   {
-    SAFE_DELETE(timeshiftBuffer);
+    timeshiftBuffer->Close();
   }
 
   int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)

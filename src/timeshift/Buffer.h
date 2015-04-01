@@ -41,13 +41,18 @@ namespace timeshift {
   public:
     Buffer() 
       : m_inputHandle(nullptr), m_startTime(0) {};
-    virtual ~Buffer();
+    virtual ~Buffer() {};
 
     /**
      * Opens the input handle
      * @return whether the input was successfully opened
      */
     virtual bool Open(const std::string inputUrl);
+
+    /**
+     * Closes the buffer
+     */
+    virtual void Close();
 
     /**
      * Reads "length" bytes into the specified buffer

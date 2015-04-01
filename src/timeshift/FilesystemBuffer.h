@@ -42,6 +42,7 @@ namespace timeshift {
     virtual ~FilesystemBuffer();
 
     virtual bool Open(const std::string inputUrl) override;
+    virtual void Close() override;
     virtual int Read(byte *buffer, size_t length) override;
     virtual int64_t Seek(int64_t position, int whence) override;
 
@@ -75,6 +76,12 @@ namespace timeshift {
      * handle and writes it to the output handle
      */
     void ConsumeInput();
+
+
+    /**
+     * Closes any open file handles and resets all file positions
+     */
+    void Reset();
 
     /**
      * The path to the buffer file
