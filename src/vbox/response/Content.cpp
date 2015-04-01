@@ -140,6 +140,10 @@ std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
   for (XMLElement *element = m_content->FirstChildElement("record");
     element != NULL; element = element->NextSiblingElement("record"))
   {
+    // Skip recordings that don't have a <record-id> element
+    if (!element->FirstChildElement("record-id"))
+      continue;
+
     RecordingPtr recording = CreateRecording(element);
     recordings.push_back(std::move(recording));
   }
@@ -153,17 +157,7 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
   std::string channelName = xml->FirstChildElement("channel-name")->GetText();
   RecordingState state = GetState(xml->FirstChildElement("state")->GetText());
-
-  // Determine an ID for the recording. External recordings don't have an ID so 
-  // we need to make something up
-  unsigned int id = 0;
-  static unsigned int fakeId = 10000;
-
-  const XMLElement *recordElement = xml->FirstChildElement("record-id");
-  if (recordElement)
-    id = xmltv::Utilities::QueryIntText(recordElement);
-  else
-    id = fakeId++;
+  unsigned int id = xmltv::Utilities::QueryIntText(xml->FirstChildElement("record-id"));
 
   // Construct the object
   RecordingPtr recording(new Recording(id, channelId, channelName, state));
