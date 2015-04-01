@@ -23,6 +23,7 @@
 #include "tinyxml2.h"
 #include <algorithm>
 #include <iterator>
+#include <stdexcept>
 
 using namespace xmltv;
 
