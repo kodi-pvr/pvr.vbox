@@ -1,3 +1,8 @@
+0.9.5
+	- fixed some issues with the timeshift buffer
+	- fixed Linux build (thanks dhead666)
+	- changed so that recordings without an ID (mostly external ones) are not visible since they can't be deleted
+	- 
 0.9.4
 	- fixed compatibility with older tinyxml2 libraries
 	- fixed Debian packaging
