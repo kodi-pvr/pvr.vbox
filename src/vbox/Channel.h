@@ -23,6 +23,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <cstdlib>
 
 namespace vbox {
 

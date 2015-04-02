@@ -111,7 +111,7 @@ std::string Utilities::UrlEncode(const std::string &value)
     std::string::value_type c = (*i);
 
     // Keep alphanumeric and other accepted characters intact
-    if (c < 0 || c > 255 || isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
+    if (c < 0 || isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
     {
       escaped << c;
       continue;

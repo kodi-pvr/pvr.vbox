@@ -24,6 +24,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <cstdlib>
 
 // Forward declarations
 namespace tinyxml2

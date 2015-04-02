@@ -11,3 +11,6 @@ debian/kodi-pvr-vbox.substvars
 debian/kodi-pvr-vbox/
 debian/tmp/
 obj-x86_64-linux-gnu/
+
+# OSX files
+.DS_Store
