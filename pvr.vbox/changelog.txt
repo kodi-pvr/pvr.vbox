@@ -1,3 +1,6 @@
+0.9.6
+	- fixed building on Mac OS X
+
 0.9.5
 	- fixed some issues with the timeshift buffer
 	- fixed Linux build (thanks dhead666)
