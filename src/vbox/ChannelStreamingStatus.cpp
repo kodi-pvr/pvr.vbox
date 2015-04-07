@@ -63,6 +63,9 @@ std::string ChannelStreamingStatus::GetTunerName() const
 
 unsigned int ChannelStreamingStatus::GetSignalStrength() const
 {
+  if (!m_active)
+    return 0;
+
   int rfLevel = 0;
 
   try {
@@ -86,6 +89,9 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
 
 long ChannelStreamingStatus::GetBer() const
 {
+  if (!m_active)
+    return 0;
+
   try {
     // Make sure it's not detected as hexadecimal
     return std::stol(m_ber, nullptr, 10);
