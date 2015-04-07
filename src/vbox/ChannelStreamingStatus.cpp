@@ -26,7 +26,7 @@
 using namespace vbox;
 
 const int ChannelStreamingStatus::RFLEVEL_MIN = -96;
-const int ChannelStreamingStatus::RFLEVEL_MAX = -35;
+const int ChannelStreamingStatus::RFLEVEL_MAX = -60;
 
 std::string ChannelStreamingStatus::GetServiceName() const
 {
@@ -71,6 +71,10 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
   try {
     // Convert the RF level to an integer
     rfLevel = std::stoi(m_rfLevel);
+
+    // If the level is above the maximum we consider it to be perfect
+    if (rfLevel > RFLEVEL_MAX)
+      return 100;
 
     // Normalize the value to between 0 and 1
     // TODO: This is not very scientific
