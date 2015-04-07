@@ -94,8 +94,8 @@ namespace vbox {
     unsigned int m_signalQuality;
 
   private:
-    const static int RFLEVEL_MIN = -96;
-    const static int RFLEVEL_MAX = -35;
+    const static int RFLEVEL_MIN;
+    const static int RFLEVEL_MAX;
 
     unsigned int m_sid;
     std::string m_tunerId;

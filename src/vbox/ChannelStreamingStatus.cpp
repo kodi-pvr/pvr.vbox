@@ -25,6 +25,9 @@
 
 using namespace vbox;
 
+const int ChannelStreamingStatus::RFLEVEL_MIN = -96;
+const int ChannelStreamingStatus::RFLEVEL_MAX = -35;
+
 std::string ChannelStreamingStatus::GetServiceName() const
 {
   if (!m_active)
