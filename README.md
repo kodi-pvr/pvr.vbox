@@ -7,7 +7,7 @@ This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing wit
 ### Settings
 
 This list contains some explanation for the non-obvious settings:
-* `External IP`: The external address of the VBox device when used over the internet. Without this setting, all URLs the device responds with will use its internal IP address.
+* `HTTP and UPnP port`: You'll only need to change these from their respective defaults if you wish to use a VBox TV Gateway over the Internet and you're using asymmetric port forwarding (e.g. port 8080 -> 80 and 12345 -> 55555). The HTTP port is used to communicate with the device while the UPnP port is used when streaming media.
 * `External XMLTV path`: The addon can augment the EPG data it receives from the VBox device with external data in XMLTV format. This option is for specifying the path to the XML file that holds the guide data. It is your responsibility to make sure this file is updated on a regular basis.
 * `Prefer external EPG over OTA`: If a specific channel has guide data both from the VBox itself and from the external XMLTV file, this setting controls which guide data is used. Note that the external data is always used if the VBox doesn't provide any guide data for a specific channel.
 * `Timeshift buffer path`: The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels!

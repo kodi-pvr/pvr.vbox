@@ -27,11 +27,11 @@ msgid "Hostname or IP address"
 msgstr ""
 
 msgctxt "#30002"
-msgid "Port"
+msgid "HTTP port"
 msgstr ""
 
-msgctxt "#30004"
-msgid "External IP"
+msgctxt "#30003"
+msgid "UPnP port"
 msgstr ""
 
 msgctxt "#30100"

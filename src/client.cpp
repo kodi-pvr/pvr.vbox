@@ -42,8 +42,8 @@ ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
 VBox *g_vbox = nullptr;
 timeshift::Buffer *g_timeshiftBuffer = nullptr;
 std::string g_hostname;
-std::string g_externalIp;
-int g_port;
+int g_httpPort;
+int g_upnpPort;
 bool g_useExternalXmltv;
 std::string g_externalXmltvPath;
 bool g_preferExternalXmltv;
@@ -67,8 +67,8 @@ extern "C" {
     char buffer[1024];
 
     UPDATE_STR(g_hostname, "hostname", buffer, "");
-    UPDATE_STR(g_externalIp, "external_ip", buffer, "");
-    UPDATE_INT(g_port, "port", 80);
+    UPDATE_INT(g_httpPort, "http_port", 80);
+    UPDATE_INT(g_upnpPort, "upnp_port", 55555);
     UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", true);
@@ -103,8 +103,8 @@ extern "C" {
     ADDON_ReadSettings();
     Settings settings;
     settings.m_hostname = g_hostname;
-    settings.m_externalIp = g_externalIp;
-    settings.m_port = g_port;
+    settings.m_httpPort = g_httpPort;
+    settings.m_upnpPort = g_upnpPort;
     settings.m_useExternalXmltv = g_useExternalXmltv;
     settings.m_externalXmltvPath = g_externalXmltvPath;
     settings.m_preferExternalXmltv = g_preferExternalXmltv;
@@ -206,8 +206,8 @@ extern "C" {
     const vbox::Settings &settings = g_vbox->GetSettings();
 
     UPDATE_STR("hostname", settings.m_hostname);
-    UPDATE_STR("external_ip", settings.m_externalIp);
-    UPDATE_INT("port", int, settings.m_port);
+    UPDATE_INT("http_port", int, settings.m_httpPort);
+    UPDATE_INT("upnp_port", int, settings.m_upnpPort);
     UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);
     UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
     UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);

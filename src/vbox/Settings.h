@@ -26,8 +26,8 @@ namespace vbox {
   class Settings {
   public:
     std::string m_hostname;
-    std::string m_externalIp;
-    int m_port;
+    int m_httpPort;
+    int m_upnpPort;
     bool m_useExternalXmltv;
     std::string m_externalXmltvPath;
     bool m_preferExternalXmltv;

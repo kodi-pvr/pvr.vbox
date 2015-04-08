@@ -49,11 +49,14 @@ Request::Request(const std::string &method)
 {
   AddParameter("Method", method);
 
-  // Add the "ExternalIP" parameter appropriate
-  std::string externalIp = g_vbox->GetSettings().m_externalIp;
-
-  if (!externalIp.empty())
-    AddParameter("ExternalIP", externalIp);
+  // Add external IP and port options to the methods that support it
+  if (std::find(
+    externalCapableMethods.cbegin(), 
+    externalCapableMethods.cend(), method) != externalCapableMethods.cend())
+  {
+    AddParameter("ExternalIP", g_vbox->GetSettings().m_hostname);
+    AddParameter("Port", g_vbox->GetSettings().m_upnpPort);
+  }
 }
 
 ResponseType Request::GetResponseType() const

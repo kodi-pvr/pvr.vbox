@@ -159,8 +159,11 @@ void VBox::BackgroundUpdater()
 bool VBox::ValidateSettings() const
 {
   // Check connection settings
-  if (m_settings.m_hostname.empty() || m_settings.m_port == 0)
+  if (m_settings.m_hostname.empty() || m_settings.m_httpPort == 0 || 
+    m_settings.m_upnpPort == 0)
+  {
     return false;
+  }
 
   // Check guide settings
   if (m_settings.m_useExternalXmltv && m_settings.m_externalXmltvPath.empty())
@@ -207,7 +210,7 @@ std::string VBox::GetBackendVersion() const
 std::string VBox::GetConnectionString() const
 {
   std::stringstream ss;
-  ss << GetBackendHostname() << ":" << m_settings.m_port;
+  ss << GetBackendHostname() << ":" << m_settings.m_httpPort;
 
   return ss.str();
 }
@@ -432,7 +435,7 @@ std::string VBox::GetApiBaseUrl() const
 {
   std::stringstream ss;
   ss << "http://" << m_settings.m_hostname;
-  ss << ":" << m_settings.m_port;
+  ss << ":" << m_settings.m_httpPort;
   ss << "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 
   return ss.str();
