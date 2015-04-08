@@ -23,8 +23,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <functional>
-#include <cstdlib>
 
 // Forward declarations
 namespace tinyxml2
@@ -69,16 +67,6 @@ namespace xmltv {
      */
     Programme(const tinyxml2::XMLElement *xml);
     virtual ~Programme() {}
-
-    /**
-    * @return a unique ID of this object based on the hash content
-    */
-    unsigned int GetUniqueId() const
-    {
-      std::hash<std::string> hasher;
-      int uniqueId = hasher(m_channelName + m_startTime + m_endTime);
-      return std::abs(uniqueId);
-    }
 
     const std::vector<std::string>& GetDirectors() const
     {

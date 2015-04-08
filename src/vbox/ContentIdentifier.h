@@ -1,0 +1,68 @@
+#pragma once
+/*
+ *      Copyright (C) 2015 Sam Stenvall
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with XBMC; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 51 Franklin Street, Fifth Floor, Boston,
+ *  MA 02110-1301  USA
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#include <functional>
+#include <cstdlib>
+#include "Channel.h"
+#include "Recording.h"
+#include "../xmltv/Programme.h"
+
+namespace vbox {
+  /**
+   * Static helper class for creating unique identifiers for arbitrary objects
+   */
+  class ContentIdentifier
+  {
+  public:
+
+    /**
+     * @return a unique ID for the channel
+     */
+    static unsigned int ContentIdentifier::GetUniqueId(const vbox::Channel *channel)
+    {
+      std::hash<std::string> hasher;
+      int uniqueId = hasher(channel->m_uniqueId);
+      return std::abs(uniqueId);
+    }
+
+    /**
+     * @return a unique ID for the recording. This implementation must match
+     * that of xmltv::Programme so that recordings can be linked to programmes.
+     */
+    static unsigned int ContentIdentifier::GetUniqueId(const vbox::Recording *recording)
+    {
+      std::hash<std::string> hasher;
+      int uniqueId = hasher(recording->m_channelId + recording->m_endTime);
+      return std::abs(uniqueId);
+    }
+
+    /**
+     * @return a unique ID for the programme
+     */
+    static unsigned int ContentIdentifier::GetUniqueId(const xmltv::Programme *programme)
+    {
+      std::hash<std::string> hasher;
+      int uniqueId = hasher(programme->m_channelName + programme->m_endTime);
+      return std::abs(uniqueId);
+    }
+  };
+}

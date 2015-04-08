@@ -25,6 +25,7 @@
 #include "client.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
+#include "vbox/ContentIdentifier.h"
 #include "timeshift/DummyBuffer.h"
 #include "timeshift/FilesystemBuffer.h"
 #include "xmltv/Utilities.h"
@@ -130,7 +131,7 @@ extern "C" {
         g_vbox->OnGuideUpdated = []()
         {
           for (const auto &channel : g_vbox->GetChannels())
-            PVR->TriggerEpgUpdate(channel->GetUniqueId());
+            PVR->TriggerEpgUpdate(ContentIdentifier::GetUniqueId(channel.get()));
         };
 
         // Create the timeshift buffer
@@ -338,7 +339,7 @@ extern "C" {
       PVR_CHANNEL channel;
       memset(&channel, 0, sizeof(PVR_CHANNEL));
 
-      channel.iUniqueId = item->GetUniqueId();
+      channel.iUniqueId = ContentIdentifier::GetUniqueId(item.get());
       channel.bIsRadio = item->m_radio;
       channel.iChannelNumber = item->m_number;
       channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
@@ -392,6 +393,7 @@ extern "C" {
 
       recording.recordingTime = startTime;
       recording.iDuration = static_cast<int>(endTime - startTime);
+      recording.iEpgEventId = ContentIdentifier::GetUniqueId(item.get());
 
       strncpy(recording.strChannelName, item->m_channelName.c_str(),
         sizeof(recording.strChannelName));
@@ -478,7 +480,7 @@ extern "C" {
       });
 
       if (it != channels.cend())
-        timer.iClientChannelUid = (*it)->GetUniqueId();
+        timer.iClientChannelUid = ContentIdentifier::GetUniqueId((*it).get());
 
       strncpy(timer.strTitle, item->m_title.c_str(),
         sizeof(timer.strTitle));
@@ -500,7 +502,7 @@ extern "C" {
     auto it = std::find_if(channels.cbegin(), channels.cend(),
       [&timer](const ChannelPtr &channel)
     {
-      return channel->GetUniqueId() == timer.iClientChannelUid;
+      return timer.iClientChannelUid == ContentIdentifier::GetUniqueId(channel.get());
     });
 
     if (it == channels.end())
@@ -578,7 +580,7 @@ extern "C" {
       event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
       event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
       event.iChannelNumber = channel.iChannelNumber;
-      event.iUniqueBroadcastId = programme->GetUniqueId();
+      event.iUniqueBroadcastId = ContentIdentifier::GetUniqueId(programme.get());
       event.strTitle = programme->m_title.c_str();
       event.strPlot = programme->m_description.c_str();
       event.iYear = programme->m_year;
@@ -688,7 +690,7 @@ extern "C" {
   int GetCurrentClientChannel(void)
   {
     // TODO: Investigate whether Kodi actually uses this method anymore
-    return g_vbox->GetCurrentChannel().GetUniqueId();
+    return ContentIdentifier::GetUniqueId(&g_vbox->GetCurrentChannel());
   }
 
   bool CanPauseStream(void)

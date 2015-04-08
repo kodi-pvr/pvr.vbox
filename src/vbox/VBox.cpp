@@ -26,6 +26,7 @@
 #include <algorithm>
 #include "kodi/util/timeutils.h"
 #include "../client.h"
+#include "ContentIdentifier.h"
 #include "Exceptions.h"
 #include "Utilities.h"
 #include "response/Factory.h"
@@ -233,7 +234,7 @@ const Channel* VBox::GetChannel(unsigned int uniqueId) const
   std::unique_lock<std::mutex> lock(m_mutex);
 
   auto it = std::find_if(m_channels.cbegin(), m_channels.cend(), [uniqueId](const ChannelPtr &channel) {
-    return uniqueId == channel->GetUniqueId();
+    return uniqueId == ContentIdentifier::GetUniqueId(channel.get());
   });
 
   if (it == m_channels.cend())

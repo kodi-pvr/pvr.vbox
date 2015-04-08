@@ -22,8 +22,6 @@
 
 #include <string>
 #include <memory>
-#include <functional>
-#include <cstdlib>
 
 namespace vbox {
 
@@ -61,15 +59,10 @@ namespace vbox {
     }
 
     /**
-    * @return a unique ID of this object based on the hash content
-    */
-    unsigned int GetUniqueId() const
-    {
-      std::hash<std::string> hasher;
-      int uniqueId = hasher(m_uniqueId);
-      return std::abs(uniqueId);
-    }
-    
+     * The internal name used by VBox
+     */
+    std::string m_uniqueId;
+
     /**
     * The index of the channel, as it appears in the API results. Needed for
     * some API requests.
@@ -87,11 +80,5 @@ namespace vbox {
     bool m_radio;
     std::string m_url;
     bool m_encrypted;
-
-  private:
-    /**
-     * The internal name used by VBox
-     */
-    std::string m_uniqueId;
   };
 }

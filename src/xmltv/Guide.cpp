@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "Utilities.h"
 #include "tinyxml2.h"
+#include "../vbox/ContentIdentifier.h"
 
 using namespace xmltv;
 using namespace tinyxml2;
@@ -72,7 +73,7 @@ const Programme* Guide::GetProgramme(int programmeUniqueId) const
       schedule->cend(),
       [programmeUniqueId](const ProgrammePtr &programme)
     {
-      return programme->GetUniqueId() == programmeUniqueId;
+      return programmeUniqueId == vbox::ContentIdentifier::GetUniqueId(programme.get());
     });
 
     if (it != schedule->cend())
