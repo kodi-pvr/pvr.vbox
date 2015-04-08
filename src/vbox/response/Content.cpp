@@ -182,11 +182,16 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
       recording->m_title = "Unnamed recording (channel " + channelName + ")";
   }
 
-  if (xml->FirstChildElement("programme-desc"))
-    recording->m_description = xml->FirstChildElement("programme-desc")->GetText();
+  // Some recordings may have certain tags, but they can be empty
+  const XMLElement *element = xml->FirstChildElement("programme-desc");
 
-  if (xml->FirstChildElement("url"))
-    recording->m_url = xml->FirstChildElement("url")->GetText();
+  if (element && element->GetText())
+    recording->m_description = element->GetText();
+
+  element = xml->FirstChildElement("url");
+
+  if (element && element->GetText())
+    recording->m_url = element->GetText();
 
   return recording;
 }
