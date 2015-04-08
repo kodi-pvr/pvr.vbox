@@ -56,8 +56,8 @@ namespace vbox {
         m_url == other.m_url &&
         m_title == other.m_title &&
         m_description == other.m_description &&
-        m_start == other.m_start &&
-        m_end == other.m_end &&
+        m_startTime == other.m_startTime &&
+        m_endTime == other.m_endTime &&
         m_state == other.m_state;
     }
 
@@ -101,8 +101,8 @@ namespace vbox {
     std::string m_url;
     std::string m_title;
     std::string m_description;
-    time_t m_start;
-    time_t m_end;
+    std::string m_startTime;
+    std::string m_endTime;
 
   private:
     RecordingState m_state;

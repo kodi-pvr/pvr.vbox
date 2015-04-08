@@ -387,8 +387,11 @@ extern "C" {
       PVR_RECORDING recording;
       memset(&recording, 0, sizeof(PVR_RECORDING));
 
-      recording.recordingTime = item->m_start;
-      recording.iDuration = static_cast<int>(item->m_end - item->m_start);
+      time_t startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
+      time_t endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
+
+      recording.recordingTime = startTime;
+      recording.iDuration = static_cast<int>(endTime - startTime);
 
       strncpy(recording.strChannelName, item->m_channelName.c_str(),
         sizeof(recording.strChannelName));
@@ -447,8 +450,8 @@ extern "C" {
       PVR_TIMER timer;
       memset(&timer, 0, sizeof(PVR_TIMER));
 
-      timer.startTime = item->m_start;
-      timer.endTime = item->m_end;
+      timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
+      timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
       timer.iClientIndex = item->m_id;
 
       // Convert the internal timer state to PVR_TIMER_STATE

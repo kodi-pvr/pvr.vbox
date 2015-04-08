@@ -163,13 +163,13 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   RecordingPtr recording(new Recording(id, channelId, channelName, state));
 
   // Add additional properties
-  recording->m_start = xmltv::Utilities::XmltvToUnixTime(xml->Attribute("start"));
+  recording->m_startTime = xml->Attribute("start");
 
   // TODO: External recordings don't have an end time, default to one hour
   if (xml->Attribute("stop") != NULL)
-    recording->m_end = xmltv::Utilities::XmltvToUnixTime(xml->Attribute("stop"));
+    recording->m_endTime = xml->Attribute("stop");
   else
-    recording->m_end = recording->m_start + 86400;
+    recording->m_endTime = xmltv::Utilities::UnixTimeToXmltv(time(nullptr) + 86400);
 
   if (xml->FirstChildElement("programme-title"))
     recording->m_title = xml->FirstChildElement("programme-title")->GetText();
