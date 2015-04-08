@@ -318,7 +318,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   auto it = std::find_if(m_recordings.begin(), m_recordings.end(), 
     [id](const RecordingPtr &recording)
   {
-    return recording->m_id == id;
+    return id == ContentIdentifier::GetUniqueId(recording.get());
   });
 
   if (it == m_recordings.end())

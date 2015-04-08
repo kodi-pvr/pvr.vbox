@@ -23,9 +23,9 @@
 
 using namespace vbox;
 
-Recording::Recording(unsigned int id, const std::string &channelId, 
+Recording::Recording(const std::string &channelId, 
   const std::string &channelName, RecordingState state)
-  : m_id(id), m_channelId(channelId), m_channelName(channelName), m_state(state)
+  : m_id(0), m_channelId(channelId), m_channelName(channelName), m_state(state)
 {
 }
 

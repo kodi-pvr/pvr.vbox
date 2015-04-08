@@ -390,15 +390,16 @@ extern "C" {
 
       time_t startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
       time_t endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
+      unsigned int id = ContentIdentifier::GetUniqueId(item.get());
 
       recording.recordingTime = startTime;
       recording.iDuration = static_cast<int>(endTime - startTime);
-      recording.iEpgEventId = ContentIdentifier::GetUniqueId(item.get());
+      recording.iEpgEventId = id;
 
       strncpy(recording.strChannelName, item->m_channelName.c_str(),
         sizeof(recording.strChannelName));
 
-      strncpy(recording.strRecordingId, std::to_string(item->m_id).c_str(),
+      strncpy(recording.strRecordingId, std::to_string(id).c_str(),
         sizeof(recording.strRecordingId));
 
       strncpy(recording.strStreamURL, item->m_url.c_str(),
@@ -454,7 +455,7 @@ extern "C" {
 
       timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
       timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
-      timer.iClientIndex = item->m_id;
+      timer.iClientIndex = ContentIdentifier::GetUniqueId(item.get());
 
       // Convert the internal timer state to PVR_TIMER_STATE
       switch (item->GetState())

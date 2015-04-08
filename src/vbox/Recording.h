@@ -45,7 +45,7 @@ namespace vbox {
   class Recording
   {
   public:
-    Recording(unsigned int id, const std::string &channelId, 
+    Recording(const std::string &channelId, 
       const std::string &channelName, RecordingState state);
     ~Recording();
 
