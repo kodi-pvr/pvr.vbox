@@ -32,6 +32,7 @@ namespace vbox {
     SCHEDULED,
     RECORDED,
     RECORDING,
+    RECORDING_ERROR, // Can't use just ERROR because of Windows
     EXTERNAL
   };
 
