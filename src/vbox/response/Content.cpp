@@ -199,6 +199,12 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   if (element && element->GetText())
     recording->m_url = element->GetText();
 
+  // Extract the "local target" (filename), it is needed on rare occasions
+  element = xml->FirstChildElement("LocalTarget");
+
+  if (element)
+    recording->m_filename = element->GetText();
+
   return recording;
 }
 

@@ -101,6 +101,7 @@ namespace vbox {
     std::string m_channelId;
     std::string m_channelName;
     std::string m_url;
+    std::string m_filename;
     std::string m_title;
     std::string m_description;
     std::string m_startTime;
