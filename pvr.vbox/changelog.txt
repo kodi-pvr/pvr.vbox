@@ -1,3 +1,12 @@
+0.9.7
+	- fixed some more signal status values between channel switches
+	- adjusted the signal strength algorithm
+	- fixed a crash when loading certain recordings
+	- linked recordings with their respective EPG events so the "currently recording" icon is properly displayed in the EPG grid
+	- properly ignore recordings that are in an error state
+	- refactored the port settings to take advantage of the new API
+	- added ability to watch and actually delete certain external recordings
+
 0.9.6
 	- fixed building on Mac OS X
 
