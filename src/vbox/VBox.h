@@ -97,6 +97,7 @@ namespace vbox {
     int64_t GetRecordingUsedSpace() const;
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
+    request::Request CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
     bool DeleteRecordingOrTimer(unsigned int id);
     void AddTimer(const Channel *channel, const ::xmltv::Programme* programme);
     void AddTimer(const Channel *channel, time_t startTime, time_t endTime);

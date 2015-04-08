@@ -310,6 +310,29 @@ int VBox::GetRecordingsAmount() const
   });
 }
 
+request::Request VBox::CreateDeleteRecordingRequest(const RecordingPtr &recording) const
+{
+  RecordingState state = recording->GetState();
+  unsigned int recordId = recording->m_id;
+
+  // Determine the request method to use. If a recording is active we want to 
+  // cancel it instead of deleting it
+  std::string requestMethod = "DeleteRecord";
+
+  if (state == RecordingState::RECORDING)
+    requestMethod = "CancelRecord";
+
+  // Create the request
+  request::Request request(requestMethod);
+  request.AddParameter("RecordID", recordId);
+
+  // Determine request parameters
+  if (state == RecordingState::EXTERNAL)
+    request.AddParameter("FileName", recording->m_filename);
+
+  return request;
+}
+
 bool VBox::DeleteRecordingOrTimer(unsigned int id)
 {
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
@@ -324,17 +347,9 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   if (it == m_recordings.end())
     return false;
 
-  // Determine the request method to use. If a recording is active we want to 
-  // cancel it instead of deleting it
-  std::string requestMethod = "DeleteRecord";
-
-  if ((*it)->GetState() == RecordingState::RECORDING)
-    requestMethod = "CancelRecord";
-
   // The request fails if the item doesn't exist
   try {
-    request::Request request(requestMethod);
-    request.AddParameter("RecordID", id);
+    request::Request request = CreateDeleteRecordingRequest(*it);
     response::ResponsePtr response = PerformRequest(request);
 
     // Delete the item from memory too
