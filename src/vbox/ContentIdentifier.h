@@ -37,7 +37,7 @@ namespace vbox {
     /**
      * @return a unique ID for the channel
      */
-    static unsigned int ContentIdentifier::GetUniqueId(const vbox::Channel *channel)
+    static unsigned int GetUniqueId(const vbox::Channel *channel)
     {
       std::hash<std::string> hasher;
       int uniqueId = hasher(channel->m_uniqueId);
@@ -48,7 +48,7 @@ namespace vbox {
      * @return a unique ID for the recording. This implementation must match
      * that of xmltv::Programme so that recordings can be linked to programmes.
      */
-    static unsigned int ContentIdentifier::GetUniqueId(const vbox::Recording *recording)
+    static unsigned int GetUniqueId(const vbox::Recording *recording)
     {
       std::hash<std::string> hasher;
       int uniqueId = hasher(recording->m_channelId + recording->m_endTime);
@@ -58,7 +58,7 @@ namespace vbox {
     /**
      * @return a unique ID for the programme
      */
-    static unsigned int ContentIdentifier::GetUniqueId(const xmltv::Programme *programme)
+    static unsigned int GetUniqueId(const xmltv::Programme *programme)
     {
       std::hash<std::string> hasher;
       int uniqueId = hasher(programme->m_channelName + programme->m_endTime);
