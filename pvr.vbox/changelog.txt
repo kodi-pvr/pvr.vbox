@@ -1,3 +1,6 @@
+0.9.8
+	- fixed GCC and Clang builds
+
 0.9.7
 	- fixed some more signal status values between channel switches
 	- adjusted the signal strength algorithm
