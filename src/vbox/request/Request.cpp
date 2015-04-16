@@ -22,6 +22,7 @@
 #include "Request.h"
 #include "../../client.h"
 #include "../../xmltv/Utilities.h"
+#include "../../compat.h"
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
@@ -89,10 +90,10 @@ void Request::AddParameter(const std::string &name, const std::string &value)
 
 void Request::AddParameter(const std::string &name, int value)
 {
-  m_parameters[name] = std::to_string(value);
+  m_parameters[name] = compat::to_string(value);
 }
 
 void Request::AddParameter(const std::string &name, unsigned int value)
 {
-  m_parameters[name] = std::to_string(value);
+  m_parameters[name] = compat::to_string(value);
 }

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include "kodi/util/timeutils.h"
 #include "../client.h"
+#include "../compat.h"
 #include "ContentIdentifier.h"
 #include "Exceptions.h"
 #include "Utilities.h"
@@ -78,7 +79,7 @@ void VBox::Initialize()
   Log(LOG_INFO, std::string("         uboot version: " + boardInfo.GetString("UbootVersion")).c_str());
   Log(LOG_INFO, std::string("        kernel version: " + boardInfo.GetString("KernelVersion")).c_str());
   Log(LOG_INFO, std::string("      software version: " + boardInfo.GetString("SoftwareVersion")).c_str());
-  Log(LOG_INFO, std::string("      number of tuners: " + std::to_string(boardInfo.GetInteger("TunersNumber"))).c_str());
+  Log(LOG_INFO, std::string("      number of tuners: " + compat::to_string(boardInfo.GetInteger("TunersNumber"))).c_str());
 
   m_backendName = model;
   m_backendVersion = SoftwareVersion::ParseString(boardInfo.GetString("SoftwareVersion"));

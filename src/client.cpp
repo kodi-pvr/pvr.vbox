@@ -23,6 +23,7 @@
 #include "util/util.h"
 #include "xbmc_pvr_dll.h"
 #include "client.h"
+#include "compat.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
 #include "vbox/ContentIdentifier.h"
@@ -399,7 +400,7 @@ extern "C" {
       strncpy(recording.strChannelName, item->m_channelName.c_str(),
         sizeof(recording.strChannelName));
 
-      strncpy(recording.strRecordingId, std::to_string(id).c_str(),
+      strncpy(recording.strRecordingId, compat::to_string(id).c_str(),
         sizeof(recording.strRecordingId));
 
       strncpy(recording.strStreamURL, item->m_url.c_str(),
@@ -419,10 +420,8 @@ extern "C" {
 
   PVR_ERROR DeleteRecording(const PVR_RECORDING &recording)
   {
-    // DeleteRecording swallows its exceptions, but std::stoul throws if the 
-    // value can't be converted
     try {
-      unsigned int id = std::stoul(recording.strRecordingId);
+      unsigned int id = compat::stoul(recording.strRecordingId);
 
       if (g_vbox->DeleteRecordingOrTimer(id))
         return PVR_ERROR_NO_ERROR;

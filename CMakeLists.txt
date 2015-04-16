@@ -17,7 +17,8 @@ include_directories(${kodiplatform_INCLUDE_DIRS}
 # Sources and headers
 set(VBOX_SOURCES 
                 src/client.h
-                src/client.cpp)
+                src/client.cpp
+                src/compat.h)
 
 set(VBOX_SOURCES_VBOX
                 src/vbox/Channel.h
