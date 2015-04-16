@@ -1,3 +1,6 @@
+0.9.9
+	- added a small compatibility layer to enable building on Android which lacks some C++11 features
+
 0.9.8
 	- fixed GCC and Clang builds
 
