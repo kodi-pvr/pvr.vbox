@@ -182,7 +182,7 @@ extern "C" {
 #define UPDATE_STR(key, var)\
   if (!strcmp(settingName, key))\
   {\
-    if (var != std::string(static_cast<const char*>(settingValue)))\
+    if (strcmp(var.c_str(), (const char*)settingValue) != 0)\
     {\
       VBox::Log(LOG_INFO, "updated setting %s from '%s' to '%s'",\
         settingName, var.c_str(), settingValue);\
