@@ -20,8 +20,8 @@
  */
 
 #include <algorithm>
-#include "util/util.h"
-#include "xbmc_pvr_dll.h"
+#include "kodi/util/util.h"
+#include "kodi/xbmc_pvr_dll.h"
 #include "client.h"
 #include "compat.h"
 #include "vbox/Exceptions.h"
