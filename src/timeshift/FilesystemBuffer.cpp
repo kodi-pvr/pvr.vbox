@@ -40,6 +40,8 @@ FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
 
 FilesystemBuffer::~FilesystemBuffer()
 {
+  Close();
+
   // Remove the buffer file so it doesn't take up space once Kodi has exited
   XBMC->DeleteFile(m_bufferPath.c_str());
 }

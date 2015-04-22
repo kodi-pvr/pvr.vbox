@@ -32,6 +32,11 @@ bool Buffer::Open(const std::string inputUrl)
   return m_inputHandle != nullptr;
 }
 
+Buffer::~Buffer()
+{
+  Close();
+}
+
 void Buffer::Close()
 {
   CloseHandle(m_inputHandle);

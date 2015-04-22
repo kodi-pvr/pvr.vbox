@@ -41,7 +41,7 @@ namespace timeshift {
   public:
     Buffer() 
       : m_inputHandle(nullptr), m_startTime(0) {};
-    virtual ~Buffer() {};
+    virtual ~Buffer();
 
     /**
      * Opens the input handle
