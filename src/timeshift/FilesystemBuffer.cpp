@@ -81,10 +81,10 @@ void FilesystemBuffer::Reset()
   std::unique_lock<std::mutex> lock(m_mutex);
 
   if (m_outputReadHandle)
-    XBMC->CloseFile(m_outputReadHandle);
+    CloseHandle(m_outputReadHandle);
 
   if (m_outputWriteHandle)
-    XBMC->CloseFile(m_outputWriteHandle);
+    CloseHandle(m_outputWriteHandle);
 
   // Reset
   m_outputReadHandle = m_outputWriteHandle = nullptr;

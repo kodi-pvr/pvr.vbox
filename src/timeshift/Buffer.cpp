@@ -34,5 +34,14 @@ bool Buffer::Open(const std::string inputUrl)
 
 void Buffer::Close()
 {
-  XBMC->CloseFile(m_inputHandle);
+  CloseHandle(m_inputHandle);
+}
+
+void Buffer::CloseHandle(void *&handle)
+{
+  if (handle)
+  {
+    XBMC->CloseFile(handle);
+    handle = nullptr;
+  }
 }

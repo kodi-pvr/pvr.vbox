@@ -105,6 +105,12 @@ namespace timeshift {
   protected:
 
     /**
+     * Safely closes an open file handle.
+     * @param the handle to close. The pointer will be nulled.
+     */
+    void CloseHandle(void *&handle);
+
+    /**
      * The input handle (where data is read from)
      */
     void *m_inputHandle;
