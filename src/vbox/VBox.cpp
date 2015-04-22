@@ -542,6 +542,10 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
     for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += 10)
     {
+      // Abort immediately if the addon just got terminated
+      if (!m_active)
+        return;
+
       int toIndex = std::min(fromIndex + 9, lastChannelIndex);
 
       request::Request request("GetXmltvSection");
