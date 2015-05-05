@@ -24,7 +24,7 @@
 #include <sstream>
 #include <chrono>
 #include <algorithm>
-#include "kodi/util/timeutils.h"
+#include "platform/util/timeutils.h"
 #include "../client.h"
 #include "../compat.h"
 #include "ContentIdentifier.h"

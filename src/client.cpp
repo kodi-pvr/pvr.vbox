@@ -20,7 +20,7 @@
  */
 
 #include <algorithm>
-#include "kodi/util/util.h"
+#include "platform/util/util.h"
 #include "kodi/xbmc_pvr_dll.h"
 #include "client.h"
 #include "compat.h"
