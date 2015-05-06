@@ -1,3 +1,7 @@
+1.0.2
+	- fixed Android version (wrong addon name)
+	- fixed a bad include (thanks bkuhls)
+
 1.0.1
 	- updated to use new libplatform-dev
 
