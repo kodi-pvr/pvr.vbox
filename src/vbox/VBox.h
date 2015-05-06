@@ -72,8 +72,10 @@ namespace vbox {
      * Initializes the addon
      */
     void Initialize();
+    void DetermineConnectionParams();
     bool ValidateSettings() const;
     const Settings& GetSettings() const;
+    const ConnectionParameters& GetConnectionParams() const;
     StartupStateHandler& GetStateHandler();
     std::string GetApiBaseUrl() const;
 
@@ -132,6 +134,11 @@ namespace vbox {
      * The addons settings
      */
     const Settings m_settings;
+
+    /**
+     * The connection parameters to use for requests
+     */
+    ConnectionParameters m_currentConnectionParameters;
 
     /**
      * Name of the backend
