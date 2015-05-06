@@ -23,11 +23,33 @@
 #include <string>
 
 namespace vbox {
+
+  /**
+   * Represents a set of parameters required to make a connection
+   */
+  class ConnectionParameters
+  {
+  public:
+    std::string hostname;
+    int httpPort;
+    int upnpPort;
+
+    /**
+     * @return whether the connection parameters appear valid
+     */
+    bool AreValid() const
+    {
+      return !hostname.empty() && httpPort > 0 && upnpPort > 0;
+    }
+  };
+
+  /**
+   * Represents the settings for this addon
+   */
   class Settings {
   public:
-    std::string m_hostname;
-    int m_httpPort;
-    int m_upnpPort;
+    ConnectionParameters m_internalConnectionParams;
+    ConnectionParameters m_externalConnectionParams;
     bool m_useExternalXmltv;
     std::string m_externalXmltvPath;
     bool m_preferExternalXmltv;

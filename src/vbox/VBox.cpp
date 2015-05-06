@@ -57,6 +57,9 @@ VBox::~VBox()
 
 void VBox::Initialize()
 {
+  // Determine which connection parameters should be used
+  DetermineConnectionParams();
+
   // Query the software version, we need a few elements from that response
   request::Request versionRequest("QuerySwVersion");
   response::ResponsePtr response = PerformRequest(versionRequest);
@@ -120,6 +123,35 @@ void VBox::Initialize()
   });
 }
 
+void VBox::DetermineConnectionParams()
+{
+  // Attempt to perform a request using the internal connection parameters
+  m_currentConnectionParameters = m_settings.m_internalConnectionParams;
+
+  try {
+    request::Request request("QuerySwVersion");
+    response::ResponsePtr response = PerformRequest(request);
+  }
+  catch (VBoxException&)
+  {
+    // Retry the request with the external parameters
+    if (m_settings.m_externalConnectionParams.AreValid())
+    {
+      Log(LOG_INFO, "Unable to connect using internal connection settings, trying with external");
+      m_currentConnectionParameters = m_settings.m_externalConnectionParams;
+
+      request::Request request("QuerySwVersion");
+      response::ResponsePtr response = PerformRequest(request);
+    }
+  }
+
+  auto &params = m_currentConnectionParameters;
+  Log(LOG_INFO, "Connection parameters used: ");
+  Log(LOG_INFO, "    Hostname: %s", params.hostname.c_str());
+  Log(LOG_INFO, "    HTTP port: %d", params.httpPort);
+  Log(LOG_INFO, "    UPnP port: %d", params.upnpPort);
+}
+
 void VBox::BackgroundUpdater()
 {
   // Keep count of how many times the loop has run so we can perform some 
@@ -160,11 +192,8 @@ void VBox::BackgroundUpdater()
 bool VBox::ValidateSettings() const
 {
   // Check connection settings
-  if (m_settings.m_hostname.empty() || m_settings.m_httpPort == 0 || 
-    m_settings.m_upnpPort == 0)
-  {
+  if (!m_settings.m_internalConnectionParams.AreValid())
     return false;
-  }
 
   // Check guide settings
   if (m_settings.m_useExternalXmltv && m_settings.m_externalXmltvPath.empty())
@@ -182,6 +211,11 @@ const Settings& VBox::GetSettings() const
   return m_settings;
 }
 
+const ConnectionParameters& VBox::GetConnectionParams() const
+{
+  return m_currentConnectionParameters;
+}
+
 StartupStateHandler& VBox::GetStateHandler()
 {
   return m_stateHandler;
@@ -197,7 +231,7 @@ std::string VBox::GetBackendName() const
 
 std::string VBox::GetBackendHostname() const
 {
-  return m_settings.m_hostname;
+  return m_currentConnectionParameters.hostname;
 }
 
 std::string VBox::GetBackendVersion() const
@@ -211,7 +245,7 @@ std::string VBox::GetBackendVersion() const
 std::string VBox::GetConnectionString() const
 {
   std::stringstream ss;
-  ss << GetBackendHostname() << ":" << m_settings.m_httpPort;
+  ss << GetBackendHostname() << ":" << m_currentConnectionParameters.httpPort;
 
   return ss.str();
 }
@@ -450,8 +484,8 @@ const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 std::string VBox::GetApiBaseUrl() const
 {
   std::stringstream ss;
-  ss << "http://" << m_settings.m_hostname;
-  ss << ":" << m_settings.m_httpPort;
+  ss << "http://" << m_currentConnectionParameters.hostname;
+  ss << ":" << m_currentConnectionParameters.httpPort;
   ss << "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 
   return ss.str();

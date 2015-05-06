@@ -55,8 +55,8 @@ Request::Request(const std::string &method)
     externalCapableMethods.cbegin(), 
     externalCapableMethods.cend(), method) != externalCapableMethods.cend())
   {
-    AddParameter("ExternalIP", g_vbox->GetSettings().m_hostname);
-    AddParameter("Port", g_vbox->GetSettings().m_upnpPort);
+    AddParameter("ExternalIP", g_vbox->GetConnectionParams().hostname);
+    AddParameter("Port", g_vbox->GetConnectionParams().upnpPort);
   }
 }
 
