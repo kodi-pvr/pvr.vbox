@@ -49,6 +49,8 @@ int g_internalHttpPort;
 int g_externalHttpPort;
 int g_internalUpnpPort;
 int g_externalUpnpPort;
+int g_internalConnectionTimeout;
+int g_externalConnectionTimeout;
 
 bool g_useExternalXmltv;
 std::string g_externalXmltvPath;
@@ -78,6 +80,8 @@ extern "C" {
     UPDATE_STR(g_externalHostname, "external_hostname", buffer, "");
     UPDATE_INT(g_externalHttpPort, "external_http_port", 80);
     UPDATE_INT(g_externalUpnpPort, "external_upnp_port", 55555);
+    UPDATE_INT(g_internalConnectionTimeout, "connection_timeout", 3);
+    UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);
     UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", true);
@@ -116,14 +120,16 @@ extern "C" {
     {
       g_internalHostname,
       g_internalHttpPort,
-      g_internalUpnpPort
+      g_internalUpnpPort,
+      g_internalConnectionTimeout
     };
 
     settings.m_externalConnectionParams =
     {
       g_externalHostname,
       g_externalHttpPort,
-      g_externalUpnpPort
+      g_externalUpnpPort,
+      g_externalConnectionTimeout
     };
 
     settings.m_useExternalXmltv = g_useExternalXmltv;
@@ -229,9 +235,11 @@ extern "C" {
     UPDATE_STR("hostname", settings.m_internalConnectionParams.hostname);
     UPDATE_INT("http_port", int, settings.m_internalConnectionParams.httpPort);
     UPDATE_INT("upnp_port", int, settings.m_internalConnectionParams.upnpPort);
+    UPDATE_INT("connection_timeout", int, settings.m_internalConnectionParams.timeout);
     UPDATE_STR("external_hostname", settings.m_externalConnectionParams.hostname);
     UPDATE_INT("external_http_port", int, settings.m_externalConnectionParams.httpPort);
     UPDATE_INT("external_upnp_port", int, settings.m_externalConnectionParams.upnpPort);
+    UPDATE_INT("external_connection_timeout", int, settings.m_externalConnectionParams.timeout);
     UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);
     UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
     UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);

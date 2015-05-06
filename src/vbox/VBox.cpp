@@ -130,6 +130,7 @@ void VBox::DetermineConnectionParams()
 
   try {
     request::Request request("QuerySwVersion");
+    request.SetTimeout(m_currentConnectionParameters.timeout);
     response::ResponsePtr response = PerformRequest(request);
   }
   catch (VBoxException&)
@@ -141,6 +142,7 @@ void VBox::DetermineConnectionParams()
       m_currentConnectionParameters = m_settings.m_externalConnectionParams;
 
       request::Request request("QuerySwVersion");
+      request.SetTimeout(m_currentConnectionParameters.timeout);
       response::ResponsePtr response = PerformRequest(request);
     }
   }
