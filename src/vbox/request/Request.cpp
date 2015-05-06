@@ -46,7 +46,7 @@ const std::vector<std::string> Request::xmltvMethods = {
 };
 
 Request::Request(const std::string &method)
-  : m_method(method)
+  : m_method(method), m_timeout(0)
 {
   AddParameter("Method", method);
 
@@ -80,6 +80,10 @@ std::string Request::GetLocation() const
     for (auto const &parameter : m_parameters)
       url += "&" + parameter.first + "=" + ::xmltv::Utilities::UrlEncode(parameter.second);
 
+  // Optionally append the connection timeout
+  if (m_timeout > 0)
+    url += "|connection-timeout=" + compat::to_string(m_timeout);
+
   return url;
 }
 
@@ -96,4 +100,9 @@ void Request::AddParameter(const std::string &name, int value)
 void Request::AddParameter(const std::string &name, unsigned int value)
 {
   m_parameters[name] = compat::to_string(value);
+}
+
+void Request::SetTimeout(int timeout)
+{
+  m_timeout = timeout;
 }

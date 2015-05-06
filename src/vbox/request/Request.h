@@ -47,6 +47,8 @@ namespace vbox {
       void AddParameter(const std::string &name, int value);
       void AddParameter(const std::string &name, unsigned int value);
 
+      void SetTimeout(int timeout);
+
       virtual vbox::response::ResponseType GetResponseType() const override;
       virtual std::string GetLocation() const override;
 
@@ -61,6 +63,12 @@ namespace vbox {
        * The request parameters (and their values)
        */
       std::map<std::string, std::string> m_parameters;
+
+      /**
+       * The timeout to use for the request. Defaults to zero which means the 
+       * default underlying systems timeout is used.
+       */
+      int m_timeout;
 
       /**
        * List of methods that can take an optional "ExternalIP" parameter

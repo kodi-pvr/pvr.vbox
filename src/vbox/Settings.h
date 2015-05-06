@@ -33,13 +33,14 @@ namespace vbox {
     std::string hostname;
     int httpPort;
     int upnpPort;
+    int timeout;
 
     /**
      * @return whether the connection parameters appear valid
      */
     bool AreValid() const
     {
-      return !hostname.empty() && httpPort > 0 && upnpPort > 0;
+      return !hostname.empty() && httpPort > 0 && upnpPort > 0 && timeout > 0;
     }
   };
 
