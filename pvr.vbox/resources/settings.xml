@@ -6,6 +6,12 @@
     <setting id="upnp_port" type="number" option="int" label="30003" default="55555" />
   </category>
 
+  <category label="30050">
+    <setting id="external_hostname" type="text" label="30001" default="" />
+    <setting id="external_http_port" type="number" option="int" label="30002" default="80" />
+    <setting id="external_upnp_port" type="number" option="int" label="30003" default="55555" />
+  </category>
+
   <category label="30100">
     <setting id="use_external_xmltv" type="bool" label="30101" default="false" />
     <setting id="external_xmltv_path" type="file" label="30102" default="" enable="eq(-1,true)" />
