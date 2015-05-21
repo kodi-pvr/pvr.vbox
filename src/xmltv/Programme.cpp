@@ -92,10 +92,12 @@ void Programme::ParseCredits(const XMLElement *creditsElement)
     element != NULL; element = element->NextSiblingElement("actor"))
   {
     Actor actor;
-    actor.name = element->GetText();
 
-    // Not all actors have a role attribute
+    auto *name = element->GetText();
     auto *role = element->Attribute("role");
+
+    if (name)
+      actor.name = element->GetText();
     if (role)
       actor.role = role;
 
