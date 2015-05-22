@@ -78,7 +78,7 @@ extern "C" {
     UPDATE_INT(g_internalHttpPort, "http_port", 80);
     UPDATE_INT(g_internalUpnpPort, "upnp_port", 55555);
     UPDATE_STR(g_externalHostname, "external_hostname", buffer, "");
-    UPDATE_INT(g_externalHttpPort, "external_http_port", 80);
+    UPDATE_INT(g_externalHttpPort, "external_http_port", 19999);
     UPDATE_INT(g_externalUpnpPort, "external_upnp_port", 55555);
     UPDATE_INT(g_internalConnectionTimeout, "connection_timeout", 3);
     UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);

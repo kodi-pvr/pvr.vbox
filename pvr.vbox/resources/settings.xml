@@ -9,7 +9,7 @@
 
   <category label="30050">
     <setting id="external_hostname" type="text" label="30001" default="" />
-    <setting id="external_http_port" type="number" option="int" label="30002" default="80" />
+    <setting id="external_http_port" type="number" option="int" label="30002" default="19999" />
     <setting id="external_upnp_port" type="number" option="int" label="30003" default="55555" />
     <setting id="external_connection_timeout" type="number" option="int" label="30004" default="10" />
   </category>
