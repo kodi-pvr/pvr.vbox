@@ -653,12 +653,7 @@ response::ResponsePtr VBox::PerformRequest(const request::IRequest &request) con
   if (fileHandle)
   {
     // Read the response string
-    std::unique_ptr<std::string> responseContent(new std::string());
-
-    char buffer[1024];
-    while (XBMC->ReadFileString(fileHandle, buffer, sizeof(buffer) - 1))
-      responseContent->append(buffer);
-
+    std::unique_ptr<std::string> responseContent = utilities::ReadFileContents(fileHandle);
     XBMC->CloseFile(fileHandle);
 
     // Parse the response

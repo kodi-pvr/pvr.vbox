@@ -21,6 +21,8 @@
 */
 
 #include <algorithm>
+#include <memory>
+#include "../client.h"
 
 namespace utilities {
 
@@ -40,5 +42,22 @@ namespace utilities {
     {
       return *leftItem == *rightItem;
     }));
+  }
+
+  /**
+   * Reads the contents of the file pointed to by the handle and returns it.
+   * The file handle must be opened before calling this method.
+   * @param fileHandle the file handle
+   * @return the contents (unique pointer)
+   */
+  inline std::unique_ptr<std::string> ReadFileContents(void *fileHandle)
+  {
+    std::unique_ptr<std::string> content(new std::string());
+
+    char buffer[1024];
+    while (XBMC->ReadFileString(fileHandle, buffer, sizeof(buffer) - 1))
+      content->append(buffer);
+
+    return content;
   }
 }
