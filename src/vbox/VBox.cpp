@@ -462,13 +462,15 @@ const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
   auto *schedule = m_guide.GetSchedule(channel->m_xmltvName);
 
   // Try to use the external guide data if a) it's loaded, b) the user prefers 
-  // it or c) if no scehdule was found
+  // it or c) if no schedule was found
   if (m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED &&
     (m_settings.m_preferExternalXmltv || !schedule))
   {
-    std::string xmltvName = m_externalGuide.GetChannelId(channel->m_name);
+    // Consult the channel mapper to find the corresponding external channel name
+    std::string mappedName = m_guideChannelMapper->GetExternalChannelName(channel->m_name);
+    std::string xmltvName = m_externalGuide.GetChannelId(mappedName);
 
-    if (!xmltvName.empty())
+    if (!mappedName.empty() && !xmltvName.empty())
     {
       Log(LOG_DEBUG, "Using external guide data for channel %s", channel->m_name.c_str());
       schedule = m_externalGuide.GetSchedule(xmltvName);
@@ -626,6 +628,13 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
   }
 
   LogGuideStatistics(m_externalGuide);
+
+  // Make sure the channel mapper is initialized
+  if (!m_guideChannelMapper)
+  {
+    m_guideChannelMapper = GuideChannelMapperPtr(
+      new GuideChannelMapper(m_guide, m_externalGuide));
+  }
 
   if (triggerEvent)
     OnGuideUpdated();

@@ -28,6 +28,8 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/ChannelStreamingStatus.cpp
                 src/vbox/ContentIdentifier.h
                 src/vbox/Exceptions.h
+                src/vbox/GuideChannelMapper.h
+                src/vbox/GuideChannelMapper.cpp
                 src/vbox/Recording.h
                 src/vbox/Recording.cpp
                 src/vbox/Settings.h

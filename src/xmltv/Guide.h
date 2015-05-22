@@ -22,6 +22,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "Schedule.h"
 #include "Programme.h"
 
@@ -147,6 +148,28 @@ namespace xmltv {
       auto it = m_displayNameMappings.find(displayName);
 
       return it != m_displayNameMappings.cend() ? it->second : "";
+    }
+
+    /**
+     * @return all the channel names in the guide
+     */
+    std::vector<std::string> GetChannelNames() const
+    {
+      std::vector<std::string> channelNames;
+
+      for (const auto &mapping : m_displayNameMappings)
+        channelNames.push_back(mapping.first);
+
+      return channelNames;
+    }
+
+    /**
+     * @param displayName the display name of a channel
+     * @return whether the guide contains such a channel
+     */
+    bool HasChannelName(const std::string &displayName) const
+    {
+      return m_displayNameMappings.find(displayName) != m_displayNameMappings.cend();
     }
 
     /**

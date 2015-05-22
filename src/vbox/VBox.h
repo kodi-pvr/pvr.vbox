@@ -30,6 +30,7 @@
 #include <kodi/libXBMC_addon.h>
 #include "Channel.h"
 #include "ChannelStreamingStatus.h"
+#include "GuideChannelMapper.h"
 #include "Recording.h"
 #include "Exceptions.h"
 #include "Settings.h"
@@ -170,6 +171,11 @@ namespace vbox {
      * The external guide data
      */
     ::xmltv::Guide m_externalGuide;
+
+    /**
+     * The guide channel mapper
+     */
+    GuideChannelMapperPtr m_guideChannelMapper;
 
     /**
      * The external media status
