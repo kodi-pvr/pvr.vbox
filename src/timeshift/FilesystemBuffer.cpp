@@ -20,6 +20,7 @@
 */
 
 #include "FilesystemBuffer.h"
+#include <cstring>
 
 using namespace timeshift;
 
@@ -123,11 +124,14 @@ int64_t FilesystemBuffer::Seek(int64_t position, int whence)
 
 void FilesystemBuffer::ConsumeInput()
 {
+  byte *buffer = new byte[INPUT_READ_LENGTH];
+
   while (m_active)
   {
+    memset(buffer, 0, INPUT_READ_LENGTH);
+
     // Read from m_inputHandle
-    unsigned char buffer[INPUT_READ_LENGTH];
-    ssize_t read = XBMC->ReadFile(m_inputHandle, buffer, sizeof(buffer));
+    ssize_t read = XBMC->ReadFile(m_inputHandle, buffer, INPUT_READ_LENGTH);
 
     // Write to m_outputHandle
     std::unique_lock<std::mutex> lock(m_mutex);
@@ -137,4 +141,6 @@ void FilesystemBuffer::ConsumeInput()
     // Signal that we have data again
     m_condition.notify_one();
   }
+
+  delete[] buffer;
 }

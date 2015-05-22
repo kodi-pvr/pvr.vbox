@@ -688,13 +688,14 @@ response::ResponsePtr VBox::PerformRequest(const request::IRequest &request) con
 
 void VBox::Log(const ADDON::addon_log level, const char *format, ...)
 {
-  char buf[16384];
+  char *buf = new char[16384];
   size_t c = sprintf(buf, "pvr.vbox - ");
   va_list va;
   va_start(va, format);
   vsnprintf(buf + c, sizeof(buf) - c, format, va);
   va_end(va);
   XBMC->Log(level, "%s", buf);
+  delete[] buf;
 }
 
 void VBox::LogException(VBoxException &e)
