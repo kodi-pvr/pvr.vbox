@@ -84,7 +84,7 @@ extern "C" {
     UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);
     UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
-    UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", true);
+    UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
     UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
     UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
