@@ -89,6 +89,7 @@ namespace vbox {
   public:
     bool m_active;
     std::string m_lockStatus;
+    std::string m_lockedMode;
     std::string m_modulation;
     std::string m_frequency;
     unsigned int m_signalQuality;

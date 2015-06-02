@@ -46,7 +46,7 @@ std::string ChannelStreamingStatus::GetMuxName() const
     return "";
 
   std::stringstream ss;
-  ss << m_frequency << " (" << m_modulation << ")";
+  ss << m_lockedMode << " @ " << m_frequency << " (" << m_modulation << ")";
 
   return ss.str();
 }
