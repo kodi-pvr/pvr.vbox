@@ -375,6 +375,7 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recor
 bool VBox::DeleteRecordingOrTimer(unsigned int id)
 {
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
+  std::unique_lock<std::mutex> lock(m_mutex);
 
   // Find the recording/timer
   auto it = std::find_if(m_recordings.begin(), m_recordings.end(), 
@@ -392,8 +393,6 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
     response::ResponsePtr response = PerformRequest(request);
 
     // Delete the item from memory too
-    std::unique_lock<std::mutex> lock(m_mutex);
-    
     if (it != m_recordings.end())
       m_recordings.erase(it);
 
@@ -484,6 +483,7 @@ const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
 
 const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
 {
+  std::unique_lock<std::mutex> lock(m_mutex);
   return m_guide.GetProgramme(programmeUniqueId);
 }
 
@@ -627,16 +627,16 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
     auto externalGuide = content.GetGuide();
     std::unique_lock<std::mutex> lock(m_mutex);
     m_externalGuide = externalGuide;
+
+    // Make sure the channel mapper is initialized
+    if (!m_guideChannelMapper)
+    {
+      m_guideChannelMapper = GuideChannelMapperPtr(
+        new GuideChannelMapper(m_guide, m_externalGuide));
+    }
   }
 
   LogGuideStatistics(m_externalGuide);
-
-  // Make sure the channel mapper is initialized
-  if (!m_guideChannelMapper)
-  {
-    m_guideChannelMapper = GuideChannelMapperPtr(
-      new GuideChannelMapper(m_guide, m_externalGuide));
-  }
 
   if (triggerEvent)
     OnGuideUpdated();
