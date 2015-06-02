@@ -32,6 +32,7 @@
 #include "Utilities.h"
 #include "response/Factory.h"
 #include "request/Request.h"
+#include "request/ApiRequest.h"
 #include "request/FileRequest.h"
 #include "response/Content.h"
 #include "../xmltv/Utilities.h"
@@ -61,12 +62,12 @@ void VBox::Initialize()
   DetermineConnectionParams();
 
   // Query the software version, we need a few elements from that response
-  request::Request versionRequest("QuerySwVersion");
+  request::ApiRequest versionRequest("QuerySwVersion");
   response::ResponsePtr response = PerformRequest(versionRequest);
   response::Content versionContent(response->GetReplyElement());
 
   // Query the board info, we need some elements from that as well
-  request::Request boardRequest("QueryBoardInfo");
+  request::ApiRequest boardRequest("QueryBoardInfo");
   response::ResponsePtr boardResponse = PerformRequest(boardRequest);
   response::Content boardInfo(boardResponse->GetReplyElement());
 
@@ -99,7 +100,7 @@ void VBox::Initialize()
   // Query external media status. The request will error if no external media 
   // is attached
   try {
-    request::Request mediaRequest = request::Request("QueryExternalMediaStatus");
+    request::ApiRequest mediaRequest("QueryExternalMediaStatus");
     response::ResponsePtr mediaResponse = PerformRequest(mediaRequest);
     response::Content mediaStatus = response::Content(mediaResponse->GetReplyElement());
 
@@ -129,7 +130,7 @@ void VBox::DetermineConnectionParams()
   m_currentConnectionParameters = m_settings.m_internalConnectionParams;
 
   try {
-    request::Request request("QuerySwVersion");
+    request::ApiRequest request("QuerySwVersion");
     request.SetTimeout(m_currentConnectionParameters.timeout);
     response::ResponsePtr response = PerformRequest(request);
   }
@@ -141,7 +142,7 @@ void VBox::DetermineConnectionParams()
       Log(LOG_INFO, "Unable to connect using internal connection settings, trying with external");
       m_currentConnectionParameters = m_settings.m_externalConnectionParams;
 
-      request::Request request("QuerySwVersion");
+      request::ApiRequest request("QuerySwVersion");
       request.SetTimeout(m_currentConnectionParameters.timeout);
       response::ResponsePtr response = PerformRequest(request);
     }
@@ -297,7 +298,7 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) c
 {
   ChannelStreamingStatus status;
 
-  request::Request request("QueryChannelStreamingStatus");
+  request::ApiRequest request("QueryChannelStreamingStatus");
   request.AddParameter("ChannelID", channel->m_xmltvName);
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
@@ -348,7 +349,7 @@ int VBox::GetRecordingsAmount() const
   });
 }
 
-request::Request VBox::CreateDeleteRecordingRequest(const RecordingPtr &recording) const
+request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recording) const
 {
   RecordingState state = recording->GetState();
   unsigned int recordId = recording->m_id;
@@ -361,7 +362,7 @@ request::Request VBox::CreateDeleteRecordingRequest(const RecordingPtr &recordin
     requestMethod = "CancelRecord";
 
   // Create the request
-  request::Request request(requestMethod);
+  request::ApiRequest request(requestMethod);
   request.AddParameter("RecordID", recordId);
 
   // Determine request parameters
@@ -387,7 +388,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 
   // The request fails if the item doesn't exist
   try {
-    request::Request request = CreateDeleteRecordingRequest(*it);
+    request::ApiRequest request = CreateDeleteRecordingRequest(*it);
     response::ResponsePtr response = PerformRequest(request);
 
     // Delete the item from memory too
@@ -413,7 +414,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
 {
   // Add the timer
-  request::Request request("ScheduleProgramRecord");
+  request::ApiRequest request("ScheduleProgramRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
   request.AddParameter("ProgramTitle", programme->m_title);
   request.AddParameter("StartTime", programme->m_startTime);
@@ -426,7 +427,7 @@ void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
 void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
 {
   // Add the timer
-  request::Request request("ScheduleChannelRecord");
+  request::ApiRequest request("ScheduleChannelRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
   request.AddParameter("StartTime", ::xmltv::Utilities::UnixTimeToXmltv(startTime));
   request.AddParameter("EndTime", ::xmltv::Utilities::UnixTimeToXmltv(endTime));
@@ -499,7 +500,7 @@ std::string VBox::GetApiBaseUrl() const
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
 {
   try {
-    request::Request request("GetXmltvChannelsList");
+    request::ApiRequest request("GetXmltvChannelsList");
     request.AddParameter("FromChIndex", "FirstChannel");
     request.AddParameter("ToChIndex", "LastChannel");
     response::ResponsePtr response = PerformRequest(request);
@@ -532,7 +533,7 @@ void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
   if (m_externalMediaStatus.present)
   {
     try {
-      request::Request request("GetRecordsList");
+      request::ApiRequest request("GetRecordsList");
       request.AddParameter("Externals", "YES");
       response::ResponsePtr response = PerformRequest(request);
       response::RecordingResponseContent content(response->GetReplyElement());
@@ -587,7 +588,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
       int toIndex = std::min(fromIndex + 9, lastChannelIndex);
 
-      request::Request request("GetXmltvSection");
+      request::ApiRequest request("GetXmltvSection");
       request.AddParameter("FromChIndex", fromIndex);
       request.AddParameter("ToChIndex", toIndex);
       response::ResponsePtr response = PerformRequest(request);
@@ -655,7 +656,7 @@ void VBox::LogGuideStatistics(const xmltv::Guide &guide) const
   }
 }
 
-response::ResponsePtr VBox::PerformRequest(const request::IRequest &request) const
+response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
 {
   // Attempt to open a HTTP file handle
   void *fileHandle = XBMC->OpenFile(request.GetLocation().c_str(), 0x08 /* READ_NO_CACHE */);

@@ -19,7 +19,7 @@
 *
 */
 
-#include "Request.h"
+#include "ApiRequest.h"
 #include "../../client.h"
 #include "../../xmltv/Utilities.h"
 #include "../../compat.h"
@@ -30,7 +30,7 @@
 using namespace vbox::request;
 using vbox::response::ResponseType;
 
-const std::vector<std::string> Request::externalCapableMethods = {
+const std::vector<std::string> ApiRequest::externalCapableMethods = {
   "GetXmltvEntireFile",
   "GetXmltvSection",
   "GetXmltvChannelsList",
@@ -38,14 +38,14 @@ const std::vector<std::string> Request::externalCapableMethods = {
   "GetRecordsList"
 };
 
-const std::vector<std::string> Request::xmltvMethods = {
+const std::vector<std::string> ApiRequest::xmltvMethods = {
   "GetXmltvEntireFile",
   "GetXmltvSection",
   "GetXmltvChannelsList",
   "GetXmltvProgramsList",
 };
 
-Request::Request(const std::string &method)
+ApiRequest::ApiRequest(const std::string &method)
   : m_method(method), m_timeout(0)
 {
   AddParameter("Method", method);
@@ -60,7 +60,7 @@ Request::Request(const std::string &method)
   }
 }
 
-ResponseType Request::GetResponseType() const
+ResponseType ApiRequest::GetResponseType() const
 {
   // Determine the response type based on the method name
   if (std::find(xmltvMethods.cbegin(), xmltvMethods.cend(), m_method) != xmltvMethods.cend())
@@ -71,7 +71,7 @@ ResponseType Request::GetResponseType() const
   return ResponseType::GENERIC;
 }
 
-std::string Request::GetLocation() const
+std::string ApiRequest::GetLocation() const
 {
   std::string url = g_vbox->GetApiBaseUrl();
 
@@ -87,22 +87,22 @@ std::string Request::GetLocation() const
   return url;
 }
 
-void Request::AddParameter(const std::string &name, const std::string &value)
+void ApiRequest::AddParameter(const std::string &name, const std::string &value)
 {
   m_parameters[name] = value;
 }
 
-void Request::AddParameter(const std::string &name, int value)
+void ApiRequest::AddParameter(const std::string &name, int value)
 {
   m_parameters[name] = compat::to_string(value);
 }
 
-void Request::AddParameter(const std::string &name, unsigned int value)
+void ApiRequest::AddParameter(const std::string &name, unsigned int value)
 {
   m_parameters[name] = compat::to_string(value);
 }
 
-void Request::SetTimeout(int timeout)
+void ApiRequest::SetTimeout(int timeout)
 {
   m_timeout = timeout;
 }

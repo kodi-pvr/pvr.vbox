@@ -21,64 +21,28 @@
 */
 
 #include <string>
-#include <map>
-#include <vector>
-#include "IRequest.h"
+#include "../response/Response.h"
 
 namespace vbox {
   namespace request {
 
     /**
-     * Represents an API request
+     * Interface for requests
      */
-    class Request : public IRequest
+    class Request
     {
     public:
-      Request(const std::string &method);
       virtual ~Request() {};
 
       /**
-       * Adds a request parameter with the specified value
-       *
-       * @param name  The name.
-       * @param value The value.
+       * @return the type of response this request leads to
        */
-      void AddParameter(const std::string &name, const std::string &value);
-      void AddParameter(const std::string &name, int value);
-      void AddParameter(const std::string &name, unsigned int value);
-
-      void SetTimeout(int timeout);
-
-      virtual vbox::response::ResponseType GetResponseType() const override;
-      virtual std::string GetLocation() const override;
-
-    private:
+      virtual response::ResponseType GetResponseType() const = 0;
 
       /**
-       * The method name
+       * @return the request location
        */
-      std::string m_method;
-
-      /**
-       * The request parameters (and their values)
-       */
-      std::map<std::string, std::string> m_parameters;
-
-      /**
-       * The timeout to use for the request. Defaults to zero which means the 
-       * default underlying systems timeout is used.
-       */
-      int m_timeout;
-
-      /**
-       * List of methods that can take an optional "ExternalIP" parameter
-       */
-      static const std::vector<std::string> externalCapableMethods;
-
-      /**
-       * List of methods that return XMLTV responses
-       */
-      static const std::vector<std::string> xmltvMethods;
+      virtual std::string GetLocation() const = 0;
     };
   }
 }

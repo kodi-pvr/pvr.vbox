@@ -22,7 +22,7 @@
 
 #include <memory>
 #include <string>
-#include "../request/IRequest.h"
+#include "../request/Request.h"
 #include "Response.h"
 
 namespace vbox {
@@ -44,7 +44,7 @@ namespace vbox {
        * @param request the request
        * @return the response
        */
-      static ResponsePtr CreateResponse(const request::IRequest &request)
+      static ResponsePtr CreateResponse(const request::Request &request)
       {
         switch (request.GetResponseType())
         {

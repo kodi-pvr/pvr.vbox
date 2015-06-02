@@ -42,10 +42,10 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/VBox.cpp)
                       
 set(VBOX_SOURCES_VBOX_REQUEST 
+                src/vbox/request/ApiRequest.h
+                src/vbox/request/ApiRequest.cpp
                 src/vbox/request/FileRequest.h
-                src/vbox/request/IRequest.h
-                src/vbox/request/Request.h
-                src/vbox/request/Request.cpp)
+                src/vbox/request/Request.h)
                  
 set(VBOX_SOURCES_VBOX_RESPONSE
                 src/vbox/response/Content.h

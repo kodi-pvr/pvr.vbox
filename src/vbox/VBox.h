@@ -36,6 +36,7 @@
 #include "Settings.h"
 #include "SoftwareVersion.h"
 #include "request/Request.h"
+#include "request/ApiRequest.h"
 #include "response/Response.h"
 #include "StartupStateHandler.h"
 #include "../xmltv/Programme.h"
@@ -100,7 +101,7 @@ namespace vbox {
     int64_t GetRecordingUsedSpace() const;
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
-    request::Request CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
+    request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
     bool DeleteRecordingOrTimer(unsigned int id);
     void AddTimer(const Channel *channel, const ::xmltv::Programme* programme);
     void AddTimer(const Channel *channel, time_t startTime, time_t endTime);
@@ -129,7 +130,7 @@ namespace vbox {
     void RetrieveExternalGuide(bool triggerEvent = true);
 
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
-    response::ResponsePtr PerformRequest(const request::IRequest &request) const;
+    response::ResponsePtr PerformRequest(const request::Request &request) const;
 
     /**
      * The addons settings

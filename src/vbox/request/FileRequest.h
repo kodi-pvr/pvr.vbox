@@ -21,7 +21,7 @@
 */
 
 #include <string>
-#include "IRequest.h"
+#include "Request.h"
 
 namespace vbox {
   namespace request {
@@ -29,7 +29,7 @@ namespace vbox {
     /**
      * Represents a local file request
      */
-    class FileRequest : public IRequest
+    class FileRequest : public Request
     {
     public:
       FileRequest(const std::string &path) 
