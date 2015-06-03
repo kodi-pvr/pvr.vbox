@@ -21,7 +21,7 @@
 
 #include <algorithm>
 #include "platform/util/util.h"
-#include "kodi/xbmc_pvr_dll.h"
+#include "xbmc_pvr_dll.h"
 #include "client.h"
 #include "compat.h"
 #include "vbox/Exceptions.h"
