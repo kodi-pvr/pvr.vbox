@@ -56,6 +56,16 @@ namespace vbox {
   };
 
   /**
+   * Represents various pieces of information about the connected backend
+   */
+  struct BackendInformation
+  {
+    std::string name = "";
+    SoftwareVersion version;
+    ExternalMediaStatus externalMediaStatus;
+  };
+
+  /**
    * The main class for interfacing with the VBox Gateway
    */
   class VBox
@@ -143,14 +153,9 @@ namespace vbox {
     ConnectionParameters m_currentConnectionParameters;
 
     /**
-     * Name of the backend
+     * The backend information
      */
-    std::string m_backendName;
-
-    /**
-     * The backend version
-     */
-    SoftwareVersion m_backendVersion;
+    BackendInformation m_backendInformation;
 
     /**
      * The list of channels
@@ -177,11 +182,6 @@ namespace vbox {
      * The guide channel mapper
      */
     GuideChannelMapperPtr m_guideChannelMapper;
-
-    /**
-     * The external media status
-     */
-    ExternalMediaStatus m_externalMediaStatus;
 
     /**
      * Handler for the startup state

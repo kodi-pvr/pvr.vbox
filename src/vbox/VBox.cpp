@@ -85,11 +85,12 @@ void VBox::Initialize()
   Log(LOG_INFO, std::string("      software version: " + boardInfo.GetString("SoftwareVersion")).c_str());
   Log(LOG_INFO, std::string("      number of tuners: " + compat::to_string(boardInfo.GetInteger("TunersNumber"))).c_str());
 
-  m_backendName = model;
-  m_backendVersion = SoftwareVersion::ParseString(boardInfo.GetString("SoftwareVersion"));
+  // Construct backend information
+  m_backendInformation.name = model;
+  m_backendInformation.version = SoftwareVersion::ParseString(boardInfo.GetString("SoftwareVersion"));
 
   // Check that the backend uses a compatible software version
-  if (m_backendVersion < SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION))
+  if (m_backendInformation.version < SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION))
   {
     std::string error = std::string("Firmware version ") + 
       MINIMUM_SOFTWARE_VERSION + " or higher is required";
@@ -104,9 +105,12 @@ void VBox::Initialize()
     response::ResponsePtr mediaResponse = PerformRequest(mediaRequest);
     response::Content mediaStatus = response::Content(mediaResponse->GetReplyElement());
 
-    m_externalMediaStatus.present = true;
-    m_externalMediaStatus.spaceTotal = (int64_t)mediaStatus.GetInteger("TotalMem") * 1048576;
-    m_externalMediaStatus.spaceUsed = (int64_t)mediaStatus.GetInteger("UsedMem") * 1048576;
+    ExternalMediaStatus externalMediaStatus;
+    externalMediaStatus.present = true;
+    externalMediaStatus.spaceTotal = (int64_t)mediaStatus.GetInteger("TotalMem") * 1048576;
+    externalMediaStatus.spaceUsed = (int64_t)mediaStatus.GetInteger("UsedMem") * 1048576;
+
+    m_backendInformation.externalMediaStatus = externalMediaStatus;
   }
   catch (VBoxException &e)
   {
@@ -227,7 +231,7 @@ StartupStateHandler& VBox::GetStateHandler()
 std::string VBox::GetBackendName() const
 {
   if (m_stateHandler.WaitForState(StartupState::INITIALIZED))
-    return m_backendName;
+    return m_backendInformation.name;
 
   return "";
 }
@@ -240,7 +244,7 @@ std::string VBox::GetBackendHostname() const
 std::string VBox::GetBackendVersion() const
 {
   if (m_stateHandler.WaitForState(StartupState::INITIALIZED))
-    return m_backendVersion.GetString();
+    return m_backendInformation.version.GetString();
 
   return "";
 }
@@ -326,17 +330,17 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) c
 
 bool VBox::SupportsRecordings() const
 {
-  return m_externalMediaStatus.present;
+  return m_backendInformation.externalMediaStatus.present;
 }
 
 int64_t VBox::GetRecordingTotalSpace() const
 {
-  return m_externalMediaStatus.spaceTotal;
+  return m_backendInformation.externalMediaStatus.spaceTotal;
 }
 
 int64_t VBox::GetRecordingUsedSpace() const
 {
-  return m_externalMediaStatus.spaceUsed;
+  return m_backendInformation.externalMediaStatus.spaceUsed;
 }
 
 int VBox::GetRecordingsAmount() const
@@ -530,7 +534,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
 void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
 {
   // Only attempt to retrieve recordings when external media is present
-  if (m_externalMediaStatus.present)
+  if (m_backendInformation.externalMediaStatus.present)
   {
     try {
       request::ApiRequest request("GetRecordsList");
