@@ -25,10 +25,40 @@
 #include <algorithm>
 #include <iterator>
 #include <stdexcept>
+#include <sstream>
+#include <iomanip>
 
 using namespace xmltv;
 
 const char* Utilities::XMLTV_DATETIME_FORMAT = "%Y%m%d%H%M%S";
+
+time_t Utilities::XmltvToUnixTime(const std::string &time)
+{
+  std::tm timeinfo;
+
+  sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d",
+    &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday,
+    &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec);
+
+  timeinfo.tm_year -= 1900;
+  timeinfo.tm_mon -= 1;
+  timeinfo.tm_isdst = -1;
+
+  return mktime(&timeinfo);
+}
+
+std::string Utilities::UnixTimeToXmltv(const time_t timestamp)
+{
+  std::tm tm = *std::gmtime(&timestamp);
+
+  char buffer[20];
+  strftime(buffer, sizeof(buffer), XMLTV_DATETIME_FORMAT, &tm);
+
+  std::string xmltvTime(buffer);
+  xmltvTime += "+0000";
+
+  return xmltvTime;
+}
 
 // Borrowed from https://github.com/xbmc/xbmc/blob/master/xbmc/URL.cpp
 std::string Utilities::UrlDecode(const std::string& strURLData)

@@ -22,8 +22,6 @@
 
 #include <ctime>
 #include <string>
-#include <sstream>
-#include <iomanip>
 #include <vector>
 
 namespace tinyxml2 {
@@ -45,38 +43,14 @@ namespace xmltv {
       * @param time e.g. "20120228001500+0200"
       * @return a UNIX timestamp
       */
-    static time_t XmltvToUnixTime(const std::string &time)
-    {
-      std::tm timeinfo;
-
-      sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d",
-        &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday, 
-        &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec);
-
-      timeinfo.tm_year -= 1900;
-      timeinfo.tm_mon -= 1;
-      timeinfo.tm_isdst = -1;
-        
-      return mktime(&timeinfo);
-    }
+    static time_t XmltvToUnixTime(const std::string &time);
 
     /**
       * Converts a time_t to a GMT XMLTV datetime string
       * @param time a UNIX timestamp
       * @return e.g. "20120228001500+0000"
       */
-    static std::string UnixTimeToXmltv(const time_t timestamp)
-    {
-      std::tm tm = *std::gmtime(&timestamp);
-        
-      char buffer[20];
-      strftime(buffer, sizeof(buffer), XMLTV_DATETIME_FORMAT, &tm);
-
-      std::string xmltvTime(buffer);
-      xmltvTime += "+0000";
-
-      return xmltvTime;
-    }
+    static std::string UnixTimeToXmltv(const time_t timestamp);
 
     /**
      * Parses the contents of the specified element into an integer. We need 
