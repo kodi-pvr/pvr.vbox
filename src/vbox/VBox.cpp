@@ -441,8 +441,8 @@ void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
   // Add the timer
   request::ApiRequest request("ScheduleChannelRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
-  request.AddParameter("StartTime", ::xmltv::Utilities::UnixTimeToXmltv(startTime));
-  request.AddParameter("EndTime", ::xmltv::Utilities::UnixTimeToXmltv(endTime));
+  request.AddParameter("StartTime", CreateTimestamp(startTime));
+  request.AddParameter("EndTime", CreateTimestamp(endTime));
   PerformRequest(request);
 
   // Refresh the recordings and timers
@@ -508,6 +508,13 @@ std::string VBox::GetApiBaseUrl() const
   ss << "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 
   return ss.str();
+}
+
+std::string VBox::CreateTimestamp(const time_t unixTimestamp) const
+{
+  std::string tzOffset = m_backendInformation.timezoneOffset;
+  
+  return ::xmltv::Utilities::UnixTimeToXmltv(timestamp, tzOffset);
 }
 
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)

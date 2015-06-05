@@ -92,6 +92,14 @@ namespace vbox {
     StartupStateHandler& GetStateHandler();
     std::string GetApiBaseUrl() const;
 
+    /**
+     * Converts a UTC UNIX timestamp to an XMLTV timestamp localized for the 
+     * backends timezone offset
+     * @param unixTimestamp a UTC UNIX timestamp
+     * @return XMLTV timestamp localized for the current backend
+     */
+    std::string CreateTimestamp(const time_t unixTimestamp) const;
+
     // General API methods
     std::string GetBackendName() const;
     std::string GetBackendHostname() const;

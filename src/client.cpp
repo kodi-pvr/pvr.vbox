@@ -589,8 +589,8 @@ extern "C" {
     if (!schedule)
       return PVR_ERROR_NO_ERROR;
       
-    std::string xmltvStartTime = xmltv::Utilities::UnixTimeToXmltv(iStart);
-    std::string xmltvEndTime = xmltv::Utilities::UnixTimeToXmltv(iEnd);
+    std::string xmltvStartTime = g_vbox->CreateTimestamp(iStart);
+    std::string xmltvEndTime = g_vbox->CreateTimestamp(iEnd);
 
     auto it = std::find_if(
       schedule->cbegin(),
