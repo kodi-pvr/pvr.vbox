@@ -85,6 +85,7 @@ namespace vbox {
     {
       return m_state == RecordingState::RECORDED || 
         m_state == RecordingState::RECORDING ||
+        m_state == RecordingState::RECORDING_ERROR ||
         m_state == RecordingState::EXTERNAL;
     }
 

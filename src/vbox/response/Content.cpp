@@ -141,12 +141,6 @@ std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
   for (XMLElement *element = m_content->FirstChildElement("record");
     element != NULL; element = element->NextSiblingElement("record"))
   {
-    // Skip recordings that are in an error state
-    RecordingState state = GetState(element->FirstChildElement("state")->GetText());
-    
-    if (state == RecordingState::RECORDING_ERROR)
-      continue;
-
     RecordingPtr recording = CreateRecording(element);
     recordings.push_back(std::move(recording));
   }
