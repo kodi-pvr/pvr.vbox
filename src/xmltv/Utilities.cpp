@@ -31,11 +31,46 @@
 using namespace xmltv;
 
 const char* Utilities::XMLTV_DATETIME_FORMAT = "%Y%m%d%H%M%S";
+const char* Utilities::XMLTV_TIMEZONE_OFFSET_FORMAT = "%03d%02d";
+
+std::string Utilities::GetTimezoneOffset(const std::string timestamp)
+{
+  std::string xmltvTime = timestamp;
+  std::string tzOffset = "";
+
+  // Make sure the timestamp doesn't contain a space before the timezone offset
+  xmltvTime.erase(std::remove_if(xmltvTime.begin(), xmltvTime.end(), isspace), xmltvTime.end());
+
+  if (xmltvTime.length() > 14)
+    tzOffset = xmltvTime.substr(14);
+
+  return tzOffset;
+}
+
+int Utilities::GetTimezoneAdjustment(const std::string tzOffset)
+{
+  // Sanity check
+  if (tzOffset.length() != 5)
+    return 0;
+
+  int hours = 0;
+  int minutes = 0;
+
+  sscanf(tzOffset.c_str(), XMLTV_TIMEZONE_OFFSET_FORMAT, &hours, &minutes);
+
+  // Make minutes negative if hours is
+  if (hours < 0)
+    minutes = -minutes;
+
+  return (hours * 3600) + (minutes * 60);
+}
 
 time_t Utilities::XmltvToUnixTime(const std::string &time)
 {
+  std::string xmltvTime = time;
   std::tm timeinfo;
 
+  // Convert the timestamp, disregarding the timezone offset
   sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d",
     &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday,
     &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec);
@@ -44,18 +79,36 @@ time_t Utilities::XmltvToUnixTime(const std::string &time)
   timeinfo.tm_mon -= 1;
   timeinfo.tm_isdst = -1;
 
-  return mktime(&timeinfo);
+  time_t unixTime = compat::timegm(&timeinfo);
+
+  // Adjust for eventual timezone offset
+  std::string tzOffset = GetTimezoneOffset(time);
+
+  if (!tzOffset.empty())
+    unixTime -= GetTimezoneAdjustment(tzOffset);
+
+  return unixTime;
 }
 
-std::string Utilities::UnixTimeToXmltv(const time_t timestamp)
+std::string Utilities::UnixTimeToXmltv(const time_t timestamp,
+  const std::string tzOffset /* = ""*/)
 {
-  std::tm tm = *std::gmtime(&timestamp);
+  // Adjust the timestamp according to the timezone
+  time_t adjustedTimestamp = timestamp + GetTimezoneAdjustment(tzOffset);
+
+  // Format the timestamp
+  std::tm tm = *std::gmtime(&adjustedTimestamp);
 
   char buffer[20];
   strftime(buffer, sizeof(buffer), XMLTV_DATETIME_FORMAT, &tm);
 
   std::string xmltvTime(buffer);
-  xmltvTime += "+0000";
+
+  // Append the timezone offset
+  if (tzOffset.empty())
+    xmltvTime += "+0000";
+  else
+    xmltvTime += tzOffset;
 
   return xmltvTime;
 }

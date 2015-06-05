@@ -39,18 +39,41 @@ namespace xmltv {
     static const char* XMLTV_DATETIME_FORMAT;
 
     /**
-      * Converts an XMLTV datetime string to time_t
+     * The XMLTV datetime timezone offset format
+     */
+    static const char* XMLTV_TIMEZONE_OFFSET_FORMAT;
+
+    /**
+     * Returns the timezone offset part of the specified XMLTV timestamp
+     * @param timestamp an XMLTV timestamp
+     * @return the timezone offset, e.g. "+0200", or an empty string if no 
+     * timezone offset could be parsed.
+     */
+    static std::string GetTimezoneOffset(const std::string timestamp);
+
+    /**
+     * Converts the specified timezone offset into the number of seconds it 
+     * differs from UTC
+     * @param tzOffset the timezone offset, e.g. "+0200"
+     * @return the number of seconds to adjust
+     */
+    static int GetTimezoneAdjustment(const std::string tzOffset);
+
+    /**
+      * Converts an XMLTV datetime string into a UTC UNIX timestamp
       * @param time e.g. "20120228001500+0200"
-      * @return a UNIX timestamp
+      * @return a UTC UNIX timestamp
       */
     static time_t XmltvToUnixTime(const std::string &time);
 
     /**
-      * Converts a time_t to a GMT XMLTV datetime string
+      * Converts a UTC time_t to an XMLTV datetime string, optionally adjusted 
+      * for the specified timezone offset
       * @param time a UNIX timestamp
-      * @return e.g. "20120228001500+0000"
+      * @param tzOffset the timezone offset, e.g. "+0200"
+      * @return e.g. "20120228001500+0200"
       */
-    static std::string UnixTimeToXmltv(const time_t timestamp);
+    static std::string UnixTimeToXmltv(const time_t timestamp, const std::string tzOffset = "");
 
     /**
      * Parses the contents of the specified element into an integer. We need 
