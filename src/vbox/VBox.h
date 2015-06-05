@@ -123,12 +123,14 @@ namespace vbox {
     request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
     bool DeleteRecordingOrTimer(unsigned int id);
     void AddTimer(const Channel *channel, const ::xmltv::Programme* programme);
+    void AddTimer(const Channel *channel, time_t startTime, time_t endTime,
+      const std::string title, const std::string description);
     void AddTimer(const Channel *channel, time_t startTime, time_t endTime);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
     const ::xmltv::Schedule* GetSchedule(const Channel *channel) const;
-    const ::xmltv::Programme* GetProgramme(int programmeUniqueId) const;
+    const ::xmltv::Programme* GetProgramme(int programmeUniqueId, bool useExternalGuide) const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);

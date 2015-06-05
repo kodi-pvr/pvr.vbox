@@ -541,30 +541,44 @@ extern "C" {
 
     const Channel *channel = it->get();
 
-    // Find the event the timer is for
-    const xmltv::Programme *programme = g_vbox->GetProgramme(timer.iEpgUid);
-
     try {
+      // See if the programme info is available in the guide
+      const xmltv::Programme *programme = g_vbox->GetProgramme(timer.iEpgUid, false);
+
       if (programme)
-        g_vbox->AddTimer(channel, programme);
-      else
       {
-        // Set start time to now if it's missing
-        time_t startTime = timer.startTime;
-
-        if (startTime == 0)
-          startTime = time(nullptr);
-
-        g_vbox->AddTimer(channel, startTime, timer.endTime);
+        g_vbox->AddTimer(channel, programme);
+        return PVR_ERROR_NO_ERROR;
       }
+
+      time_t startTime = timer.startTime;
+      time_t endTime = timer.endTime;
+
+      // Set start time to now if it's missing
+      if (startTime == 0)
+        startTime = time(nullptr);
+
+      // See if the programme info is available in the external guide
+      programme = g_vbox->GetProgramme(timer.iEpgUid, true);
+
+      if (programme)
+      {
+        std::string title = programme->m_title;
+        std::string description = programme->m_description;
+
+        g_vbox->AddTimer(channel, startTime, endTime, title, description);
+        return PVR_ERROR_NO_ERROR;
+      }
+
+      // If no programme info is available we add a time-based timer
+      g_vbox->AddTimer(channel, startTime, timer.endTime);
+      return PVR_ERROR_NO_ERROR;
     }
     catch (VBoxException &e)
     {
       g_vbox->LogException(e);
       return PVR_ERROR_FAILED;
     }
-
-    return PVR_ERROR_NO_ERROR;
   }
 
   PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)

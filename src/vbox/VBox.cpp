@@ -436,6 +436,26 @@ void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
   RetrieveRecordings();
 }
 
+void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime,
+  const std::string title, const std::string description)
+{
+  // Add the timer
+  request::ApiRequest request("ScheduleChannelRecord");
+  request.AddParameter("ChannelID", channel->m_xmltvName);
+  request.AddParameter("StartTime", CreateTimestamp(startTime));
+  request.AddParameter("EndTime", CreateTimestamp(endTime));
+
+  // Manually set title and description
+  request.AddParameter("ProgramName", title);
+  request.AddParameter("Description", description);
+  request.AddParameter("SaveProgramInfo", "YES");
+
+  PerformRequest(request);
+
+  // Refresh the recordings and timers
+  RetrieveRecordings();
+}
+
 void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
 {
   // Add the timer
@@ -494,10 +514,14 @@ const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
   return schedule;
 }
 
-const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId) const
+const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId, bool useExternalGuide) const
 {
   std::unique_lock<std::mutex> lock(m_mutex);
-  return m_guide.GetProgramme(programmeUniqueId);
+
+  if (!useExternalGuide)
+    return m_guide.GetProgramme(programmeUniqueId);
+  else
+    return m_externalGuide.GetProgramme(programmeUniqueId);
 }
 
 std::string VBox::GetApiBaseUrl() const
