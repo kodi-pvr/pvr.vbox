@@ -117,6 +117,15 @@ void VBox::Initialize()
     LogException(e);
   }
 
+  // Query the timezone offset used
+  request::ApiRequest timezoneRequest("QuerySystemTime");
+  timezoneRequest.AddParameter("TimeFormat", "XMLTV");
+  response::ResponsePtr timezoneResponse = PerformRequest(timezoneRequest);
+  response::Content timezoneInfo(timezoneResponse->GetReplyElement());
+
+  std::string timestamp = timezoneInfo.GetString("Time");
+  m_backendInformation.timezoneOffset = ::xmltv::Utilities::GetTimezoneOffset(timestamp);
+
   // Consider the addon initialized
   m_stateHandler.EnterState(StartupState::INITIALIZED);
 

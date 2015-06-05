@@ -61,6 +61,7 @@ namespace vbox {
   struct BackendInformation
   {
     std::string name = "";
+    std::string timezoneOffset = "";
     SoftwareVersion version;
     ExternalMediaStatus externalMediaStatus;
   };
