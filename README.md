@@ -53,7 +53,7 @@ This addon has been built from the ground up using C++11. The main functionality
 
 The addon communicates with a VBox TV Gateway using the TV gateway's HTTP API. Since the structure of the responses vary a little bit, a factory is used to construct meaningful objects to represent the various responses. All response-related code is located under the `vbox::response` namespace.
 
-The addon requires XMLTV parsing since that's the format the gateway provides EPG data over. The classes and utilities for handling this are shipped as a separate library (libxmltv) and available through the `xmltv` namespace.
+The addon requires XMLTV parsing since that's the format the gateway provides EPG data over. The classes and utilities for handling this are kept separate under the `xmltv` namespace so that the code can potentially be reused.
 
 The `vbox::VBox` class which `client.cpp` interfaces with is designed so that an exception of base type `VBoxException` (which is an extension of `std::runtime_error`) is thrown whenever ever a request fails. A request can fail for various reasons:
 
@@ -61,7 +61,7 @@ The `vbox::VBox` class which `client.cpp` interfaces with is designed so that an
 * the XML parsing failed, i.e. the response was invalid
 * the request succeeded but the response represented an error
  
-The code for the timeshift buffer is fairly generic and at some point it will probably move out of the `vbox` namespace, since it doesn't depend on it in any way. Currently there is a base class for all buffers and two implementations, a `FilesystemBuffer` which buffers the data to a file on disc, and a `DummyBuffer` which just relays the read operations to the underlying input handle. This is required since Kodi uses a different code paths depending on whether clients handle input streams on their own or not, and we need this particular code path.
+Similar to the XMLTV code, the code for the timeshift buffer is fairly generic and lives in a separate `timeshift` namespace. Currently there is a base class for all buffers and two implementations, a `FilesystemBuffer` which buffers the data to a file on disc, and a `DummyBuffer` which just relays the read operations to the underlying input handle. This is required since Kodi uses a different code paths depending on whether clients handle input streams on their own or not, and we need this particular code path for other features like signal status handling to work.
 
 ### Useful links
 
