@@ -86,7 +86,7 @@ const Programme* Guide::GetProgramme(int programmeUniqueId) const
 void Guide::AddProgramme(const std::string &channelId, ProgrammePtr programme)
 {
   if (m_schedules.find(channelId) == m_schedules.end())
-    AddSchedule(channelId, SchedulePtr(new Schedule));
+    AddSchedule(channelId, SchedulePtr(new Schedule);
 
   m_schedules[channelId]->push_back(std::move(programme));
 }

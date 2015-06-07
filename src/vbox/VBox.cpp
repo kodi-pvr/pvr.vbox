@@ -107,8 +107,8 @@ void VBox::Initialize()
 
     ExternalMediaStatus externalMediaStatus;
     externalMediaStatus.present = true;
-    externalMediaStatus.spaceTotal = (int64_t)mediaStatus.GetInteger("TotalMem") * 1048576;
-    externalMediaStatus.spaceUsed = (int64_t)mediaStatus.GetInteger("UsedMem") * 1048576;
+    externalMediaStatus.spaceTotal = static_cast<int64_t>(mediaStatus.GetInteger("TotalMem")) * 1048576;
+    externalMediaStatus.spaceUsed = static_cast<int64_t>(mediaStatus.GetInteger("UsedMem")) * 1048576;
 
     m_backendInformation.externalMediaStatus = externalMediaStatus;
   }
@@ -539,7 +539,7 @@ std::string VBox::CreateTimestamp(const time_t unixTimestamp) const
 {
   std::string tzOffset = m_backendInformation.timezoneOffset;
   
-  return ::xmltv::Utilities::UnixTimeToXmltv(timestamp, tzOffset);
+  return ::xmltv::Utilities::UnixTimeToXmltv(unixTimestamp, tzOffset);
 }
 
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
@@ -616,7 +616,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
   try {
     // Retrieving the whole XMLTV file is too slow so we fetch sections in 
     // batches of 10 channels and merge the results
-    int lastChannelIndex = 0;
+    int lastChannelIndex;
 
     {
       std::unique_lock<std::mutex> lock(m_mutex);

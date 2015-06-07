@@ -21,7 +21,6 @@
  */
 
 #include <functional>
-#include <cstdlib>
 #include "Channel.h"
 #include "Recording.h"
 #include "../xmltv/Programme.h"

@@ -97,8 +97,6 @@ extern "C" {
     if (!hdl || !props)
       return ADDON_STATUS_UNKNOWN;
 
-    PVR_PROPERTIES* pvrprops = (PVR_PROPERTIES*)props;
-
     // Instantiate helpers
     XBMC = new CHelper_libXBMC_addon;
     PVR = new CHelper_libXBMC_pvr;
@@ -651,7 +649,7 @@ extern "C" {
       event.strCast = cast.c_str();
 
       PVR->TransferEpgEntry(handle, &event);
-      it++;
+      ++it;
     }
 
     return PVR_ERROR_NO_ERROR;

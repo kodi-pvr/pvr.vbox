@@ -23,9 +23,7 @@
 #include "../../client.h"
 #include "../../xmltv/Utilities.h"
 #include "../../compat.h"
-#include <sstream>
 #include <algorithm>
-#include <iomanip>
 
 using namespace vbox::request;
 using vbox::response::ResponseType;

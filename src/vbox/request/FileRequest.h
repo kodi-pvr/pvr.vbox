@@ -36,7 +36,7 @@ namespace vbox {
         : m_path(path) {}
       virtual ~FileRequest() {}
       
-      virtual response::ResponseType GetResponseType() const
+      virtual response::ResponseType GetResponseType() const override
       {
         // Currently we always expect local files to contain XMLTV
         return response::ResponseType::XMLTV;

@@ -34,7 +34,7 @@ bool Buffer::Open(const std::string inputUrl)
 
 Buffer::~Buffer()
 {
-  Close();
+  Buffer::Close();
 }
 
 void Buffer::Close()

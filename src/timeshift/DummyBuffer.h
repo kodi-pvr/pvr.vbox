@@ -44,12 +44,12 @@ namespace timeshift {
       return -1; // we can't seek without a real buffer
     }
 
-    virtual bool CanPauseStream() const
+    virtual bool CanPauseStream() const override
     {
       return false;
     }
 
-    virtual bool CanSeekStream() const
+    virtual bool CanSeekStream() const override
     {
       return false;
     }

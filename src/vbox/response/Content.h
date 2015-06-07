@@ -20,13 +20,11 @@
 *
 */
 
-#include <cstdint>
 #include <string>
 #include <vector>
 #include "../Channel.h"
 #include "../Recording.h"
 #include "../../xmltv/Guide.h"
-#include <memory>
 
 namespace tinyxml2 {
   // Forward declarations

@@ -121,7 +121,7 @@ std::string Utilities::UrlDecode(const std::string& strURLData)
   strResult.reserve(strURLData.length());
   for (unsigned int i = 0; i < strURLData.size(); ++i)
   {
-    int kar = (unsigned char)strURLData[i];
+    int kar = static_cast<unsigned char>(strURLData[i]);
     if (kar == '+') strResult += ' ';
     else if (kar == '%')
     {
@@ -130,12 +130,12 @@ std::string Utilities::UrlDecode(const std::string& strURLData)
         std::string strTmp;
         strTmp.assign(strURLData.substr(i + 1, 2));
         int dec_num = -1;
-        sscanf(strTmp.c_str(), "%x", (unsigned int *)&dec_num);
+        sscanf(strTmp.c_str(), "%x", reinterpret_cast<unsigned int *>(&dec_num));
         if (dec_num < 0 || dec_num>255)
           strResult += kar;
         else
         {
-          strResult += (char)dec_num;
+          strResult += static_cast<char>(dec_num);
           i += 2;
         }
       }
@@ -202,7 +202,7 @@ std::string Utilities::UrlEncode(const std::string &value)
     }
 
     // Any other characters are percent-encoded
-    escaped << '%' << std::setw(2) << int((unsigned char)c);
+    escaped << '%' << std::setw(2) << int(static_cast<unsigned char>(c));
   }
 
   return escaped.str();

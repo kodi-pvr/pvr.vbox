@@ -46,12 +46,12 @@ namespace timeshift {
     virtual int Read(byte *buffer, size_t length) override;
     virtual int64_t Seek(int64_t position, int whence) override;
 
-    virtual bool CanPauseStream() const
+    virtual bool CanPauseStream() const override
     {
       return true;
     }
 
-    virtual bool CanSeekStream() const
+    virtual bool CanSeekStream() const override
     {
       return true;
     }

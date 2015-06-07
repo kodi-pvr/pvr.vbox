@@ -79,14 +79,14 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
 
     // Normalize the value to between 0 and 1
     // TODO: This is not very scientific
-    double normalized = ((double)(rfLevel - RFLEVEL_MIN)) /
-      ((double)(RFLEVEL_MAX - RFLEVEL_MIN));
+    double normalized = static_cast<double>(rfLevel - RFLEVEL_MIN) /
+                        static_cast<double>(RFLEVEL_MAX - RFLEVEL_MIN);
 
-    return (unsigned int)(normalized * 100);
+    return static_cast<unsigned int>(normalized * 100);
   }
   catch (std::invalid_argument)
   {
-    return 0;
+    
   }
 
   return rfLevel;

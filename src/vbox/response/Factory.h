@@ -21,7 +21,6 @@
 */
 
 #include <memory>
-#include <string>
 #include "../request/Request.h"
 #include "Response.h"
 

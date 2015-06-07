@@ -21,7 +21,6 @@
 
 #include "Response.h"
 #include "../Exceptions.h"
-#include "../VBox.h"
 #include "../../xmltv/Utilities.h"
 
 using namespace tinyxml2;
@@ -29,7 +28,7 @@ using namespace vbox::response;
 
 Response::Response()
 {
-  m_document = std::unique_ptr<XMLDocument>(new XMLDocument());
+  m_document = std::unique_ptr<XMLDocument>(new XMLDocument);
   m_error.code = ErrorCode::SUCCESS;
   m_error.description = "";
 }

@@ -36,8 +36,8 @@ namespace vbox {
   public:
     Channel(const std::string &uniqueId, const std::string &xmltvName,
       const std::string &name, const std::string &url)
-      : m_index(0), m_number(0), m_uniqueId(uniqueId), m_xmltvName(xmltvName), m_name(name),
-      m_url(url), m_radio(false), m_encrypted(false) {}
+      : m_uniqueId(uniqueId), m_index(0), m_xmltvName(xmltvName), m_name(name), m_number(0),
+      m_radio(false), m_url(url), m_encrypted(false) {}
     ~Channel() {}
 
     bool operator== (const Channel &other)
