@@ -62,6 +62,8 @@ set(VBOX_SOURCES_TIMESHIFT
                 src/timeshift/FilesystemBuffer.cpp)
                 
 set(VBOX_SOURCES_XMLTV 
+                src/xmltv/Channel.h
+                src/xmltv/Channel.cpp
                 src/xmltv/Guide.h
                 src/xmltv/Guide.cpp
                 src/xmltv/Programme.h

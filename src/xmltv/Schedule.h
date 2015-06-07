@@ -21,6 +21,7 @@
 */
 
 #include "Programme.h"
+#include "Channel.h"
 #include <vector>
 #include <memory>
 
@@ -42,6 +43,13 @@ namespace xmltv {
   class Schedule
   {
   public:
+
+    /**
+     * Creates a new schedule
+     * @param the channel this schedule is for
+     */
+    Schedule(ChannelPtr &channel);
+
     /**
      * Adds the specified programme to the specified channel's schedule
      * @param programme a programme
@@ -64,6 +72,14 @@ namespace xmltv {
     const Segment GetSegment(time_t startTime, time_t endTime) const;
 
     /**
+     * @return the channel this schedule is for
+     */
+    const ChannelPtr GetChannel() const
+    {
+      return m_channel;
+    }
+
+    /**
      * @return the number of programmes in the schedule
      */
     size_t GetLength() const
@@ -73,5 +89,6 @@ namespace xmltv {
 
   private:
     Segment m_programmes;
+    ChannelPtr m_channel;
   };
 }

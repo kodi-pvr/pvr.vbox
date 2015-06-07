@@ -20,6 +20,7 @@
 */
 
 #include "Guide.h"
+#include "Channel.h"
 #include "Utilities.h"
 #include "tinyxml2.h"
 #include "../vbox/ContentIdentifier.h"
@@ -32,14 +33,21 @@ Guide::Guide(const XMLElement *m_content)
   for (const XMLElement *element = m_content->FirstChildElement("channel");
     element != NULL; element = element->NextSiblingElement("channel"))
   {
-    // Populate the lookup table which maps XMLTV IDs to display names
+    // Create the channel
     std::string channelId = Utilities::UrlDecode(element->Attribute("id"));
     std::string displayName = element->FirstChildElement("display-name")->GetText();
+    ChannelPtr channel = ChannelPtr(new Channel(channelId, displayName));
 
+    // Add channel icon if it exists
+    auto *iconElement = element->FirstChildElement("icon");
+    if (iconElement)
+      channel->m_icon = iconElement->Attribute("src");
+
+    // Populate the lookup table which maps XMLTV IDs to display names
     AddDisplayNameMapping(displayName, channelId);
 
     // Create a schedule for the channel
-    m_schedules[channelId] = SchedulePtr(new Schedule);
+    m_schedules[channelId] = SchedulePtr(new Schedule(channel));
   }
 
   for (const XMLElement *element = m_content->FirstChildElement("programme");
