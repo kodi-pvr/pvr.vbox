@@ -539,38 +539,48 @@ extern "C" {
 
     const Channel *channel = it->get();
 
+    // Find the channel's schedule
+    const Schedule schedule = g_vbox->GetSchedule(channel);
+
     try {
-      // See if the programme info is available in the guide
-      const xmltv::Programme *programme = g_vbox->GetProgramme(timer.iEpgUid, false);
-
-      if (programme)
-      {
-        g_vbox->AddTimer(channel, programme);
-        return PVR_ERROR_NO_ERROR;
-      }
-
+      // Set start time to now if it's missing
       time_t startTime = timer.startTime;
       time_t endTime = timer.endTime;
 
-      // Set start time to now if it's missing
       if (startTime == 0)
         startTime = time(nullptr);
 
-      // See if the programme info is available in the external guide
-      programme = g_vbox->GetProgramme(timer.iEpgUid, true);
-
-      if (programme)
+      // Add a time-based timer if no programme is available
+      if (!schedule.schedule)
       {
-        std::string title = programme->m_title;
-        std::string description = programme->m_description;
-
-        g_vbox->AddTimer(channel, startTime, endTime, title, description);
+        g_vbox->AddTimer(channel, startTime, endTime);
         return PVR_ERROR_NO_ERROR;
       }
 
-      // If no programme info is available we add a time-based timer
-      g_vbox->AddTimer(channel, startTime, timer.endTime);
-      return PVR_ERROR_NO_ERROR;
+      // Add a programme-based timer if the programme exists in the schedule
+      const xmltv::ProgrammePtr programme = schedule.schedule->GetProgramme(timer.iEpgUid);
+
+      if (programme)
+      {
+        switch (schedule.origin)
+        {
+        case Schedule::Origin::INTERNAL_GUIDE:
+          g_vbox->AddTimer(channel, programme);
+          break;
+        case Schedule::Origin::EXTERNAL_GUIDE:
+          std::string title = programme->m_title;
+          std::string description = programme->m_description;
+
+          g_vbox->AddTimer(channel, startTime, endTime, title, description);
+          break;
+        }
+
+        return PVR_ERROR_NO_ERROR;
+      }
+
+      // If the channel has a schedule but not the desired programme, something 
+      // is wrong
+      return PVR_ERROR_INVALID_PARAMETERS;
     }
     catch (VBoxException &e)
     {
@@ -594,29 +604,15 @@ extern "C" {
     if (!channelPtr)
       return PVR_ERROR_INVALID_PARAMETERS;
 
-    // Retrieve the schedule and filter out the programmes that don't fit 
-    // within the start and end times
-    const auto *schedule = g_vbox->GetSchedule(channelPtr);
+    // Retrieve the schedule
+    const auto schedule = g_vbox->GetSchedule(channelPtr);
 
-    if (!schedule)
+    if (!schedule.schedule)
       return PVR_ERROR_NO_ERROR;
       
-    std::string xmltvStartTime = g_vbox->CreateTimestamp(iStart);
-    std::string xmltvEndTime = g_vbox->CreateTimestamp(iEnd);
-
-    auto it = std::find_if(
-      schedule->cbegin(),
-      schedule->cend(),
-      [xmltvStartTime, xmltvEndTime](const xmltv::ProgrammePtr &programme)
+    // Transfer the programmes between the start and end times
+    for (const auto &programme : schedule.schedule->GetSegment(iStart, iEnd))
     {
-      return programme->m_startTime >= xmltvStartTime &&
-        programme->m_endTime <= xmltvEndTime;
-    });
-
-    // Transfer the events
-    while (it != schedule->cend())
-    {
-      const auto &programme = *it;
       EPG_TAG event;
       memset(&event, 0, sizeof(EPG_TAG));
 
@@ -649,7 +645,6 @@ extern "C" {
       event.strCast = cast.c_str();
 
       PVR->TransferEpgEntry(handle, &event);
-      ++it;
     }
 
     return PVR_ERROR_NO_ERROR;

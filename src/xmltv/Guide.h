@@ -44,42 +44,13 @@ namespace xmltv {
   {
   public:
 
-    /**
-      * Creates an empty guide
-      */
-    Guide() {}
+    Guide() = default;
+    ~Guide() = default;
 
     /**
       * Creates a guide from the specified XMLTV contents
       */
-    Guide(const tinyxml2::XMLElement *m_content);
-
-    ~Guide() {}
-
-    /**
-      * Move constructor, needed since we have members containing unique_ptr's
-      */
-    Guide(Guide &&other)
-    {
-      if (this != &other)
-      {
-        m_schedules = std::move(other.m_schedules);
-        m_displayNameMappings = other.m_displayNameMappings;
-      }
-    }
-
-    /**
-      * Assignment operator, needed since we have members containing 
-      * unique_ptr's
-      */
-    void operator= (Guide &other)
-    {
-      if (this != &other)
-      {
-        m_schedules = std::move(other.m_schedules);
-        m_displayNameMappings = other.m_displayNameMappings;
-      }
-    }
+    explicit Guide(const tinyxml2::XMLElement *m_content);
 
     /**
       * For combining the other guide into this one
@@ -88,7 +59,7 @@ namespace xmltv {
     {
       // Add all schedules from the other object
       for (auto &entry : other.m_schedules)
-        AddSchedule(entry.first, std::move(entry.second));
+        AddSchedule(entry.first, entry.second);
 
       // Merge the display name mappings
       m_displayNameMappings.insert(
@@ -99,34 +70,21 @@ namespace xmltv {
     }
 
     /**
+     * Adds the specified schedule on the specified channel
+     * @param channelId the channel name
+     * @param schedule the schedule (ownership is taken)
+     */
+    void AddSchedule(const std::string &channelId, SchedulePtr schedule)
+    {
+      m_schedules[channelId] = schedule;
+    }
+
+    /**
       * @param channelId the channel ID
       * @return the schedule for the specified channel, or nullptr if the
       * channel has no schedule
       */
-    const Schedule* GetSchedule(const std::string &channelId) const;
-
-    /**
-     * @param programmeUniqueId the unique ID of the programme
-     * @return the programme, or nullptr if not found
-     */
-    const Programme* GetProgramme(int programmeUniqueId) const;
-
-    /**
-      * Adds the specified schedule on the specified channel
-      * @param channelId the channel name
-      * @param schedule the schedule (ownership is taken)
-      */
-    void AddSchedule(const std::string &channelId, SchedulePtr schedule)
-    {
-      m_schedules[channelId] = std::move(schedule);
-    }
-
-    /**
-      * Adds the specified programme to the specified channel's schedule
-      * @param channelId the channel name
-      * @param programme the program (ownership is taken)
-      */
-    void AddProgramme(const std::string &channelId, ProgrammePtr programme);
+    const SchedulePtr GetSchedule(const std::string &channelId) const;
 
     /**
       * Adds a new mapping between the display name and the channel ID

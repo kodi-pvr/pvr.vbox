@@ -423,7 +423,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
-void VBox::AddTimer(const Channel *channel, const ::xmltv::Programme* programme)
+void VBox::AddTimer(const Channel *channel, const ::xmltv::ProgrammePtr programme)
 {
   // Add the timer
   request::ApiRequest request("ScheduleProgramRecord");
@@ -488,18 +488,19 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
   return m_recordings;
 }
 
-const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
+const Schedule VBox::GetSchedule(const Channel *channel) const
 {
-  // Load the schedule
+  // Load the schedule from the internal guide
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  auto *schedule = m_guide.GetSchedule(channel->m_xmltvName);
+  Schedule schedule;
+  schedule.schedule = m_guide.GetSchedule(channel->m_xmltvName);
 
   // Try to use the external guide data if a) it's loaded, b) the user prefers 
   // it or c) if no schedule was found
   if (m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED &&
-    (m_settings.m_preferExternalXmltv || !schedule))
+    (m_settings.m_preferExternalXmltv || !schedule.schedule))
   {
     // Consult the channel mapper to find the corresponding external channel name
     std::string mappedName = m_guideChannelMapper->GetExternalChannelName(channel->m_name);
@@ -508,21 +509,13 @@ const ::xmltv::Schedule* VBox::GetSchedule(const Channel *channel) const
     if (!mappedName.empty() && !xmltvName.empty())
     {
       Log(LOG_DEBUG, "Using external guide data for channel %s", channel->m_name.c_str());
-      schedule = m_externalGuide.GetSchedule(xmltvName);
+
+      schedule.schedule = m_externalGuide.GetSchedule(xmltvName);
+      schedule.origin = Schedule::Origin::EXTERNAL_GUIDE;
     }
   }
 
   return schedule;
-}
-
-const ::xmltv::Programme* VBox::GetProgramme(int programmeUniqueId, bool useExternalGuide) const
-{
-  std::unique_lock<std::mutex> lock(m_mutex);
-
-  if (!useExternalGuide)
-    return m_guide.GetProgramme(programmeUniqueId);
-  else
-    return m_externalGuide.GetProgramme(programmeUniqueId);
 }
 
 std::string VBox::GetApiBaseUrl() const
@@ -705,7 +698,7 @@ void VBox::LogGuideStatistics(const xmltv::Guide &guide) const
 
   for (const auto &schedule : guide.GetSchedules())
   {
-    Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->size(),
+    Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->GetLength(),
       schedule.first.c_str());
   }
 }

@@ -20,7 +20,6 @@
 */
 
 #include "Guide.h"
-#include <algorithm>
 #include "Utilities.h"
 #include "tinyxml2.h"
 #include "../vbox/ContentIdentifier.h"
@@ -30,63 +29,37 @@ using namespace tinyxml2;
 
 Guide::Guide(const XMLElement *m_content)
 {
-  // Populate the lookup table which maps XMLTV IDs to display names
   for (const XMLElement *element = m_content->FirstChildElement("channel");
     element != NULL; element = element->NextSiblingElement("channel"))
   {
-    std::string id = Utilities::UrlDecode(element->Attribute("id"));
+    // Populate the lookup table which maps XMLTV IDs to display names
+    std::string channelId = Utilities::UrlDecode(element->Attribute("id"));
     std::string displayName = element->FirstChildElement("display-name")->GetText();
 
-    AddDisplayNameMapping(displayName, id);
+    AddDisplayNameMapping(displayName, channelId);
+
+    // Create a schedule for the channel
+    m_schedules[channelId] = SchedulePtr(new Schedule);
   }
 
   for (const XMLElement *element = m_content->FirstChildElement("programme");
     element != NULL; element = element->NextSiblingElement("programme"))
   {
     // Extract the channel name and the programme
-    std::string channelName = Utilities::UrlDecode(element->Attribute("channel"));
+    std::string channelId = Utilities::UrlDecode(element->Attribute("channel"));
     xmltv::ProgrammePtr programme(new Programme(element));
 
-    // Add the programme to the guide
-    AddProgramme(channelName, std::move(programme));
+    // Add the programme to the channel's schedule
+    m_schedules[channelId]->AddProgramme(programme);
   }
 }
 
-const Schedule* Guide::GetSchedule(const std::string &channelId) const
+const SchedulePtr Guide::GetSchedule(const std::string &channelId) const
 {
   auto it = m_schedules.find(channelId);
 
   if (it != m_schedules.cend())
-    return it->second.get();
+    return it->second;
 
   return nullptr;
-}
-
-const Programme* Guide::GetProgramme(int programmeUniqueId) const
-{
-  for (const auto &entry : m_schedules)
-  {
-    const ::xmltv::SchedulePtr &schedule = entry.second;
-
-    auto it = std::find_if(
-      schedule->cbegin(),
-      schedule->cend(),
-      [programmeUniqueId](const ProgrammePtr &programme)
-    {
-      return programmeUniqueId == vbox::ContentIdentifier::GetUniqueId(programme.get());
-    });
-
-    if (it != schedule->cend())
-      return it->get();
-  }
-
-  return nullptr;
-}
-
-void Guide::AddProgramme(const std::string &channelId, ProgrammePtr programme)
-{
-  if (m_schedules.find(channelId) == m_schedules.end())
-    AddSchedule(channelId, SchedulePtr(new Schedule);
-
-  m_schedules[channelId]->push_back(std::move(programme));
 }

@@ -33,7 +33,7 @@ namespace tinyxml2
 namespace xmltv {
     
   class Programme;
-  typedef std::unique_ptr<Programme> ProgrammePtr;
+  typedef std::shared_ptr<Programme> ProgrammePtr;
 
   /**
    * Represents an actor
@@ -66,7 +66,7 @@ namespace xmltv {
      * Creates a programme from the specified <programme> element
      */
     Programme(const tinyxml2::XMLElement *xml);
-    virtual ~Programme() {}
+    virtual ~Programme() = default;
 
     const std::vector<std::string>& GetDirectors() const
     {

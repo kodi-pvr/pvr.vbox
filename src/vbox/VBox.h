@@ -66,6 +66,22 @@ namespace vbox {
   };
 
   /**
+   * Represents a schedule. It contains an actual schedule and an indicator 
+   * which tells if the schedule is from the internal or external guide
+   */
+  struct Schedule
+  {
+    enum Origin
+    {
+      INTERNAL_GUIDE,
+      EXTERNAL_GUIDE
+    };
+
+    ::xmltv::SchedulePtr schedule = nullptr;
+    Origin origin = Origin::INTERNAL_GUIDE;
+  };
+
+  /**
    * The main class for interfacing with the VBox Gateway
    */
   class VBox
@@ -121,15 +137,14 @@ namespace vbox {
     int GetTimersAmount() const;
     request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
     bool DeleteRecordingOrTimer(unsigned int id);
-    void AddTimer(const Channel *channel, const ::xmltv::Programme* programme);
+    void AddTimer(const Channel *channel, const ::xmltv::ProgrammePtr programme);
     void AddTimer(const Channel *channel, time_t startTime, time_t endTime,
       const std::string title, const std::string description);
     void AddTimer(const Channel *channel, time_t startTime, time_t endTime);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
-    const ::xmltv::Schedule* GetSchedule(const Channel *channel) const;
-    const ::xmltv::Programme* GetProgramme(int programmeUniqueId, bool useExternalGuide) const;
+    const Schedule GetSchedule(const Channel *channel) const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);

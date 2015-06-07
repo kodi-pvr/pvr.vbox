@@ -67,6 +67,7 @@ set(VBOX_SOURCES_XMLTV
                 src/xmltv/Programme.h
                 src/xmltv/Programme.cpp
                 src/xmltv/Schedule.h
+                src/xmltv/Schedule.cpp
                 src/xmltv/Utilities.h
                 src/xmltv/Utilities.cpp)
 

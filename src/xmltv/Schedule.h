@@ -31,6 +31,47 @@
 #endif
 
 namespace xmltv {
-  typedef std::vector<ProgrammePtr> Schedule;
-  typedef std::unique_ptr<Schedule> SchedulePtr;
+
+  class Schedule;
+  typedef std::shared_ptr<Schedule> SchedulePtr;
+  typedef std::vector<ProgrammePtr> Segment;
+
+  /**
+   * Represents a schedule for a channel
+   */
+  class Schedule
+  {
+  public:
+    /**
+     * Adds the specified programme to the specified channel's schedule
+     * @param programme a programme
+     */
+    void AddProgramme(ProgrammePtr programme);
+
+    /**
+     * @param programmeUniqueId the unique ID of the programme
+     * @return the programme, or nullptr if not found
+     */
+    const ProgrammePtr GetProgramme(int programmeUniqueId) const;
+
+    /**
+     * Returns a schedule segment containing all programmes between the 
+     * specified timestamps
+     * @param startTime the start time
+     * @param endTime the end time
+     * @return list of matching programmes
+     */
+    const Segment GetSegment(time_t startTime, time_t endTime) const;
+
+    /**
+     * @return the number of programmes in the schedule
+     */
+    size_t GetLength() const
+    {
+      return m_programmes.size();
+    }
+
+  private:
+    Segment m_programmes;
+  };
 }
