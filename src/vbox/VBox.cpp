@@ -445,9 +445,10 @@ void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime,
   request.AddParameter("StartTime", CreateTimestamp(startTime));
   request.AddParameter("EndTime", CreateTimestamp(endTime));
 
-  // Manually set title and description
+  // Manually set title and description. There is a bug in the VBox firmware 
+  // so we have to truncate the description.
   request.AddParameter("ProgramName", title);
-  request.AddParameter("Description", description);
+  request.AddParameter("Description", description.substr(0, 250));
   request.AddParameter("SaveProgramInfo", "YES");
 
   PerformRequest(request);
