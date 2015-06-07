@@ -633,14 +633,23 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
       int toIndex = std::min(fromIndex + 9, lastChannelIndex);
 
-      request::ApiRequest request("GetXmltvSection");
-      request.AddParameter("FromChIndex", fromIndex);
-      request.AddParameter("ToChIndex", toIndex);
-      response::ResponsePtr response = PerformRequest(request);
-      response::XMLTVResponseContent content(response->GetReplyElement());
+      // Swallow exceptions, we don't want guide loading to fail just because 
+      // one request failed
+      try
+      {
+        request::ApiRequest request("GetXmltvSection");
+        request.AddParameter("FromChIndex", fromIndex);
+        request.AddParameter("ToChIndex", toIndex);
+        response::ResponsePtr response = PerformRequest(request);
+        response::XMLTVResponseContent content(response->GetReplyElement());
 
-      auto partialGuide = content.GetGuide();
-      guide += partialGuide;
+        auto partialGuide = content.GetGuide();
+        guide += partialGuide;
+      }
+      catch (VBoxException &e)
+      {
+        LogException(e);
+      }
     }
 
     LogGuideStatistics(guide);
