@@ -544,10 +544,17 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
     response::ResponsePtr response = PerformRequest(request);
     response::XMLTVResponseContent content(response->GetReplyElement());
 
-    // Swap and notify if the contents have changed
     auto channels = content.GetChannels();
     std::unique_lock<std::mutex> lock(m_mutex);
 
+    // Optionally swap the channel icons for the ones in the external guide
+    if (m_settings.m_useExternalXmltvIcons &&
+      m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED)
+    {
+      SwapChannelIcons(channels);
+    }
+
+    // Swap and notify if the contents have changed
     if (!utilities::deref_equals(m_channels, channels))
     {
       m_channels = std::move(channels);
@@ -690,6 +697,30 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
 
   if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
     m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
+
+  // Retrieve the channels again if the user prefers external channel icons
+  if (m_settings.m_useExternalXmltvIcons)
+    RetrieveChannels();
+}
+
+void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
+{
+  for (auto &channel : channels)
+  {
+    // Consult the channel mapper to find the corresponding external channel
+    std::string displayName = m_guideChannelMapper->GetExternalChannelName(channel->m_name);
+    std::string channelId = m_externalGuide.GetChannelId(displayName);
+    const auto schedulePtr = m_externalGuide.GetSchedule(channelId);
+
+    if (schedulePtr)
+    {
+      const auto xmltvChannel = schedulePtr->GetChannel();
+
+      // Don't store bogus icons
+      if (!xmltvChannel->m_icon.empty())
+        channel->m_iconUrl = xmltvChannel->m_icon;
+    }
+  }
 }
 
 void VBox::LogGuideStatistics(const xmltv::Guide &guide) const

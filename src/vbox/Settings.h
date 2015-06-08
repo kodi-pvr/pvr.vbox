@@ -54,6 +54,7 @@ namespace vbox {
     bool m_useExternalXmltv;
     std::string m_externalXmltvPath;
     bool m_preferExternalXmltv;
+    bool m_useExternalXmltvIcons;
     bool m_timeshiftEnabled;
     std::string m_timeshiftBufferPath;
   };

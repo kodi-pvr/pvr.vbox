@@ -55,6 +55,7 @@ int g_externalConnectionTimeout;
 bool g_useExternalXmltv;
 std::string g_externalXmltvPath;
 bool g_preferExternalXmltv;
+bool g_useExternalXmltvIcons;
 bool g_timeshiftEnabled;
 std::string g_timeshiftBufferPath;
 
@@ -85,6 +86,7 @@ extern "C" {
     UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
+    UPDATE_INT(g_useExternalXmltvIcons, "use_external_xmltv_icons", false);
     UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
     UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
@@ -133,6 +135,7 @@ extern "C" {
     settings.m_useExternalXmltv = g_useExternalXmltv;
     settings.m_externalXmltvPath = g_externalXmltvPath;
     settings.m_preferExternalXmltv = g_preferExternalXmltv;
+    settings.m_useExternalXmltvIcons = g_useExternalXmltvIcons;
     settings.m_timeshiftEnabled = g_timeshiftEnabled;
     settings.m_timeshiftBufferPath = g_timeshiftBufferPath;
 
@@ -241,6 +244,7 @@ extern "C" {
     UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);
     UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
     UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
+    UPDATE_INT("use_external_xmltv_icons", bool, settings.m_useExternalXmltvIcons);
     UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
     UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
 

@@ -18,6 +18,7 @@
     <setting id="use_external_xmltv" type="bool" label="30101" default="false" />
     <setting id="external_xmltv_path" type="file" label="30102" default="" enable="eq(-1,true)" />
     <setting id="prefer_external_xmltv" type="bool" label="30103" default="false" enable="eq(-2,true)" />
+    <setting id="use_external_xmltv_icons" type="bool" label="30104" default="false" enable="eq(-3,true)" />
   </category>
   
   <category label="30200">

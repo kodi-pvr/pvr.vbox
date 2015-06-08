@@ -58,6 +58,10 @@ msgctxt "#30103"
 msgid "Prefer external EPG over OTA"
 msgstr ""
 
+msgctxt "#30104"
+msgid "Use channel icons from external XMLTV"
+msgstr ""
+
 msgctxt "#30200"
 msgid "Timeshift"
 msgstr ""
