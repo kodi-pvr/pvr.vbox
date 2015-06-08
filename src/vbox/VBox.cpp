@@ -164,7 +164,12 @@ void VBox::DetermineConnectionParams()
   auto &params = m_currentConnectionParameters;
   Log(LOG_INFO, "Connection parameters used: ");
   Log(LOG_INFO, "    Hostname: %s", params.hostname.c_str());
-  Log(LOG_INFO, "    HTTP port: %d", params.httpPort);
+
+  if (params.UseHttps())
+    Log(LOG_INFO, "    HTTPS port: %d", params.httpsPort);
+  else
+    Log(LOG_INFO, "    HTTP port: %d", params.httpPort);
+
   Log(LOG_INFO, "    UPnP port: %d", params.upnpPort);
 }
 
@@ -521,8 +526,8 @@ const Schedule VBox::GetSchedule(const Channel *channel) const
 std::string VBox::GetApiBaseUrl() const
 {
   std::stringstream ss;
-  ss << "http://" << m_currentConnectionParameters.hostname;
-  ss << ":" << m_currentConnectionParameters.httpPort;
+  ss << m_currentConnectionParameters.GetUriScheme() << "://";
+  ss << m_currentConnectionParameters.GetUriAuthority();
   ss << "/cgi-bin/HttpControl/HttpControlApp?OPTION=1";
 
   return ss.str();

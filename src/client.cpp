@@ -47,6 +47,8 @@ std::string g_internalHostname;
 std::string g_externalHostname;
 int g_internalHttpPort;
 int g_externalHttpPort;
+int g_internalHttpsPort;
+int g_externalHttpsPort;
 int g_internalUpnpPort;
 int g_externalUpnpPort;
 int g_internalConnectionTimeout;
@@ -77,9 +79,11 @@ extern "C" {
 
     UPDATE_STR(g_internalHostname, "hostname", buffer, "");
     UPDATE_INT(g_internalHttpPort, "http_port", 80);
+    UPDATE_INT(g_internalHttpsPort, "https_port", 0);
     UPDATE_INT(g_internalUpnpPort, "upnp_port", 55555);
     UPDATE_STR(g_externalHostname, "external_hostname", buffer, "");
     UPDATE_INT(g_externalHttpPort, "external_http_port", 19999);
+    UPDATE_INT(g_externalHttpsPort, "external_https_port", 0);
     UPDATE_INT(g_externalUpnpPort, "external_upnp_port", 55555);
     UPDATE_INT(g_internalConnectionTimeout, "connection_timeout", 3);
     UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);
@@ -120,6 +124,7 @@ extern "C" {
     {
       g_internalHostname,
       g_internalHttpPort,
+      g_internalHttpsPort,
       g_internalUpnpPort,
       g_internalConnectionTimeout
     };
@@ -128,6 +133,7 @@ extern "C" {
     {
       g_externalHostname,
       g_externalHttpPort,
+      g_externalHttpsPort,
       g_externalUpnpPort,
       g_externalConnectionTimeout
     };
@@ -235,10 +241,12 @@ extern "C" {
 
     UPDATE_STR("hostname", settings.m_internalConnectionParams.hostname);
     UPDATE_INT("http_port", int, settings.m_internalConnectionParams.httpPort);
+    UPDATE_INT("https_port", int, settings.m_internalConnectionParams.httpsPort);
     UPDATE_INT("upnp_port", int, settings.m_internalConnectionParams.upnpPort);
     UPDATE_INT("connection_timeout", int, settings.m_internalConnectionParams.timeout);
     UPDATE_STR("external_hostname", settings.m_externalConnectionParams.hostname);
     UPDATE_INT("external_http_port", int, settings.m_externalConnectionParams.httpPort);
+    UPDATE_INT("external_https_port", int, settings.m_externalConnectionParams.httpsPort);
     UPDATE_INT("external_upnp_port", int, settings.m_externalConnectionParams.upnpPort);
     UPDATE_INT("external_connection_timeout", int, settings.m_externalConnectionParams.timeout);
     UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);

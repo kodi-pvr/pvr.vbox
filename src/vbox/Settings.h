@@ -21,6 +21,7 @@
 */
 
 #include <string>
+#include <sstream>
 
 namespace vbox {
 
@@ -32,6 +33,7 @@ namespace vbox {
   public:
     std::string hostname;
     int httpPort;
+    int httpsPort;
     int upnpPort;
     int timeout;
 
@@ -41,6 +43,34 @@ namespace vbox {
     bool AreValid() const
     {
       return !hostname.empty() && httpPort > 0 && upnpPort > 0 && timeout > 0;
+    }
+
+    /**
+     * @return the URI scheme to use
+     */
+    std::string GetUriScheme() const
+    {
+      return UseHttps() ? "https" : "http";
+    }
+
+    /**
+     * @return the URI authority to use
+     */
+    std::string GetUriAuthority() const
+    {
+      std::stringstream ss;
+      int port = UseHttps() ? httpsPort : httpPort;
+      ss << hostname << ":" << port;
+
+      return ss.str();
+    }
+
+    /**
+     * @return whether HTTPS should be used or not
+     */
+    bool UseHttps() const
+    {
+      return httpsPort > 0;
     }
   };
 
