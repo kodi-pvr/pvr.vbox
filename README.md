@@ -1,4 +1,4 @@
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/4605/badge.svg)](https://scan.coverity.com/projects/4605)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/5120/badge.svg)](https://scan.coverity.com/projects/5120)
 
 # VBox Home TV Gateway PVR Client
 
