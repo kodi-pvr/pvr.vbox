@@ -22,7 +22,7 @@
 #include "Guide.h"
 #include "Channel.h"
 #include "Utilities.h"
-#include "tinyxml2.h"
+#include "lib/tinyxml2/tinyxml2.h"
 #include "../vbox/ContentIdentifier.h"
 
 using namespace xmltv;

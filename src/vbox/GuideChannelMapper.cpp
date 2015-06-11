@@ -21,7 +21,7 @@
 
 #include "GuideChannelMapper.h"
 #include <memory>
-#include "tinyxml2.h"
+#include "lib/tinyxml2/tinyxml2.h"
 #include "Utilities.h"
 #include "../client.h"
 

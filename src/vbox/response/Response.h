@@ -22,7 +22,7 @@
 
 #include <memory>
 #include <string>
-#include <tinyxml2.h>
+#include "lib/tinyxml2/tinyxml2.h"
 
 namespace vbox {
   namespace response {

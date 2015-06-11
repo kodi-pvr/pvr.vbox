@@ -9,12 +9,11 @@ enable_language(CXX)
 find_package(kodi REQUIRED)
 find_package(kodiplatform REQUIRED)
 find_package(platform REQUIRED)
-find_package(TinyXML2 REQUIRED)
 
 include_directories(${kodiplatform_INCLUDE_DIRS}
                     ${platform_INCLUDE_DIRS}
                     ${KODI_INCLUDE_DIR}
-                    ${TINYXML2_INCLUDE_DIRS})
+                    ${PROJECT_SOURCE_DIR})
 
 # Sources and headers
 set(VBOX_SOURCES 
@@ -79,6 +78,13 @@ source_group("Source Files\\vbox\\request" FILES ${VBOX_SOURCES_VBOX_REQUEST})
 source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
 source_group("Source Files\\timeshift" FILES ${VBOX_SOURCES_TIMESHIFT})
 source_group("Source Files\\xmltv" FILES ${VBOX_SOURCES_XMLTV})
+
+# Library files
+set(VBOX_LIBRARIES_TINYXML2
+                lib/tinyxml2/tinyxml2.h
+                lib/tinyxml2/tinyxml2.cpp)
+
+source_group("Library Files\\tinyxml2" FILES ${VBOX_LIBRARIES_TINYXML2})
                  
 # Resource files
 set(VBOX_RESOURCES 
@@ -98,9 +104,10 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX_RESPONSE}
                 ${VBOX_SOURCES_TIMESHIFT}
                 ${VBOX_SOURCES_XMLTV}
-                ${VBOX_RESOURCES})
+                ${VBOX_RESOURCES}
+                ${VBOX_LIBRARIES_TINYXML2})
 
-set(DEPLIBS ${platform_LIBRARIES} ${TINYXML2_LIBRARIES})
+set(DEPLIBS ${platform_LIBRARIES})
 build_addon(pvr.vbox VBOX DEPLIBS)
 
 include(CPack)

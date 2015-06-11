@@ -21,7 +21,7 @@
 
 #include "Utilities.h"
 #include "../compat.h"
-#include "tinyxml2.h"
+#include "lib/tinyxml2/tinyxml2.h"
 #include <algorithm>
 #include <iterator>
 #include <stdexcept>
