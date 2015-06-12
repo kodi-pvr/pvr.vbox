@@ -80,6 +80,9 @@ namespace compat
    */
   inline time_t timegm(struct tm *tm)
   {
+#ifdef _WIN32
+    return _mkgmtime(tm);
+#else
     time_t ret;
     char *tz;
 
@@ -94,5 +97,6 @@ namespace compat
     tzset();
 
     return ret;
+#endif
   }
 }
