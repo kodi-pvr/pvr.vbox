@@ -63,13 +63,13 @@ namespace compat
   }
 
   /**
-   * Android doesn't fully support C++11 so std::stoul() is missing
+   * Converts the specified value to an unsigned int
    */
-  template<typename T> unsigned long stoul(const T& value)
+  template<typename T> unsigned int stoui(const T& value)
   {
     std::istringstream iss(value);
 
-    unsigned long result;
+    unsigned int result;
     iss >> result;
     return result;
   }

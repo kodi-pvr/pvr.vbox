@@ -119,7 +119,7 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
     if (lcnValue.find("lcn_") != std::string::npos)
       lcnValue = lcnValue.substr(4);
 
-    channel->m_number = compat::stoul(lcnValue);
+    channel->m_number = compat::stoui(lcnValue);
   }
 
   // Set icon URL if it exists

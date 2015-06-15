@@ -173,7 +173,7 @@ unsigned int Utilities::QueryUnsignedText(const tinyxml2::XMLElement *element)
   {
     try {
       std::string content = element->GetText();
-      value = compat::stoul(content);
+      value = compat::stoui(content);
     }
     catch (std::invalid_argument) {
 

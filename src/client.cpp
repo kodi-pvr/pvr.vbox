@@ -462,7 +462,7 @@ extern "C" {
   PVR_ERROR DeleteRecording(const PVR_RECORDING &recording)
   {
     try {
-      unsigned int id = compat::stoul(recording.strRecordingId);
+      unsigned int id = compat::stoui(recording.strRecordingId);
 
       if (g_vbox->DeleteRecordingOrTimer(id))
         return PVR_ERROR_NO_ERROR;
