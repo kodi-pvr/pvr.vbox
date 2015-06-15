@@ -22,6 +22,7 @@
 #include "GuideChannelMapper.h"
 #include <memory>
 #include "lib/tinyxml2/tinyxml2.h"
+#include "Exceptions.h"
 #include "Utilities.h"
 #include "../client.h"
 
@@ -79,10 +80,13 @@ void GuideChannelMapper::Load()
 
   if (fileHandle)
   {
-    // Parse the document
+    // Read the XML
     tinyxml2::XMLDocument document;
     std::unique_ptr<std::string> contents = utilities::ReadFileContents(fileHandle);
-    document.Parse(contents->c_str());
+
+    // Try to parse the document
+    if (document.Parse(contents->c_str(), contents->size()) != XML_NO_ERROR)
+      throw vbox::InvalidXMLException("XML parsing failed: " + std::string(document.ErrorName()));
 
     // Create mappings
     for (const XMLElement *element = document.RootElement()->FirstChildElement("mapping");
