@@ -693,6 +693,8 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
       // Make sure the channel mapper is initialized
       if (!m_guideChannelMapper)
       {
+        Log(LOG_INFO, "Loading external guide channel mapper");
+
         m_guideChannelMapper = GuideChannelMapperPtr(
           new GuideChannelMapper(m_guide, m_externalGuide));
       }
