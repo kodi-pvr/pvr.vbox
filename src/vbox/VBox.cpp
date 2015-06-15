@@ -678,21 +678,29 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
 {
   Log(LOG_INFO, "Loading external guide data");
-  request::FileRequest request(m_settings.m_externalXmltvPath);
-  response::ResponsePtr response = PerformRequest(request);
-  response::XMLTVResponseContent content(response->GetReplyElement());
 
+  try
   {
-    auto externalGuide = content.GetGuide();
-    std::unique_lock<std::mutex> lock(m_mutex);
-    m_externalGuide = externalGuide;
+    request::FileRequest request(m_settings.m_externalXmltvPath);
+    response::ResponsePtr response = PerformRequest(request);
+    response::XMLTVResponseContent content(response->GetReplyElement());
 
-    // Make sure the channel mapper is initialized
-    if (!m_guideChannelMapper)
     {
-      m_guideChannelMapper = GuideChannelMapperPtr(
-        new GuideChannelMapper(m_guide, m_externalGuide));
+      auto externalGuide = content.GetGuide();
+      std::unique_lock<std::mutex> lock(m_mutex);
+      m_externalGuide = externalGuide;
+
+      // Make sure the channel mapper is initialized
+      if (!m_guideChannelMapper)
+      {
+        m_guideChannelMapper = GuideChannelMapperPtr(
+          new GuideChannelMapper(m_guide, m_externalGuide));
+      }
     }
+  }
+  catch (VBoxException &e)
+  {
+    LogException(e);
   }
 
   LogGuideStatistics(m_externalGuide);
