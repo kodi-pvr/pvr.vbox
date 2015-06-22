@@ -61,11 +61,11 @@ ChannelMap GuideChannelMapper::CreateDefaultMap()
   ChannelMap map;
   std::vector<std::string> channelNames = m_vboxGuide.GetChannelNames();
 
-  // Add a mapping for every channel which display names matches perfectly, 
-  // otherwise leave it empty
+  // Add a mapping for every channel which display names matches, otherwise 
+  // leave it empty
   for (const std::string &channelName : channelNames)
   {
-    if (m_externalGuide.HasChannelName(channelName))
+    if (!m_externalGuide.GetChannelId(channelName).empty())
       map[channelName] = channelName;
     else
       map[channelName] = "";

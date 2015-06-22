@@ -97,16 +97,11 @@ namespace xmltv {
     }
 
     /**
-     * Maps a channel display name to its XMLTV name
+     * Maps a channel display name to its XMLTV name (case-insensitive)
      * @param displayName the display name
      * @return the corresponding channel ID for specified display name
      */
-    std::string GetChannelId(const std::string &displayName) const
-    {
-      auto it = m_displayNameMappings.find(displayName);
-
-      return it != m_displayNameMappings.cend() ? it->second : "";
-    }
+    std::string GetChannelId(const std::string &displayName) const;
 
     /**
      * @return all the channel names in the guide
@@ -119,15 +114,6 @@ namespace xmltv {
         channelNames.push_back(mapping.first);
 
       return channelNames;
-    }
-
-    /**
-     * @param displayName the display name of a channel
-     * @return whether the guide contains such a channel
-     */
-    bool HasChannelName(const std::string &displayName) const
-    {
-      return m_displayNameMappings.find(displayName) != m_displayNameMappings.cend();
     }
 
     /**

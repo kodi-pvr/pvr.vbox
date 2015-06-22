@@ -20,9 +20,11 @@
 */
 
 #include "Guide.h"
+#include <algorithm>
 #include "Channel.h"
 #include "Utilities.h"
 #include "lib/tinyxml2/tinyxml2.h"
+#include "platform/util/StringUtils.h"
 #include "../vbox/ContentIdentifier.h"
 
 using namespace xmltv;
@@ -60,6 +62,19 @@ Guide::Guide(const XMLElement *m_content)
     // Add the programme to the channel's schedule
     m_schedules[channelId]->AddProgramme(programme);
   }
+}
+
+std::string Guide::GetChannelId(const std::string &displayName) const
+{
+  auto it = std::find_if(
+    m_displayNameMappings.cbegin(),
+    m_displayNameMappings.cend(),
+    [displayName](const std::pair<std::string, std::string> &mapping)
+  {
+    return StringUtils::CompareNoCase(mapping.first, displayName);
+  });
+
+  return it != m_displayNameMappings.cend() ? it->second : "";
 }
 
 const SchedulePtr Guide::GetSchedule(const std::string &channelId) const
