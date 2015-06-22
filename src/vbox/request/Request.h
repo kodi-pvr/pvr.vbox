@@ -43,6 +43,11 @@ namespace vbox {
        * @return the request location
        */
       virtual std::string GetLocation() const = 0;
+
+      /**
+       * @return an identifier for this request (mainly for logging purposes)
+       */
+      virtual std::string GetIdentifier() const = 0;
     };
   }
 }

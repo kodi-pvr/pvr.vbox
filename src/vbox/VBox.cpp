@@ -782,7 +782,8 @@ response::ResponsePtr VBox::PerformRequest(const request::Request &request) cons
   }
 
   // The request failed completely
-  throw RequestFailedException("Unable to perform request");
+  throw RequestFailedException("Unable to perform request (" + 
+    request.GetIdentifier() + ")");
 }
 
 void VBox::Log(const ADDON::addon_log level, const char *format, ...)

@@ -85,6 +85,11 @@ std::string ApiRequest::GetLocation() const
   return url;
 }
 
+std::string ApiRequest::GetIdentifier() const
+{
+  return m_method;
+}
+
 void ApiRequest::AddParameter(const std::string &name, const std::string &value)
 {
   m_parameters[name] = value;

@@ -47,6 +47,11 @@ namespace vbox {
         return m_path;
       }
 
+      virtual std::string GetIdentifier() const override
+      {
+        return "FileRequest for \"" + m_path + "\"";
+      }
+
     private:
       std::string m_path;
     };

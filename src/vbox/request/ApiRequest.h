@@ -51,6 +51,7 @@ namespace vbox {
 
       virtual vbox::response::ResponseType GetResponseType() const override;
       virtual std::string GetLocation() const override;
+      virtual std::string GetIdentifier() const override;
 
     private:
 
