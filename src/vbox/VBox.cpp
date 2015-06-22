@@ -571,6 +571,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
   catch (VBoxException &e)
   {
     LogException(e);
+    return;
   }
 
   if (m_stateHandler.GetState() < StartupState::CHANNELS_LOADED)
@@ -606,6 +607,8 @@ void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
     }
     catch (VBoxException &e)
     {
+      // Intentionally don't return, the request fails if there are no 
+      // recordings (which is technically not an error)
       LogException(e);
     }
   }
@@ -669,6 +672,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
   catch (VBoxException &e)
   {
     LogException(e);
+    return;
   }
 
   if (m_stateHandler.GetState() < StartupState::GUIDE_LOADED)
