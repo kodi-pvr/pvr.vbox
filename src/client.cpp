@@ -711,6 +711,7 @@ extern "C" {
       return true;
     }
 
+    CloseLiveStream();
     return false;
   }
 
