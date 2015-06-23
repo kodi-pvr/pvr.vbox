@@ -688,9 +688,9 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
     request::FileRequest request(m_settings.m_externalXmltvPath);
     response::ResponsePtr response = PerformRequest(request);
     response::XMLTVResponseContent content(response->GetReplyElement());
+    auto externalGuide = content.GetGuide();
 
     {
-      auto externalGuide = content.GetGuide();
       std::unique_lock<std::mutex> lock(m_mutex);
       m_externalGuide = externalGuide;
 
@@ -703,23 +703,24 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
           new GuideChannelMapper(m_guide, m_externalGuide));
       }
     }
+
+    LogGuideStatistics(m_externalGuide);
+
+    if (triggerEvent)
+      OnGuideUpdated();
+
+    if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
+      m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
+
+    // Retrieve the channels again if the user prefers external channel icons
+    if (m_settings.m_useExternalXmltvIcons)
+      RetrieveChannels();
   }
   catch (VBoxException &e)
   {
     LogException(e);
+    Log(LOG_INFO, "Failed to retrieve external guide data");
   }
-
-  LogGuideStatistics(m_externalGuide);
-
-  if (triggerEvent)
-    OnGuideUpdated();
-
-  if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
-    m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
-
-  // Retrieve the channels again if the user prefers external channel icons
-  if (m_settings.m_useExternalXmltvIcons)
-    RetrieveChannels();
 }
 
 void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
