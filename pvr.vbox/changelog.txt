@@ -1,3 +1,11 @@
+1.3.3
+	- compare channel names case-insensitively when mapping between the internal and external guide
+	- fixed some issues during startup which could lead to crashes
+	- use the specified connection timeout when streaming too, not just for API communication
+	- fixed a bug where the timeshift buffer could get "stuck" if a channel didn't open successfully
+	- bypass timeshifting for radio channels, fixes radio playback stuttering for now
+	- fixed crash when using external XMLTV from an invalid/missing file
+
 1.3.2
 	- fixed Coverity issues
 	- gracefully handle exceptions when parsing external XMLTV data
