@@ -25,7 +25,6 @@
 using namespace timeshift;
 
 const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
-const int FilesystemBuffer::READ_TIMEOUT = 10;
 
 // Fix a stupid #define on Windows which causes XBMC->DeleteFile() to break
 #ifdef _WIN32
@@ -100,7 +99,7 @@ int FilesystemBuffer::Read(byte *buffer, size_t length)
   int64_t requiredLength = Position() + length;
 
   std::unique_lock<std::mutex> lock(m_mutex);
-  m_condition.wait_for(lock, std::chrono::seconds(READ_TIMEOUT),
+  m_condition.wait_for(lock, std::chrono::seconds(m_readTimeout),
     [this, requiredLength]()
   {
     return Length() >= requiredLength;

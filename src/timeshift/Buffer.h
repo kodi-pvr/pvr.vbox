@@ -39,8 +39,9 @@ namespace timeshift {
   class Buffer
   {
   public:
-    Buffer() 
-      : m_inputHandle(nullptr), m_startTime(0) {};
+    Buffer() :
+      m_inputHandle(nullptr), m_startTime(0),
+      m_readTimeout(DEFAULT_READ_TIMEOUT) {};
     virtual ~Buffer();
 
     /**
@@ -102,7 +103,17 @@ namespace timeshift {
       return time(nullptr);
     }
 
+    /**
+     * Sets the read timeout (defaults to 10 seconds)
+     * @param timeout the read timeout in seconds
+     */
+    void SetReadTimeout(int timeout)
+    {
+      m_readTimeout = timeout;
+    }
+
   protected:
+    const static int DEFAULT_READ_TIMEOUT;
 
     /**
      * Safely closes an open file handle.
@@ -114,6 +125,12 @@ namespace timeshift {
      * The input handle (where data is read from)
      */
     void *m_inputHandle;
+
+    /**
+     * The time (in seconds) to wait when opening a read handle and when 
+     * waiting for the buffer to have enough data
+     */
+    int m_readTimeout;
 
   private:
     /**

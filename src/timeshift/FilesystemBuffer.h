@@ -69,7 +69,6 @@ namespace timeshift {
   private:
 
     const static int INPUT_READ_LENGTH;
-    const static int READ_TIMEOUT;
 
     /**
      * The method that runs on m_inputThread. It reads data from the input

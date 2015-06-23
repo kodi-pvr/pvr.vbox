@@ -173,6 +173,8 @@ extern "C" {
           g_timeshiftBuffer = new timeshift::FilesystemBuffer(settings.m_timeshiftBufferPath);
         else
           g_timeshiftBuffer = new timeshift::DummyBuffer();
+
+        g_timeshiftBuffer->SetReadTimeout(g_vbox->GetConnectionParams().timeout);
       }
       catch (FirmwareVersionException &e) {
         XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());

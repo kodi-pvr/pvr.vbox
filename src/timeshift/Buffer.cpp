@@ -20,14 +20,21 @@
 */
 
 #include "Buffer.h"
+#include <sstream>
 
 using namespace timeshift;
 
+const int Buffer::DEFAULT_READ_TIMEOUT = 10;
+
 bool Buffer::Open(const std::string inputUrl)
 {
+  // Append the read timeout parameter
+  std::stringstream ss;
+  ss << inputUrl << "|connection-timeout=" << m_readTimeout;
+
   // Remember the start time and open the input
   m_startTime = time(nullptr);
-  m_inputHandle = XBMC->OpenFile(inputUrl.c_str(), 0x08 /*READ_NO_CACHE*/);
+  m_inputHandle = XBMC->OpenFile(ss.str().c_str(), 0x08 /*READ_NO_CACHE*/);
 
   return m_inputHandle != nullptr;
 }
