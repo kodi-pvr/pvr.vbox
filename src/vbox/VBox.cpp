@@ -43,7 +43,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel("dummy", "dummy", "dummy", "dummy")
+  : m_settings(settings), m_currentChannel(nullptr)
 {
 }
 
@@ -287,32 +287,32 @@ const std::vector<ChannelPtr>& VBox::GetChannels() const
   return m_channels;
 }
 
-const Channel* VBox::GetChannel(unsigned int uniqueId) const
+const ChannelPtr VBox::GetChannel(unsigned int uniqueId) const
 {
   m_stateHandler.WaitForState(StartupState::CHANNELS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
   auto it = std::find_if(m_channels.cbegin(), m_channels.cend(), [uniqueId](const ChannelPtr &channel) {
-    return uniqueId == ContentIdentifier::GetUniqueId(channel.get());
+    return uniqueId == ContentIdentifier::GetUniqueId(channel);
   });
 
   if (it == m_channels.cend())
     return nullptr;
 
-  return it->get();
+  return *it;
 }
 
-const Channel& VBox::GetCurrentChannel() const
+const ChannelPtr VBox::GetCurrentChannel() const
 {
   return m_currentChannel;
 }
 
-void VBox::SetCurrentChannel(const Channel &channel)
+void VBox::SetCurrentChannel(const ChannelPtr &channel)
 {
   m_currentChannel = channel;
 }
 
-ChannelStreamingStatus VBox::GetChannelStreamingStatus(const Channel* channel) const
+ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel) const
 {
   ChannelStreamingStatus status;
 
@@ -428,7 +428,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
-void VBox::AddTimer(const Channel *channel, const ::xmltv::ProgrammePtr programme)
+void VBox::AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme)
 {
   // Add the timer
   request::ApiRequest request("ScheduleProgramRecord");
@@ -441,7 +441,7 @@ void VBox::AddTimer(const Channel *channel, const ::xmltv::ProgrammePtr programm
   RetrieveRecordings();
 }
 
-void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime,
+void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
   const std::string title, const std::string description)
 {
   // Add the timer
@@ -462,7 +462,7 @@ void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime,
   RetrieveRecordings();
 }
 
-void VBox::AddTimer(const Channel *channel, time_t startTime, time_t endTime)
+void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime)
 {
   // Add the timer
   request::ApiRequest request("ScheduleChannelRecord");
@@ -493,7 +493,7 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
   return m_recordings;
 }
 
-const Schedule VBox::GetSchedule(const Channel *channel) const
+const Schedule VBox::GetSchedule(const ChannelPtr &channel) const
 {
   // Load the schedule from the internal guide
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
@@ -562,7 +562,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
     // Swap and notify if the contents have changed
     if (!utilities::deref_equals(m_channels, channels))
     {
-      m_channels = std::move(channels);
+      m_channels = channels;
 
       if (triggerEvent)
         OnChannelsUpdated();

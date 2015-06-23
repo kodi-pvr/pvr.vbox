@@ -26,7 +26,7 @@
 namespace vbox {
 
   class Channel;
-  typedef std::unique_ptr<Channel> ChannelPtr;
+  typedef std::shared_ptr<Channel> ChannelPtr;
 
   /**
   * Represents a channel

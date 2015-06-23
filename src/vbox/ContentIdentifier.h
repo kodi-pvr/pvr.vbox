@@ -38,7 +38,7 @@ namespace vbox {
     /**
      * @return a unique ID for the channel
      */
-    static unsigned int GetUniqueId(const vbox::Channel *channel)
+    static unsigned int GetUniqueId(const vbox::ChannelPtr &channel)
     {
       std::hash<std::string> hasher;
       int uniqueId = hasher(channel->m_uniqueId);

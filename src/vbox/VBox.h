@@ -124,10 +124,10 @@ namespace vbox {
     // Channel methods
     int GetChannelsAmount() const;
     const std::vector<ChannelPtr>& GetChannels() const;
-    const Channel* GetChannel(unsigned int uniqueId) const;
-    const Channel& GetCurrentChannel() const;
-    void SetCurrentChannel(const Channel &channel);
-    ChannelStreamingStatus GetChannelStreamingStatus(const Channel* channel) const;
+    const ChannelPtr GetChannel(unsigned int uniqueId) const;
+    const ChannelPtr GetCurrentChannel() const;
+    void SetCurrentChannel(const ChannelPtr &channel);
+    ChannelStreamingStatus GetChannelStreamingStatus(const ChannelPtr &channel) const;
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -137,14 +137,14 @@ namespace vbox {
     int GetTimersAmount() const;
     request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
     bool DeleteRecordingOrTimer(unsigned int id);
-    void AddTimer(const Channel *channel, const ::xmltv::ProgrammePtr programme);
-    void AddTimer(const Channel *channel, time_t startTime, time_t endTime,
+    void AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
+    void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
       const std::string title, const std::string description);
-    void AddTimer(const Channel *channel, time_t startTime, time_t endTime);
+    void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime);
     const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
-    const Schedule GetSchedule(const Channel *channel) const;
+    const Schedule GetSchedule(const ChannelPtr &channel) const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -228,7 +228,7 @@ namespace vbox {
      * The currently active channel, or the last active channel when no 
      * channel is playing
      */
-    Channel m_currentChannel;
+    ChannelPtr m_currentChannel;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings

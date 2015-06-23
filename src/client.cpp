@@ -165,7 +165,7 @@ extern "C" {
         g_vbox->OnGuideUpdated = []()
         {
           for (const auto &channel : g_vbox->GetChannels())
-            PVR->TriggerEpgUpdate(ContentIdentifier::GetUniqueId(channel.get()));
+            PVR->TriggerEpgUpdate(ContentIdentifier::GetUniqueId(channel));
         };
 
         // Create the timeshift buffer
@@ -383,7 +383,7 @@ extern "C" {
       PVR_CHANNEL channel;
       memset(&channel, 0, sizeof(PVR_CHANNEL));
 
-      channel.iUniqueId = ContentIdentifier::GetUniqueId(item.get());
+      channel.iUniqueId = ContentIdentifier::GetUniqueId(item);
       channel.bIsRadio = item->m_radio;
       channel.iChannelNumber = item->m_number;
       channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
@@ -523,7 +523,7 @@ extern "C" {
       });
 
       if (it != channels.cend())
-        timer.iClientChannelUid = ContentIdentifier::GetUniqueId((*it).get());
+        timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
 
       strncpy(timer.strTitle, item->m_title.c_str(),
         sizeof(timer.strTitle));
@@ -545,13 +545,13 @@ extern "C" {
     auto it = std::find_if(channels.cbegin(), channels.cend(),
       [&timer](const ChannelPtr &channel)
     {
-      return timer.iClientChannelUid == ContentIdentifier::GetUniqueId(channel.get());
+      return timer.iClientChannelUid == ContentIdentifier::GetUniqueId(channel);
     });
 
     if (it == channels.end())
       return PVR_ERROR_INVALID_PARAMETERS;
 
-    const Channel *channel = it->get();
+    const ChannelPtr channel = *it;
 
     // Find the channel's schedule
     const Schedule schedule = g_vbox->GetSchedule(channel);
@@ -613,7 +613,7 @@ extern "C" {
 
   PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time_t iStart, time_t iEnd)
   {
-    const Channel *channelPtr = g_vbox->GetChannel(channel.iUniqueId);
+    const ChannelPtr channelPtr = g_vbox->GetChannel(channel.iUniqueId);
 
     if (!channelPtr)
       return PVR_ERROR_INVALID_PARAMETERS;
@@ -666,10 +666,13 @@ extern "C" {
 
   PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   {
-    const Channel &currentChannel = g_vbox->GetCurrentChannel();
+    const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
+
+    if (!currentChannel)
+      return PVR_ERROR_NO_ERROR;
 
     try {
-      ChannelStreamingStatus status = g_vbox->GetChannelStreamingStatus(&currentChannel);
+      ChannelStreamingStatus status = g_vbox->GetChannelStreamingStatus(currentChannel);
 
       // Adjust for Kodi's weird handling of the signal strength
       signalStatus.iSignal = static_cast<int>(status.GetSignalStrength()) * 655; 
@@ -699,7 +702,7 @@ extern "C" {
   bool OpenLiveStream(const PVR_CHANNEL &channel)
   {
     // Find the channel
-    const Channel* channelPtr = g_vbox->GetChannel(channel.iUniqueId);
+    const ChannelPtr channelPtr = g_vbox->GetChannel(channel.iUniqueId);
     
     if (!channelPtr)
       return false;
@@ -707,7 +710,7 @@ extern "C" {
     // Remember the current channel if the buffer was successfully opened
     if (g_timeshiftBuffer->Open(channelPtr->m_url))
     {
-      g_vbox->SetCurrentChannel(*channelPtr);
+      g_vbox->SetCurrentChannel(channelPtr);
       return true;
     }
 
@@ -743,7 +746,7 @@ extern "C" {
   int GetCurrentClientChannel(void)
   {
     // TODO: Investigate whether Kodi actually uses this method anymore
-    return ContentIdentifier::GetUniqueId(&g_vbox->GetCurrentChannel());
+    return ContentIdentifier::GetUniqueId(g_vbox->GetCurrentChannel());
   }
 
   bool CanPauseStream(void)

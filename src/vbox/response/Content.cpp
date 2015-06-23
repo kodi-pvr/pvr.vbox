@@ -79,7 +79,7 @@ std::vector<ChannelPtr> XMLTVResponseContent::GetChannels() const
   {
     ChannelPtr channel = CreateChannel(element);
     channel->m_index = index++;
-    channels.push_back(std::move(channel));
+    channels.push_back(channel);
   }
 
   return channels;
