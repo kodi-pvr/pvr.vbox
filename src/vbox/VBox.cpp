@@ -690,6 +690,8 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
     response::XMLTVResponseContent content(response->GetReplyElement());
     auto externalGuide = content.GetGuide();
 
+    LogGuideStatistics(externalGuide);
+
     {
       std::unique_lock<std::mutex> lock(m_mutex);
       m_externalGuide = externalGuide;
@@ -703,8 +705,6 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
           new GuideChannelMapper(m_guide, m_externalGuide));
       }
     }
-
-    LogGuideStatistics(m_externalGuide);
 
     if (triggerEvent)
       OnGuideUpdated();
@@ -745,8 +745,6 @@ void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
 
 void VBox::LogGuideStatistics(const xmltv::Guide &guide) const
 {
-  std::unique_lock<std::mutex> lock(m_mutex);
-
   for (const auto &schedule : guide.GetSchedules())
   {
     Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->GetLength(),
