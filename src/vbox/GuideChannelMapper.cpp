@@ -37,8 +37,6 @@ GuideChannelMapper::GuideChannelMapper(
   m_vboxGuide(vboxGuide),
   m_externalGuide(externalGuide)
 {
-  // Initialize everything
-  Initialize();
 }
 
 void GuideChannelMapper::Initialize()

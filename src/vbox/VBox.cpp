@@ -728,9 +728,11 @@ void VBox::InitializeChannelMapper()
 
   Log(LOG_INFO, "Loading external guide channel mapper");
 
+  m_guideChannelMapper = GuideChannelMapperPtr(
+    new GuideChannelMapper(m_guide, m_externalGuide));
+
   try {
-    m_guideChannelMapper = GuideChannelMapperPtr(
-      new GuideChannelMapper(m_guide, m_externalGuide));
+    m_guideChannelMapper->Initialize();
   }
   catch (VBoxException &e)
   {

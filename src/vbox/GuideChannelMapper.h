@@ -43,18 +43,18 @@ namespace vbox {
     ~GuideChannelMapper() = default;
 
     /**
+     * Initializes the mapper by loading the mappings from disk. If no existing
+     * mappings exist, a basic map is created.
+     */
+    void Initialize();
+
+    /**
     * @param vboxName a VBox channel name
     * @return the corresponding channel name from the external guide
     */
     std::string GetExternalChannelName(const std::string &vboxName) const;
 
   private:
-
-    /**
-    * Initializes the mapper by loading the mappings from disk. If no existing
-    * mappings exist, a basic map is created.
-    */
-    void Initialize();
 
     /**
      * Creates a default map between the two guides using exact name matching
