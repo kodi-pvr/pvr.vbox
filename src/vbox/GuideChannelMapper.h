@@ -68,10 +68,9 @@ namespace vbox {
     void Load();
 
     /**
-     * Saves the specified mappings to disk
-     * @param channelMap the mappings to save
+     * Saves the current mappings to disk
      */
-    void Save(const ChannelMap &channelMap);
+    void Save();
 
     /**
      * The path to the mapping file

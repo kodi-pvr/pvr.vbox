@@ -41,17 +41,22 @@ GuideChannelMapper::GuideChannelMapper(
 
 void GuideChannelMapper::Initialize()
 {
-  // Create a default mapping file if none exists
+  g_vbox->Log(ADDON::LOG_INFO, "Initializing channel mapper with default mappings");
+
+  // Generate a default map
+  m_mappings = CreateDefaultMap();
+
+  // Create a default mapping file if none exists, otherwise load it
   if (!XBMC->FileExists(MAPPING_FILE_PATH.c_str(), false))
   {
-    g_vbox->Log(ADDON::LOG_INFO, "No external XMLTV channel mapping file found, creating default mappings");
-
-    ChannelMap defaultMap = CreateDefaultMap();
-    Save(defaultMap);
+    g_vbox->Log(ADDON::LOG_INFO, "No external XMLTV channel mapping file found, saving default mappings");
+    Save();
   }
-
-  // Load the mapping file
-  Load();
+  else
+  {
+    g_vbox->Log(ADDON::LOG_INFO, "Found channel mapping file, attempting to load it");
+    Load();
+  }
 }
 
 ChannelMap GuideChannelMapper::CreateDefaultMap()
@@ -100,7 +105,7 @@ void GuideChannelMapper::Load()
   }
 }
 
-void GuideChannelMapper::Save(const ChannelMap &channelMap)
+void GuideChannelMapper::Save()
 {
   // Create the document
   tinyxml2::XMLDocument document;
@@ -112,7 +117,7 @@ void GuideChannelMapper::Save(const ChannelMap &channelMap)
   document.InsertEndChild(rootElement);
 
   // Create one <mapping> for every channel
-  for (const auto &mapping : channelMap)
+  for (const auto &mapping : m_mappings)
   {
     XMLElement *mappingElement = document.NewElement("mapping");
     mappingElement->SetAttribute("vbox-name", mapping.first.c_str());
