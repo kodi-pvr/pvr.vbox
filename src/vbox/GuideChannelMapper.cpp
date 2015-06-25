@@ -43,8 +43,8 @@ void GuideChannelMapper::Initialize()
 {
   g_vbox->Log(ADDON::LOG_INFO, "Initializing channel mapper with default mappings");
 
-  // Generate a default map
-  m_mappings = CreateDefaultMap();
+  // Generate default mappings
+  m_channelMappings = CreateDefaultMappings();
 
   // Create a default mapping file if none exists, otherwise load it
   if (!XBMC->FileExists(MAPPING_FILE_PATH.c_str(), false))
@@ -59,9 +59,9 @@ void GuideChannelMapper::Initialize()
   }
 }
 
-ChannelMap GuideChannelMapper::CreateDefaultMap()
+ChannelMappings GuideChannelMapper::CreateDefaultMappings()
 {
-  ChannelMap map;
+  ChannelMappings mappings;
   std::vector<std::string> channelNames = m_vboxGuide.GetChannelNames();
 
   // Add a mapping for every channel which display names matches, otherwise 
@@ -69,12 +69,12 @@ ChannelMap GuideChannelMapper::CreateDefaultMap()
   for (const std::string &channelName : channelNames)
   {
     if (!m_externalGuide.GetChannelId(channelName).empty())
-      map[channelName] = channelName;
+      mappings[channelName] = channelName;
     else
-      map[channelName] = "";
+      mappings[channelName] = "";
   }
 
-  return map;
+  return mappings;
 }
 
 void GuideChannelMapper::Load()
@@ -98,7 +98,7 @@ void GuideChannelMapper::Load()
       const std::string vboxName = element->Attribute("vbox-name");
       const std::string xmltvName = element->Attribute("xmltv-name");
 
-      m_mappings[vboxName] = xmltvName;
+      m_channelMappings[vboxName] = xmltvName;
     }
 
     XBMC->CloseFile(fileHandle);
@@ -117,7 +117,7 @@ void GuideChannelMapper::Save()
   document.InsertEndChild(rootElement);
 
   // Create one <mapping> for every channel
-  for (const auto &mapping : m_mappings)
+  for (const auto &mapping : m_channelMappings)
   {
     XMLElement *mappingElement = document.NewElement("mapping");
     mappingElement->SetAttribute("vbox-name", mapping.first.c_str());
@@ -143,7 +143,7 @@ void GuideChannelMapper::Save()
 
 std::string GuideChannelMapper::GetExternalChannelName(const std::string &vboxName) const
 {
-  auto it = m_mappings.find(vboxName);
+  auto it = m_channelMappings.find(vboxName);
 
-  return it != m_mappings.cend() ? it->second : "";
+  return it != m_channelMappings.cend() ? it->second : "";
 }

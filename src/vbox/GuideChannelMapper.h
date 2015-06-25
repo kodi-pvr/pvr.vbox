@@ -29,7 +29,7 @@ namespace vbox {
 
   class GuideChannelMapper;
   typedef std::unique_ptr<GuideChannelMapper> GuideChannelMapperPtr;
-  typedef std::map<std::string, std::string> ChannelMap;
+  typedef std::map<std::string, std::string> ChannelMappings;
 
   /**
    * Provides functionality for mapping VBox channels into the channel names
@@ -57,10 +57,10 @@ namespace vbox {
   private:
 
     /**
-     * Creates a default map between the two guides using exact name matching
-     * @eturn the map
+     * Creates a default mapping between the two guides using exact name matching
+     * @eturn the mappings
      */
-    ChannelMap CreateDefaultMap();
+    ChannelMappings CreateDefaultMappings();
 
     /**
      * Loads the mappings from disk
@@ -88,8 +88,8 @@ namespace vbox {
     const ::xmltv::Guide &m_externalGuide;
 
     /**
-     * The channel name map
+     * The channel name mappings
      */
-    ChannelMap m_mappings;
+    ChannelMappings m_channelMappings;
   };
 }
