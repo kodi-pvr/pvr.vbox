@@ -71,7 +71,7 @@ std::string Guide::GetChannelId(const std::string &displayName) const
     m_displayNameMappings.cend(),
     [displayName](const std::pair<std::string, std::string> &mapping)
   {
-    return StringUtils::CompareNoCase(mapping.first, displayName);
+    return StringUtils::CompareNoCase(mapping.first, displayName) == 0;
   });
 
   return it != m_displayNameMappings.cend() ? it->second : "";
