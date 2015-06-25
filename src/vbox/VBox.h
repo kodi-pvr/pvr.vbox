@@ -163,6 +163,7 @@ namespace vbox {
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
     void RetrieveExternalGuide(bool triggerEvent = true);
+    void InitializeChannelMapper();
     void SwapChannelIcons(std::vector<ChannelPtr> &channels);
 
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;

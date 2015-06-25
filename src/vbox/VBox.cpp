@@ -186,7 +186,14 @@ void VBox::BackgroundUpdater()
   RetrieveGuide(false);
 
   if (m_settings.m_useExternalXmltv)
+  {
     RetrieveExternalGuide();
+    InitializeChannelMapper();
+
+    // Retrieve the channels again if the user prefers external channel icons
+    if (m_settings.m_useExternalXmltvIcons)
+      RetrieveChannels();
+  }
 
   while (m_active)
   {
@@ -695,15 +702,6 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
     {
       std::unique_lock<std::mutex> lock(m_mutex);
       m_externalGuide = externalGuide;
-
-      // Make sure the channel mapper is initialized
-      if (!m_guideChannelMapper)
-      {
-        Log(LOG_INFO, "Loading external guide channel mapper");
-
-        m_guideChannelMapper = GuideChannelMapperPtr(
-          new GuideChannelMapper(m_guide, m_externalGuide));
-      }
     }
 
     if (triggerEvent)
@@ -711,15 +709,33 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
 
     if (m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
       m_stateHandler.EnterState(StartupState::EXTERNAL_GUIDE_LOADED);
-
-    // Retrieve the channels again if the user prefers external channel icons
-    if (m_settings.m_useExternalXmltvIcons)
-      RetrieveChannels();
   }
   catch (VBoxException &e)
   {
     LogException(e);
     Log(LOG_INFO, "Failed to retrieve external guide data");
+  }
+}
+
+void VBox::InitializeChannelMapper()
+{
+  // Abort if we're already initialized or the external guide is not loaded
+  if (m_guideChannelMapper || 
+    m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
+  {
+    return;
+  }
+
+  Log(LOG_INFO, "Loading external guide channel mapper");
+
+  try {
+    m_guideChannelMapper = GuideChannelMapperPtr(
+      new GuideChannelMapper(m_guide, m_externalGuide));
+  }
+  catch (VBoxException &e)
+  {
+    LogException(e);
+    Log(LOG_INFO, "Failed to load the external guide channel mapper");
   }
 }
 
