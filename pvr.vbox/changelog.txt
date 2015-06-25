@@ -1,3 +1,7 @@
+1.3.4
+	- fixed some minor bugs introduced in the last version
+	- improved fault tolerance and logging when loading external guide data and the channel mapping file
+
 1.3.3
 	- compare channel names case-insensitively when mapping between the internal and external guide
 	- fixed some issues during startup which could lead to crashes
