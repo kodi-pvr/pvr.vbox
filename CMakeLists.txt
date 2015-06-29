@@ -93,7 +93,7 @@ set(VBOX_RESOURCES
                 pvr.vbox/changelog.txt
                 pvr.vbox/icon.png
                 pvr.vbox/resources/settings.xml
-                pvr.vbox/resources/language/English/strings.po)
+                pvr.vbox/resources/language/resource.language.en_gb/strings.po)
 
 source_group("Resource Files" FILES ${VBOX_RESOURCES})
 
