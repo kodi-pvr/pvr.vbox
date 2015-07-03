@@ -317,7 +317,6 @@ extern "C" {
     pCapabilities->bSupportsChannelScan = false;
     pCapabilities->bSupportsChannelSettings = false;
     pCapabilities->bHandlesDemuxing = false;
-    pCapabilities->bSupportsRecordingFolders = false;
     pCapabilities->bSupportsRecordingPlayCount = false;
     pCapabilities->bSupportsLastPlayedPosition = false;
     pCapabilities->bSupportsRecordingEdl = false;
@@ -483,6 +482,12 @@ extern "C" {
     }
   }
 
+  PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size)
+  {
+    /* TODO: Implement this to get support for the timer features introduced with PVR API 1.9.7 */
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
   int GetTimersAmount(void)
   {
     return g_vbox->GetTimersAmount();
@@ -490,6 +495,7 @@ extern "C" {
 
   PVR_ERROR GetTimers(ADDON_HANDLE handle)
   {
+    /* TODO: Change implementation to get support for the timer features introduced with PVR API 1.9.7 */
     auto &recordings = g_vbox->GetRecordingsAndTimers();
 
     for (const auto &item : recordings)
@@ -500,6 +506,9 @@ extern "C" {
 
       PVR_TIMER timer;
       memset(&timer, 0, sizeof(PVR_TIMER));
+
+      /* TODO: Implement own timer types to get support for the timer features introduced with PVR API 1.9.7 */
+      timer.iTimerType = PVR_TIMER_TYPE_NONE;
 
       timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
       timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
@@ -609,8 +618,9 @@ extern "C" {
     }
   }
 
-  PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)
+  PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete, bool /*bDeleteScheduled*/)
   {
+    /* TODO: Change implementation to support bDeleteScheduled (introduced with PVR API 1.9.7 */
     if (g_vbox->DeleteRecordingOrTimer(timer.iClientIndex))
       return PVR_ERROR_NO_ERROR;
 
