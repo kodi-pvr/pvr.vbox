@@ -59,6 +59,11 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   if (element)
     m_year = Utilities::QueryIntText(element);
 
+  // Icon
+  element = xml->FirstChildElement("icon");
+  if (element)
+    m_icon = element->Attribute("src");
+
   // Categories. Skip "movie" and "series" since most people treat categories 
   // as genres
   for (element = xml->FirstChildElement("category");
