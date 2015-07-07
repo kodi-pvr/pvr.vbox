@@ -98,6 +98,7 @@ namespace xmltv {
     std::string m_channelName;
     std::string m_title;
     std::string m_description;
+    std::string m_icon;
     std::string m_subTitle;
     int m_year;
     std::string m_starRating;

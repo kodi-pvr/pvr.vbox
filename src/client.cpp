@@ -654,6 +654,7 @@ extern "C" {
       event.strPlot = programme->m_description.c_str();
       event.iYear = programme->m_year;
       event.strEpisodeName = programme->m_subTitle.c_str();
+      event.strIconPath = programme->m_icon.c_str();
 
       std::string directors = xmltv::Utilities::ConcatenateStringList(programme->GetDirectors());
       std::string writers = xmltv::Utilities::ConcatenateStringList(programme->GetWriters());
