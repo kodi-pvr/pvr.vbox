@@ -63,6 +63,10 @@ The `vbox::VBox` class which `client.cpp` interfaces with is designed so that an
  
 Similar to the XMLTV code, the code for the timeshift buffer is fairly generic and lives in a separate `timeshift` namespace. Currently there is a base class for all buffers and two implementations, a `FilesystemBuffer` which buffers the data to a file on disc, and a `DummyBuffer` which just relays the read operations to the underlying input handle. This is required since Kodi uses a different code paths depending on whether clients handle input streams on their own or not, and we need this particular code path for other features like signal status handling to work.
 
+### Versioning
+
+The addon follows semantic verisoning. Each release is tagged with its respective version number. Since each release of Kodi requires a separate branch for the addon, the major version changes whenever the Kodi version changes. This means that versions `1.x.x` are for Kodi v15, versions `2.x.x` are for Kodi v16 and so on.
+
 ### Useful links
 
 * [Kodi's PVR user support] (http://forum.kodi.tv/forumdisplay.php?fid=167)
