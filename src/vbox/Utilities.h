@@ -55,8 +55,11 @@ namespace utilities {
     std::unique_ptr<std::string> content(new std::string());
 
     char buffer[1024];
-    while (XBMC->ReadFileString(fileHandle, buffer, sizeof(buffer) - 1))
-      content->append(buffer);
+    int bytesRead = 0;
+
+    // Read until EOF or explicit error
+    while ((bytesRead = XBMC->ReadFile(fileHandle, buffer, sizeof(buffer) - 1)) > 0)
+      content->append(buffer, bytesRead);
 
     return content;
   }
