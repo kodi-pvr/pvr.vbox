@@ -839,6 +839,7 @@ extern "C" {
   bool SeekTime(int, bool, double*) { return false; }
   void SetSpeed(int) {};
   time_t GetPlayingTime() { return 0; }
+  bool IsTimeshifting(void) { return false; }
 
   // Deprecated (unused)
   const char * GetLiveStreamURL(const PVR_CHANNEL &channel) { return ""; }
