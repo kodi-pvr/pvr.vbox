@@ -674,6 +674,8 @@ extern "C" {
       std::string cast = xmltv::Utilities::ConcatenateStringList(actorNames);
       event.strCast = cast.c_str();
 
+      event.iFlags = EPG_TAG_FLAG_UNDEFINED;
+      
       PVR->TransferEpgEntry(handle, &event);
     }
 
