@@ -33,7 +33,7 @@ using namespace vbox::response;
 std::string Content::GetString(const std::string &parameter) const
 {
   const XMLElement *element = GetParameterElement(parameter);
-  
+
   if (element && element->GetText())
     return std::string(element->GetText());
 
@@ -121,11 +121,6 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
 
     channel->m_number = compat::stoui(lcnValue);
   }
-
-  // Set icon URL if it exists
-  const char *iconUrl = xml->FirstChildElement("icon")->Attribute("src");
-  if (iconUrl != NULL)
-    channel->m_iconUrl = iconUrl;
 
   // Set radio and encryption status
   channel->m_radio = type == "Radio";
