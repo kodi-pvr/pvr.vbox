@@ -33,7 +33,7 @@ using namespace vbox::response;
 std::string Content::GetString(const std::string &parameter) const
 {
   const XMLElement *element = GetParameterElement(parameter);
-
+  
   if (element && element->GetText())
     return std::string(element->GetText());
 

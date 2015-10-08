@@ -58,6 +58,7 @@ bool g_useExternalXmltv;
 std::string g_externalXmltvPath;
 bool g_preferExternalXmltv;
 bool g_useExternalXmltvIcons;
+bool g_setChannelIdUsingOrder;
 bool g_timeshiftEnabled;
 std::string g_timeshiftBufferPath;
 
@@ -91,6 +92,7 @@ extern "C" {
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
     UPDATE_INT(g_useExternalXmltvIcons, "use_external_xmltv_icons", false);
+    UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", false);
     UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
     UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
@@ -142,6 +144,7 @@ extern "C" {
     settings.m_externalXmltvPath = g_externalXmltvPath;
     settings.m_preferExternalXmltv = g_preferExternalXmltv;
     settings.m_useExternalXmltvIcons = g_useExternalXmltvIcons;
+    settings.m_setChannelIdUsingOrder = g_setChannelIdUsingOrder;
     settings.m_timeshiftEnabled = g_timeshiftEnabled;
     settings.m_timeshiftBufferPath = g_timeshiftBufferPath;
 
@@ -255,6 +258,7 @@ extern "C" {
     UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
     UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
     UPDATE_INT("use_external_xmltv_icons", bool, settings.m_useExternalXmltvIcons);
+    UPDATE_INT("set_channelid_using_order", bool, settings.m_setChannelIdUsingOrder);
     UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
     UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
 
@@ -372,6 +376,7 @@ extern "C" {
   PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
   {
     auto &channels = g_vbox->GetChannels();
+    int i = 0;
 
     for (const auto &item : channels)
     {
@@ -384,7 +389,13 @@ extern "C" {
 
       channel.iUniqueId = ContentIdentifier::GetUniqueId(item);
       channel.bIsRadio = item->m_radio;
-      channel.iChannelNumber = item->m_number;
+
+      ++i;
+      if (g_setChannelIdUsingOrder)
+        channel.iChannelNumber = i;
+      else
+        channel.iChannelNumber = item->m_number;
+
       channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
 
       strncpy(channel.strChannelName, item->m_name.c_str(),
@@ -404,6 +415,8 @@ extern "C" {
         strncpy(channel.strStreamURL, item->m_url.c_str(),
           sizeof(channel.strStreamURL));
       }
+      VBox::Log(LOG_INFO, "Adding channel %d: %s. Icon: %s",
+                channel.iChannelNumber, channel.strChannelName, channel.strIconPath);
 
       PVR->TransferChannelEntry(handle, &channel);
     }

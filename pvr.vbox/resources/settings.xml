@@ -3,7 +3,7 @@
   <category label="30000">
     <setting id="hostname" type="text" label="30001" default="" />
     <setting id="http_port" type="number" option="int" label="30002" default="80" />
-	<setting id="https_port" type="number" option="int" label="30005" default="" />
+    <setting id="https_port" type="number" option="int" label="30005" default="" />
     <setting id="upnp_port" type="number" option="int" label="30003" default="55555" />
     <setting id="connection_timeout" type="number" option="int" label="30004" default="3" />
   </category>
@@ -11,7 +11,7 @@
   <category label="30050">
     <setting id="external_hostname" type="text" label="30001" default="" />
     <setting id="external_http_port" type="number" option="int" label="30002" default="19999" />
-	<setting id="external_https_port" type="number" option="int" label="30005" default="" />
+    <setting id="external_https_port" type="number" option="int" label="30005" default="" />
     <setting id="external_upnp_port" type="number" option="int" label="30003" default="55555" />
     <setting id="external_connection_timeout" type="number" option="int" label="30004" default="10" />
   </category>
@@ -21,6 +21,7 @@
     <setting id="external_xmltv_path" type="file" label="30102" default="" enable="eq(-1,true)" />
     <setting id="prefer_external_xmltv" type="bool" label="30103" default="false" enable="eq(-2,true)" />
     <setting id="use_external_xmltv_icons" type="bool" label="30104" default="false" enable="eq(-3,true)" />
+    <setting id="set_channelid_using_order" type="bool" label="30105" default="false" />
   </category>
   
   <category label="30200">
