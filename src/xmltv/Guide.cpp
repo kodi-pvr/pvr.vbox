@@ -24,7 +24,7 @@
 #include "Channel.h"
 #include "Utilities.h"
 #include "lib/tinyxml2/tinyxml2.h"
-#include "platform/util/StringUtils.h"
+#include "p8-platform/util/StringUtils.h"
 #include "../vbox/ContentIdentifier.h"
 
 using namespace xmltv;

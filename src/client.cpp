@@ -20,7 +20,7 @@
  */
 
 #include <algorithm>
-#include "platform/util/util.h"
+#include "p8-platform/util/util.h"
 #include "kodi/xbmc_pvr_dll.h"
 #include "client.h"
 #include "compat.h"
