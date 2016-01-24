@@ -36,8 +36,8 @@ SoftwareVersion SoftwareVersion::ParseString(const std::string &string)
   SoftwareVersion version;
   std::string format = "%d.%d.%d";
 
-  if (string.substr(0, 2) == "VB")
-    format = "VB.%d.%d.%d";
+  if (string.substr(0, 1) == "V")
+    format = string.substr(0, 2) + ".%d.%d.%d";
 
   sscanf(string.c_str(), format.c_str(), &version.m_major, &version.m_minor,
     &version.m_revision);
