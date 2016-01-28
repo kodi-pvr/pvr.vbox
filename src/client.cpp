@@ -841,6 +841,9 @@ extern "C" {
   void SetSpeed(int) {};
   time_t GetPlayingTime() { return 0; }
   bool IsTimeshifting(void) { return false; }
+  /* Minimum support for API 4.2.0 */
+  /* This add-on supports some form of timeshifting and needs to be adapted to cope with that */
+  bool IsRealTimeStream(void) { return true; }
 
   // Deprecated (unused)
   const char * GetLiveStreamURL(const PVR_CHANNEL &channel) { return ""; }
