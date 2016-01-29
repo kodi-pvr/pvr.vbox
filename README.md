@@ -1,6 +1,17 @@
+[![Build Status](https://travis-ci.org/kodi-pvr/pvr.vbox.svg?branch=master)](https://travis-ci.org/kodi-pvr/pvr.vbox)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5120/badge.svg)](https://scan.coverity.com/projects/5120)
 
 # VBox Home TV Gateway PVR Client
+
+## Build instructions
+
+### Linux
+
+1. `git clone https://github.com/xbmc/xbmc.git`
+2. `git clone https://github.com/kodi-pvr/pvr.vbox.git`
+3. `cd pvr.vbox && mkdir build && cd build`
+4. `cmake -DADDONS_TO_BUILD=pvr.vbox -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/addons -DPACKAGE_ZIP=1 ../../xbmc/project/cmake/addons`
+5. `make`
 
 This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi TV Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
 
