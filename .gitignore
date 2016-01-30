@@ -1,16 +1,26 @@
-# Usually the CMake build directory
+# build artifacts
 build/
-
-# Debian packaging files
+debian/changelog
 debian/files
 debian/kodi-pvr-vbox-dbg.debhelper.log
 debian/kodi-pvr-vbox-dbg.substvars
 debian/kodi-pvr-vbox-dbg/
 debian/kodi-pvr-vbox.debhelper.log
+debian/kodi-pvr-vbox.postinst.debhelper
+debian/kodi-pvr-vbox.postrm.debhelper
 debian/kodi-pvr-vbox.substvars
 debian/kodi-pvr-vbox/
 debian/tmp/
 obj-x86_64-linux-gnu/
+pvr.vbox/addon.xml
+
+# clion
+.idea/
+
+# Eclipse/CDT
+.cproject
+.project
+.settings/
 
 # OSX files
 .DS_Store
