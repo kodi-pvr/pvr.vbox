@@ -122,11 +122,6 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
     channel->m_number = compat::stoui(lcnValue);
   }
 
-  // Set icon URL if it exists
-  const char *iconUrl = xml->FirstChildElement("icon")->Attribute("src");
-  if (iconUrl != NULL)
-    channel->m_iconUrl = iconUrl;
-
   // Set radio and encryption status
   channel->m_radio = type == "Radio";
   channel->m_encrypted = encryption == "Encrypted";
