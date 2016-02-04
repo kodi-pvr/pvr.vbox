@@ -799,7 +799,19 @@ extern "C" {
   {
     return g_timeshiftBuffer->GetEndTime();
   }
-
+  
+  bool IsRealTimeStream(void) 
+  { 
+	  ChannelStreamingStatus status;
+	  const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
+	  
+	  // return true only if last active exists & is active
+	  if (!currentChannel)
+		  return false;
+	  status = g_vbox->GetChannelStreamingStatus(currentChannel);
+	  return status.m_active;
+  }
+  
   // Management methods
   PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &item) { return PVR_ERROR_NOT_IMPLEMENTED; }
