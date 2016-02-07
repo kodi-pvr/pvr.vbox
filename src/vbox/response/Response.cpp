@@ -30,7 +30,7 @@ Response::Response()
 {
   // Some XMLTV files have weird line endings, try to account for that
   m_document = std::unique_ptr<XMLDocument>(
-    new XMLDocument(/*processEntities = */true, tinyxml2::COLLAPSE_WHITESPACE));
+    new XMLDocument(/*processEntities = */true, tinyxml2::PRESERVE_WHITESPACE));
 
   m_error.code = ErrorCode::SUCCESS;
   m_error.description = "";
