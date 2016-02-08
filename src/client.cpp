@@ -772,12 +772,6 @@ extern "C" {
     return g_timeshiftBuffer->Seek(iPosition, iWhence);
   }
 
-  int GetCurrentClientChannel(void)
-  {
-    // TODO: Investigate whether Kodi actually uses this method anymore
-    return ContentIdentifier::GetUniqueId(g_vbox->GetCurrentChannel());
-  }
-
   bool CanPauseStream(void)
   {
     return g_vbox->GetSettings().m_timeshiftEnabled;
