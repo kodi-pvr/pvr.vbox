@@ -293,14 +293,12 @@ extern "C" {
 
   const char* GetGUIAPIVersion(void)
   {
-    static const char *strGuiApiVersion = KODI_GUILIB_API_VERSION;
-    return strGuiApiVersion;
+    return ""; // GUI API not used
   }
 
   const char* GetMininumGUIAPIVersion(void)
   {
-    static const char *strMinGuiApiVersion = KODI_GUILIB_MIN_API_VERSION;
-    return strMinGuiApiVersion;
+    return ""; // GUI API not used
   }
 
   PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
