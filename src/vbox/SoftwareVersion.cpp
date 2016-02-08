@@ -35,7 +35,7 @@ SoftwareVersion SoftwareVersion::ParseString(const std::string &string)
 {
   SoftwareVersion version;
   std::string format = "%d.%d.%d";
-
+  
   if (string.substr(0, 1) == "V")
     format = string.substr(0, 2) + ".%d.%d.%d";
 
