@@ -693,6 +693,11 @@ extern "C" {
     return PVR_ERROR_NO_ERROR;
   }
 
+  PVR_ERROR SetEPGTimeFrame(int)
+  {
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
   PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   {
     const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
