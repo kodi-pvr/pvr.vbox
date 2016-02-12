@@ -471,6 +471,9 @@ extern "C" {
       strncpy(recording.strPlot, item->m_description.c_str(),
         sizeof(recording.strPlot));
 
+      /* TODO: PVR API 5.0.0: Implement this */
+      tag.iChannelUid = PVR_CHANNEL_INVALID_UID;
+
       PVR->TransferRecordingEntry(handle, &recording);
     }
 
