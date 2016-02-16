@@ -472,7 +472,7 @@ extern "C" {
         sizeof(recording.strPlot));
 
       /* TODO: PVR API 5.0.0: Implement this */
-      tag.iChannelUid = PVR_CHANNEL_INVALID_UID;
+      recording.iChannelUid = PVR_CHANNEL_INVALID_UID;
 
       PVR->TransferRecordingEntry(handle, &recording);
     }
