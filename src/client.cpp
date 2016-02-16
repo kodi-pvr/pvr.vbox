@@ -293,14 +293,12 @@ extern "C" {
 
   const char* GetGUIAPIVersion(void)
   {
-    static const char *strGuiApiVersion = KODI_GUILIB_API_VERSION;
-    return strGuiApiVersion;
+    return ""; // GUI API not used
   }
 
   const char* GetMininumGUIAPIVersion(void)
   {
-    static const char *strMinGuiApiVersion = KODI_GUILIB_MIN_API_VERSION;
-    return strMinGuiApiVersion;
+    return ""; // GUI API not used
   }
 
   PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
@@ -472,6 +470,9 @@ extern "C" {
 
       strncpy(recording.strPlot, item->m_description.c_str(),
         sizeof(recording.strPlot));
+
+      /* TODO: PVR API 5.0.0: Implement this */
+      tag.iChannelUid = PVR_CHANNEL_INVALID_UID;
 
       PVR->TransferRecordingEntry(handle, &recording);
     }
@@ -695,6 +696,11 @@ extern "C" {
     return PVR_ERROR_NO_ERROR;
   }
 
+  PVR_ERROR SetEPGTimeFrame(int)
+  {
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
   PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   {
     const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
@@ -772,12 +778,6 @@ extern "C" {
   long long SeekLiveStream(long long iPosition, int iWhence /* = SEEK_SET */)
   {
     return g_timeshiftBuffer->Seek(iPosition, iWhence);
-  }
-
-  int GetCurrentClientChannel(void)
-  {
-    // TODO: Investigate whether Kodi actually uses this method anymore
-    return ContentIdentifier::GetUniqueId(g_vbox->GetCurrentChannel());
   }
 
   bool CanPauseStream(void)

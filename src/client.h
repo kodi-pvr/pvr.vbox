@@ -22,7 +22,6 @@
 
 #include "kodi/libXBMC_addon.h"
 #include "kodi/libXBMC_pvr.h"
-#include "kodi/libKODI_guilib.h"
 #include "vbox/VBox.h"
 
 #ifdef TARGET_WINDOWS
