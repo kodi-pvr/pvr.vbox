@@ -1,8 +1,11 @@
+3.2.0
+	- Updated to PVR addon API v5.1.0
+
 3.1.0
-- Updated to PVR addon API v5.0.0
+	- Updated to PVR addon API v5.0.0
 
 3.0.1
-- updated Language files from Transifex
+	- updated Language files from Transifex
 
 3.0.0
 	- Initial Kodi Krypton version.
