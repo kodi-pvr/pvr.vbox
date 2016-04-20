@@ -275,7 +275,19 @@ extern "C" {
   {
   }
 
-  void ADDON_Announce(const char *flag, const char *sender, const char *message, const void *data)
+  void OnSystemSleep()
+  {
+  }
+
+  void OnSystemWake()
+  {
+  }
+
+  void OnPowerSavingActivated()
+  {
+  }
+
+  void OnPowerSavingDeactivated()
   {
   }
 
