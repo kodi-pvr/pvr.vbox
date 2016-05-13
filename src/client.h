@@ -20,8 +20,8 @@
  *
  */
 
-#include "kodi/libXBMC_addon.h"
-#include "kodi/libXBMC_pvr.h"
+#include "libXBMC_addon.h"
+#include "libXBMC_pvr.h"
 #include "vbox/VBox.h"
 
 #ifdef TARGET_WINDOWS
