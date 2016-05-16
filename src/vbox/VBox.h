@@ -26,7 +26,7 @@
 #include <thread>
 #include <atomic>
 #include <functional>
-#include <kodi/libXBMC_addon.h>
+#include <libXBMC_addon.h>
 #include "Channel.h"
 #include "ChannelStreamingStatus.h"
 #include "GuideChannelMapper.h"
