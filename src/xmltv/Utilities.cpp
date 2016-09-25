@@ -67,7 +67,6 @@ int Utilities::GetTimezoneAdjustment(const std::string tzOffset)
 
 time_t Utilities::XmltvToUnixTime(const std::string &time)
 {
-  std::string xmltvTime = time;
   std::tm timeinfo;
 
   // Convert the timestamp, disregarding the timezone offset

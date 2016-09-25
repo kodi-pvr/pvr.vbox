@@ -145,7 +145,7 @@ void VBox::DetermineConnectionParams()
   try {
     request::ApiRequest request("QuerySwVersion");
     request.SetTimeout(m_currentConnectionParameters.timeout);
-    response::ResponsePtr response = PerformRequest(request);
+    PerformRequest(request);
   }
   catch (VBoxException&)
   {
@@ -157,7 +157,7 @@ void VBox::DetermineConnectionParams()
 
       request::ApiRequest request("QuerySwVersion");
       request.SetTimeout(m_currentConnectionParameters.timeout);
-      response::ResponsePtr response = PerformRequest(request);
+      PerformRequest(request);
     }
   }
 
@@ -415,7 +415,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   // The request fails if the item doesn't exist
   try {
     request::ApiRequest request = CreateDeleteRecordingRequest(*it);
-    response::ResponsePtr response = PerformRequest(request);
+    PerformRequest(request);
 
     // Delete the item from memory too
     if (it != m_recordings.end())

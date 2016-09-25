@@ -386,7 +386,7 @@ extern "C" {
   PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
   {
     auto &channels = g_vbox->GetChannels();
-    int i = 0;
+    unsigned int i = 0;
 
     for (const auto &item : channels)
     {
@@ -697,7 +697,7 @@ extern "C" {
       const auto &actors = programme->GetActors();
       int numActors = std::min(static_cast<int>(actors.size()), 5);
 
-      for (int i = 0; i < numActors; i++)
+      for (unsigned int i = 0; i < numActors; i++)
         actorNames.push_back(actors.at(i).name);
 
       std::string cast = xmltv::Utilities::ConcatenateStringList(actorNames);
