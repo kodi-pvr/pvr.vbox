@@ -3,6 +3,11 @@
 
 # VBox Home TV Gateway PVR Client
 
+This repository provides a [Kodi] (http://kodi.tv) PVR addon for 
+interfacing with the VBox Communications XTi TV Gateway devices. This 
+README serves as a quick overview of the functionality and architecture 
+of the addon, to make it easier for others to possible contribute.
+
 ## Build instructions
 
 ### Linux
@@ -13,7 +18,11 @@
 4. `cmake -DADDONS_TO_BUILD=pvr.vbox -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/addons -DPACKAGE_ZIP=1 ../../xbmc/project/cmake/addons`
 5. `make`
 
-This repository provides a [Kodi] (http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi TV Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
+#### Building for Kodi built with CMake
+
+If you've built Kodi with CMake you'll want to change the 
+`CMAKE_INSTALL_PREFIX` to `../../xbmc/kodi-build/addons` instead 
+(assuming `kodi-build` is your build directory).
 
 ### Settings
 
