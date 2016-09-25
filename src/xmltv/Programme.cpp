@@ -26,6 +26,8 @@
 using namespace xmltv;
 using namespace tinyxml2;
 
+const std::string Programme::STRING_FORMAT_NOT_SUPPORTED = "String format is not supported";
+
 Programme::Programme(const tinyxml2::XMLElement *xml)
   : m_year(0)
 {
