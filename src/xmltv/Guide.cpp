@@ -59,8 +59,9 @@ Guide::Guide(const XMLElement *m_content)
     std::string channelId = Utilities::UrlDecode(element->Attribute("channel"));
     xmltv::ProgrammePtr programme(new Programme(element));
 
-    // Add the programme to the channel's schedule
-    m_schedules[channelId]->AddProgramme(programme);
+    // Add the programme to the channel's schedule only if the title was parsable
+    if (programme->m_title != Programme::STRING_FORMAT_NOT_SUPPORTED)
+      m_schedules[channelId]->AddProgramme(programme);
   }
 }
 

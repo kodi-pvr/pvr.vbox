@@ -63,6 +63,11 @@ namespace xmltv {
   public:
 
     /**
+     * Title used by programmes where the VBox cannot figure out the character encoding
+     */
+    static const std::string STRING_FORMAT_NOT_SUPPORTED;
+
+    /**
      * Creates a programme from the specified <programme> element
      */
     Programme(const tinyxml2::XMLElement *xml);
