@@ -400,8 +400,9 @@ extern "C" {
       channel.iUniqueId = ContentIdentifier::GetUniqueId(item);
       channel.bIsRadio = item->m_radio;
 
+      // Override LCN if backend channel order should be forced
       ++i;
-      if (g_setChannelIdUsingOrder)
+      if (g_vbox->GetSettings().m_setChannelIdUsingOrder)
         channel.iChannelNumber = i;
       else
         channel.iChannelNumber = item->m_number;
