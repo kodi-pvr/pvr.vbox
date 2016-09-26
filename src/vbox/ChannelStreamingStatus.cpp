@@ -67,11 +67,11 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
   if (!m_active)
     return 0;
 
-  int rfLevel = 0;
+  unsigned int rfLevel = 0;
 
   try {
     // Convert the RF level to an integer
-    rfLevel = compat::stoi(m_rfLevel);
+    rfLevel = compat::stoui(m_rfLevel);
 
     // If the level is above the maximum we consider it to be perfect
     if (rfLevel > RFLEVEL_MAX)
