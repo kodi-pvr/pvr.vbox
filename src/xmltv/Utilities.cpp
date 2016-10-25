@@ -112,6 +112,23 @@ std::string Utilities::UnixTimeToXmltv(const time_t timestamp,
   return xmltvTime;
 }
 
+std::string Utilities::UnixTimeToDailyTime(const time_t timestamp,
+  const std::string tzOffset /* = ""*/)
+{
+  // Adjust the timestamp according to the timezone
+  time_t adjustedTimestamp = timestamp + GetTimezoneAdjustment(tzOffset);
+
+  // Format the timestamp
+  std::tm tm = *std::gmtime(&adjustedTimestamp);
+
+  char buffer[20];
+  strftime(buffer, sizeof(buffer), XMLTV_DATETIME_FORMAT, &tm);
+
+  std::string xmltvTime(buffer);
+  // hours start after yyyymmdd (8 chars), minutes after hh
+  return xmltvTime.substr(8, 2) + xmltvTime.substr(10, 2);
+}
+
 // Borrowed from https://github.com/xbmc/xbmc/blob/master/xbmc/URL.cpp
 std::string Utilities::UrlDecode(const std::string& strURLData)
 {

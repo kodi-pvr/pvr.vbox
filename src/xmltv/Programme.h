@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 // Forward declarations
 namespace tinyxml2
@@ -34,7 +35,7 @@ namespace xmltv {
     
   class Programme;
   typedef std::shared_ptr<Programme> ProgrammePtr;
-
+  typedef std::map<std::string, std::string> SeriesIDMap;
   /**
    * Represents an actor
    */
@@ -105,6 +106,7 @@ namespace xmltv {
     std::string m_description;
     std::string m_icon;
     std::string m_subTitle;
+    SeriesIDMap m_seriesIds;
     int m_year;
     std::string m_starRating;
 
