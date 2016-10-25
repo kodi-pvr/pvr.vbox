@@ -31,7 +31,6 @@
 #include "ChannelStreamingStatus.h"
 #include "GuideChannelMapper.h"
 #include "Recording.h"
-#include "SeriesRecording.h"
 #include "Exceptions.h"
 #include "Settings.h"
 #include "SoftwareVersion.h"
@@ -82,17 +81,6 @@ namespace vbox {
     Origin origin = Origin::INTERNAL_GUIDE;
   };
 
-  enum TimerTypes
-  {
-    TIMER_VBOX_TYPE_NONE = 0,
-    TIMER_VBOX_TYPE_EPG_BASED_SINGLE,
-    TIMER_VBOX_TYPE_EPISODE,
-    TIMER_VBOX_TYPE_MANUAL_SINGLE,
-    TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES,
-    TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES,
-    TIMER_VBOX_TYPE_MANUAL_SERIES
-  };
-
   /**
    * The main class for interfacing with the VBox Gateway
    */
@@ -126,7 +114,6 @@ namespace vbox {
      * @return XMLTV timestamp localized for the current backend
      */
     std::string CreateTimestamp(const time_t unixTimestamp) const;
-    std::string CreateDailyTime(const time_t unixTimestamp) const;
 
     // General API methods
     std::string GetBackendName() const;
@@ -149,20 +136,12 @@ namespace vbox {
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
     request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
-    request::ApiRequest CreateDeleteSeriesRequest(const SeriesRecordingPtr &series) const;
     bool DeleteRecordingOrTimer(unsigned int id);
-    // for TIMER_VBOX_TYPE_EPG_BASED_SINGLE timer
-      void AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
-    // for TIMER_VBOX_TYPE_MANUAL_SINGLE timer
-      void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-        const std::string title, const std::string description);
-    // for TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES timer
+    void AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
     void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-      const std::string title, const std::string description, const unsigned int weekdays);
-    // for TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES timer
-    void AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
-      const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
-    const std::vector<SeriesRecordingPtr>& GetSeriesTimers() const;
+      const std::string title, const std::string description);
+    void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime);
+    const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
 
     // EPG methods
     const Schedule GetSchedule(const ChannelPtr &channel) const;
@@ -214,11 +193,6 @@ namespace vbox {
      * The list of recordings, including timeres
      */
     std::vector<RecordingPtr> m_recordings;
-
-	/**
-	* The list of recordings, including timeres
-	*/
-	std::vector<SeriesRecordingPtr> m_series;
 
     /**
      * The guide data. The XMLTV channel name is the key, the value is the 

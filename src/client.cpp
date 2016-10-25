@@ -463,7 +463,7 @@ extern "C" {
 
       time_t startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
       time_t endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
-      unsigned int id = item->m_id;
+      unsigned int id = ContentIdentifier::GetUniqueId(item.get());
 
       recording.recordingTime = startTime;
       recording.iDuration = static_cast<int>(endTime - startTime);
@@ -514,74 +514,8 @@ extern "C" {
 
   PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size)
   {
-    int numOfTimerTypes = 0;
-    
-    memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
-    // EPG based single recording
-    types[numOfTimerTypes].iId = vbox::TIMER_VBOX_TYPE_EPG_BASED_SINGLE;
-    strcpy(types[numOfTimerTypes].strDescription, "EPG-based one time recording");
-    types[numOfTimerTypes].iAttributes = 
-      PVR_TIMER_TYPE_REQUIRES_EPG_TAG_ON_CREATE |
-      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-      PVR_TIMER_TYPE_SUPPORTS_END_TIME;
-    ++numOfTimerTypes;
-    // episode recording
-    memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
-    types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_EPISODE;
-    strcpy(types[numOfTimerTypes].strDescription, "Episode recording");
-    types[numOfTimerTypes].iAttributes = 
-      PVR_TIMER_TYPE_IS_READONLY |
-      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-      PVR_TIMER_TYPE_SUPPORTS_END_TIME;
-    ++numOfTimerTypes;
-    // manual recording
-    memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
-    types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_MANUAL_SINGLE;
-    strcpy(types[numOfTimerTypes].strDescription, "Manual one time recording");
-    types[numOfTimerTypes].iAttributes = 
-      PVR_TIMER_TYPE_IS_MANUAL |
-      PVR_TIMER_TYPE_FORBIDS_EPG_TAG_ON_CREATE |
-      PVR_TIMER_TYPE_SUPPORTS_CHANNELS |
-      PVR_TIMER_TYPE_SUPPORTS_START_TIME | 
-      PVR_TIMER_TYPE_SUPPORTS_END_TIME;
-    ++numOfTimerTypes;
-
-    //Automatic series recording
-    memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
-    types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES;
-    strcpy(types[numOfTimerTypes].strDescription, "EPG-based automatic series recording");
-	types[numOfTimerTypes].iAttributes =
-		PVR_TIMER_TYPE_REQUIRES_EPG_SERIES_ON_CREATE;
-    ++numOfTimerTypes;
-
-    // EPG based series recording
-    memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
-    types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES;
-    strcpy(types[numOfTimerTypes].strDescription, "EPG-based manual series recording");
-    types[numOfTimerTypes].iAttributes =
-      PVR_TIMER_TYPE_IS_REPEATING |
-      PVR_TIMER_TYPE_REQUIRES_EPG_TAG_ON_CREATE |
-      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-      PVR_TIMER_TYPE_SUPPORTS_END_TIME |
-      PVR_TIMER_TYPE_SUPPORTS_WEEKDAYS;
-    ++numOfTimerTypes;
-
-    //Manual series recording
-    memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
-    types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_MANUAL_SERIES;
-    strcpy(types[numOfTimerTypes].strDescription, "Manual series recording");
-    types[numOfTimerTypes].iAttributes =
-      PVR_TIMER_TYPE_IS_MANUAL |
-      PVR_TIMER_TYPE_IS_REPEATING |
-      PVR_TIMER_TYPE_FORBIDS_EPG_TAG_ON_CREATE |
-      PVR_TIMER_TYPE_SUPPORTS_CHANNELS |
-      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-      PVR_TIMER_TYPE_SUPPORTS_END_TIME |
-      PVR_TIMER_TYPE_SUPPORTS_WEEKDAYS;
-    ++numOfTimerTypes;
-
-    *size = numOfTimerTypes;
-    return PVR_ERROR_NO_ERROR;
+    /* TODO: Implement this to get support for the timer features introduced with PVR API 1.9.7 */
+    return PVR_ERROR_NOT_IMPLEMENTED;
   }
 
   int GetTimersAmount(void)
@@ -594,7 +528,6 @@ extern "C" {
     /* TODO: Change implementation to get support for the timer features introduced with PVR API 1.9.7 */
     auto &recordings = g_vbox->GetRecordingsAndTimers();
 
-    // first get timers from single recordings (scheduled)
     for (const auto &item : recordings)
     {
       // Skip recordings
@@ -603,10 +536,13 @@ extern "C" {
 
       PVR_TIMER timer;
       memset(&timer, 0, sizeof(PVR_TIMER));
-      timer.iTimerType = (item->m_seriesId > 0)? vbox::TIMER_VBOX_TYPE_EPISODE : vbox::TIMER_VBOX_TYPE_MANUAL_SINGLE;
+
+      /* TODO: Implement own timer types to get support for the timer features introduced with PVR API 1.9.7 */
+      timer.iTimerType = PVR_TIMER_TYPE_NONE;
+
       timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
       timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
-      timer.iClientIndex = item->m_id;
+      timer.iClientIndex = ContentIdentifier::GetUniqueId(item.get());
 
       // Convert the internal timer state to PVR_TIMER_STATE
       switch (item->GetState())
@@ -631,83 +567,24 @@ extern "C" {
         return channel->m_xmltvName == item->m_channelId;
       });
 
-	  if (it != channels.cend())
-		  timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
-	  else
-		  continue;
-
-      strncpy(timer.strTitle, item->m_title.c_str(),
-        sizeof(timer.strTitle));
-
-      strncpy(timer.strSummary, item->m_description.c_str(),
-        sizeof(timer.strSummary));
-
-      g_vbox->Log(LOG_DEBUG, "GetTimers(): adding timer to show %s", item->m_title.c_str());
-      // TODO: Set margins to whatever the API reports
-      PVR->TransferTimerEntry(handle, &timer);
-    }
-    // second: get timer rules for series
-    auto &series = g_vbox->GetSeriesTimers();
-    for (const auto &item : series)
-    {
-      PVR_TIMER timer;
-      memset(&timer, 0, sizeof(PVR_TIMER));
-
-      timer.iTimerType = (item->m_fIsAuto)? vbox::TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES : vbox::TIMER_VBOX_TYPE_MANUAL_SERIES;
-      timer.iClientIndex = item->m_id;
-      timer.state = PVR_TIMER_STATE_SCHEDULED;
-
-      // Find the timer's channel and use its unique ID
-      auto &channels = g_vbox->GetChannels();
-      auto it = std::find_if(channels.cbegin(), channels.cend(),
-        [&item](const ChannelPtr &channel)
-      {
-        return channel->m_xmltvName == item->m_channelId;
-      });
-
       if (it != channels.cend())
         timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
 
-      unsigned int nextScheduledId = item->m_scheduledId;
-      // Find next recording of the series
-      auto recIt = std::find_if(recordings.begin(), recordings.end(),
-        [nextScheduledId](const RecordingPtr &recording)
-      {
-        return nextScheduledId == recording->m_id;
-      });
-      // if it doesn't exist (canceled) - don't add series
-      if (recIt == recordings.end())
-        continue;
-    
-      timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
-      // automatic starts & stops whenever detected (will appear as episode)		
-      if (item->m_fIsAuto)
-      {
-        timer.bStartAnyTime = true;
-        timer.bEndAnyTime = true;
-      }
-      else
-      {
-        // set periodic times
-        timer.firstDay = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
-        timer.iWeekdays = item->m_weekdays;
-        timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
-      }
       strncpy(timer.strTitle, item->m_title.c_str(),
         sizeof(timer.strTitle));
 
       strncpy(timer.strSummary, item->m_description.c_str(),
         sizeof(timer.strSummary));
-    
+
       // TODO: Set margins to whatever the API reports
       PVR->TransferTimerEntry(handle, &timer);
     }
+
     return PVR_ERROR_NO_ERROR;
   }
 
   PVR_ERROR AddTimer(const PVR_TIMER &timer)
   {
-     VBox::Log(LOG_DEBUG, "AddTimer() : entering with timer type 0x%x", timer.iTimerType);
     // Find the channel the timer is for
     auto &channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
@@ -728,69 +605,41 @@ extern "C" {
       // Set start time to now if it's missing
       time_t startTime = timer.startTime;
       time_t endTime = timer.endTime;
-      std::string title(timer.strTitle);
-      std::string desc(timer.strSummary);
 
       if (startTime == 0)
         startTime = time(nullptr);
 
+      // Add a time-based timer if no programme is available
+      if (!schedule.schedule)
+      {
+        g_vbox->AddTimer(channel, startTime, endTime);
+        return PVR_ERROR_NO_ERROR;
+      }
+
       // Add a programme-based timer if the programme exists in the schedule
-      const xmltv::ProgrammePtr programme = (schedule.schedule)? schedule.schedule->GetProgramme(timer.iEpgUid) : nullptr;
-    
-      switch (timer.iTimerType)
+      const xmltv::ProgrammePtr programme = schedule.schedule->GetProgramme(timer.iEpgUid);
+
+      if (programme)
       {
-      case TIMER_VBOX_TYPE_EPG_BASED_SINGLE:
-      case TIMER_VBOX_TYPE_EPISODE:
-        if (programme)
+        switch (schedule.origin)
         {
-          switch (schedule.origin)
-          {
-          case Schedule::Origin::INTERNAL_GUIDE:
-            g_vbox->AddTimer(channel, programme);
-            break;
-          case Schedule::Origin::EXTERNAL_GUIDE:
-            title = programme->m_title;
-            desc = programme->m_description;
-            g_vbox->AddTimer(channel, startTime, endTime, title, desc);
-            break;
-          }
-          return PVR_ERROR_NO_ERROR;
+        case Schedule::Origin::INTERNAL_GUIDE:
+          g_vbox->AddTimer(channel, programme);
+          break;
+        case Schedule::Origin::EXTERNAL_GUIDE:
+          std::string title = programme->m_title;
+          std::string description = programme->m_description;
+
+          g_vbox->AddTimer(channel, startTime, endTime, title, description);
+          break;
         }
-        else
-        {
-          g_vbox->AddTimer(channel, startTime, endTime, title, desc);
-          return PVR_ERROR_NO_ERROR;
-        }
-      case TIMER_VBOX_TYPE_MANUAL_SINGLE:
-        g_vbox->AddTimer(channel, startTime, endTime, title, desc);
-        return PVR_ERROR_NO_ERROR;
-      case TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES:
-      {
-        if (!programme)
-        {
-          return PVR_ERROR_INVALID_PARAMETERS;
-        }
-        g_vbox->AddSeriesTimer(channel, programme);
+
         return PVR_ERROR_NO_ERROR;
       }
-      case TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES:
-      {
-        if (!programme)
-        {
-            return PVR_ERROR_INVALID_PARAMETERS;
-        }
-        g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
-        return PVR_ERROR_NO_ERROR;
-      }
-      case TIMER_VBOX_TYPE_MANUAL_SERIES:
-      {
-        g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
-        return PVR_ERROR_NO_ERROR;
-      }
-      default:
-        // any other timer type is wrong
-        return PVR_ERROR_INVALID_PARAMETERS;
-      }
+
+      // If the channel has a schedule but not the desired programme, something 
+      // is wrong
+      return PVR_ERROR_INVALID_PARAMETERS;
     }
     catch (VBoxException &e)
     {
@@ -857,11 +706,6 @@ extern "C" {
 
       event.iFlags = EPG_TAG_FLAG_UNDEFINED;
       
-      if (programme->m_seriesIds.size() > 0)
-      {
-        VBox::Log(LOG_DEBUG, "GetEPGForChannel():programme %s marked as belonging to a series", programme->m_title.c_str());
-        event.iFlags |= EPG_TAG_FLAG_IS_SERIES;
-      }
       PVR->TransferEpgEntry(handle, &event);
     }
 
@@ -1021,15 +865,7 @@ extern "C" {
   PVR_ERROR SetRecordingLastPlayedPosition(const PVR_RECORDING &recording, int lastplayedposition) { return PVR_ERROR_NOT_IMPLEMENTED; }
   int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
   PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
-  PVR_ERROR UpdateTimer(const PVR_TIMER &timer) {
-	//  return PVR_ERROR_NOT_IMPLEMENTED; 
-	  PVR_ERROR err = DeleteTimer(timer, true);
-	  if (err == PVR_ERROR_NO_ERROR)
-	  {
-			return AddTimer(timer);
-	  }
-	  return err;
-  }
+  PVR_ERROR UpdateTimer(const PVR_TIMER &timer) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Miscellaneous unimplemented methods

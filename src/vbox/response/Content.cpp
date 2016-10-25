@@ -20,13 +20,11 @@
 */
 
 #include "Content.h"
-#include "xbmc_pvr_types.h"
 #include "lib/tinyxml2/tinyxml2.h"
 #include "../Channel.h"
 #include "../../xmltv/Utilities.h"
 #include "../../xmltv/Guide.h"
 #include "../../compat.h"
-#include "../../vbox/VBox.h"
 
 using namespace tinyxml2;
 using namespace vbox;
@@ -150,20 +148,6 @@ std::vector<RecordingPtr> RecordingResponseContent::GetRecordings() const
   return recordings;
 }
 
-std::vector<SeriesRecordingPtr> RecordingResponseContent::GetSeriesRecordings() const
-{
-  std::vector<SeriesRecordingPtr> allSeries;
-
-  for (XMLElement *element = m_content->FirstChildElement("record-series");
-    element != NULL; element = element->NextSiblingElement("record-series"))
-  {
-    SeriesRecordingPtr series = CreateSeriesRecording(element);
-    allSeries.push_back(std::move(series));
-  }
-
-  return allSeries;
-}
-
 RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
@@ -180,9 +164,6 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   if (xml->FirstChildElement("record-id"))
     recording->m_id = xmltv::Utilities::QueryUnsignedText(xml->FirstChildElement("record-id"));
 
-  if (xml->FirstChildElement("series-id"))
-	  recording->m_seriesId = xmltv::Utilities::QueryUnsignedText(xml->FirstChildElement("series-id"));
-  
   // TODO: External recordings don't have an end time, default to one hour
   if (xml->Attribute("stop") != NULL)
     recording->m_endTime = xml->Attribute("stop");
@@ -219,76 +200,6 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
 
   return recording;
 }
-
-SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml2::XMLElement *xml) const
-{
-  // Extract mandatory properties
-  std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
-
-  // Construct the object
-  SeriesRecordingPtr series(new SeriesRecording(channelId));
-
-  series->m_id = atoi(xml->Attribute("series-id"));
-  const XMLElement *element = xml->FirstChildElement("schedule-record-id");
-
-  if (element)
-  {
-    series->m_scheduledId = atoi(element->GetText());
-  }
-
-  element = xml->FirstChildElement("programme-title");
-  if (element)
-    series->m_title = element->GetText();
-
-  // Some recordings may have certain tags, but they can be empty
-  element = xml->FirstChildElement("programme-desc");
-
-  if (element && element->GetText())
-    series->m_description = element->GetText();
-
-  element = xml->FirstChildElement("start");
-
-  if (element && element->GetText())
-    series->m_startTime = element->GetText();
-
-  element = xml->FirstChildElement("crid");
-
-  if (element && element->GetText())
-    series->m_fIsAuto = true;
-  else
-  {
-    element = xml->FirstChildElement("stop");
-
-    if (element && element->GetText())
-      series->m_endTime = element->GetText();
-
-    element = xml->FirstChildElement("days-in-week");
-    // add day-bits to m_weekdays according to the days in this element
-    if (element && element->GetText())
-    {
-      static unsigned int days[7] = { PVR_WEEKDAY_SUNDAY, PVR_WEEKDAY_MONDAY, PVR_WEEKDAY_TUESDAY,
-        PVR_WEEKDAY_WEDNESDAY, PVR_WEEKDAY_THURSDAY, PVR_WEEKDAY_FRIDAY, PVR_WEEKDAY_SATURDAY };
-	  unsigned int dayInWeek = 0;
-      char *pDay;
-      char buf[32];
-
-      strcpy(buf, element->GetText());
-      pDay = strtok(buf, ",");
-
-      while (pDay)
-      {
-        dayInWeek = atoi(pDay);
-        if (dayInWeek < 1 || dayInWeek > 7)
-          continue;
-        series->m_weekdays |= days[dayInWeek - 1];
-        pDay = strtok(NULL, ",");
-      }
-    }
-  }
-
-  return series;
-}
-
 
 RecordingState RecordingResponseContent::GetState(const std::string &state) const
 {

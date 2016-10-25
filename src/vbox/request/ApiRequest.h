@@ -63,7 +63,7 @@ namespace vbox {
       /**
        * The request parameters (and their values)
        */
-      std::map<std::string, std::vector<std::string>> m_parameters;
+      std::map<std::string, std::string> m_parameters;
 
       /**
        * The timeout to use for the request. Defaults to zero which means the 

@@ -75,17 +75,8 @@ std::string ApiRequest::GetLocation() const
 
   // Append parameters (including method)
   if (m_parameters.size() > 0)
-  {
     for (auto const &parameter : m_parameters)
-    {
-       // multiple values possible for each parameter
-       for (auto const &value : parameter.second)
-       {
-         url += "&" + parameter.first + "=";
-         url += ::xmltv::Utilities::UrlEncode(value);
-       }
-    }
-  }
+      url += "&" + parameter.first + "=" + ::xmltv::Utilities::UrlEncode(parameter.second);
 
   // Optionally append the connection timeout
   if (m_timeout > 0)
@@ -101,17 +92,17 @@ std::string ApiRequest::GetIdentifier() const
 
 void ApiRequest::AddParameter(const std::string &name, const std::string &value)
 {
-  m_parameters[name].push_back(value);
+  m_parameters[name] = value;
 }
 
 void ApiRequest::AddParameter(const std::string &name, int value)
 {
-  m_parameters[name].push_back(compat::to_string(value));
+  m_parameters[name] = compat::to_string(value);
 }
 
 void ApiRequest::AddParameter(const std::string &name, unsigned int value)
 {
-  m_parameters[name].push_back(compat::to_string(value));
+  m_parameters[name] = compat::to_string(value);
 }
 
 void ApiRequest::SetTimeout(int timeout)

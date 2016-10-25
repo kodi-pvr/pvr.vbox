@@ -76,15 +76,6 @@ namespace xmltv {
     static std::string UnixTimeToXmltv(const time_t timestamp, const std::string tzOffset = "");
 
     /**
-    * Converts a UTC time_t a 24-hour hhmm string, optionally adjusted
-    * for the specified timezone offset
-    * @param time a UNIX timestamp
-    * @param tzOffset the timezone offset, e.g. "+0200"
-    * @return e.g. "1700"
-    */
-    static std::string UnixTimeToDailyTime(const time_t timestamp, const std::string tzOffset = "");
-
-    /**
      * Parses the contents of the specified element into an integer. We need 
      * this for backward-compatibility with older versions of tinyxml2.
      */

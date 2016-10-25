@@ -198,8 +198,7 @@ void VBox::BackgroundUpdater()
   while (m_active)
   {
     // Update recordings every iteration
-    if (lapCounter % 12 == 0)
-      RetrieveRecordings();
+    RetrieveRecordings();
 
     // Update channels every six iterations = 30 seocnds
     if (lapCounter % 6 == 0)
@@ -378,8 +377,8 @@ int VBox::GetRecordingsAmount() const
 request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recording) const
 {
   RecordingState state = recording->GetState();
-  unsigned int idToDelete = (recording->m_seriesId > 0)? recording->m_seriesId : recording->m_id;
-  
+  unsigned int recordId = recording->m_id;
+
   // Determine the request method to use. If a recording is active we want to 
   // cancel it instead of deleting it
   std::string requestMethod = "DeleteRecord";
@@ -389,27 +388,11 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recor
 
   // Create the request
   request::ApiRequest request(requestMethod);
+  request.AddParameter("RecordID", recordId);
 
   // Determine request parameters
-  request.AddParameter("RecordID", idToDelete);
   if (state == RecordingState::EXTERNAL)
     request.AddParameter("FileName", recording->m_filename);
-
-  return request;
-}
-
-request::ApiRequest VBox::CreateDeleteSeriesRequest(const SeriesRecordingPtr &series) const
-{
-  Log(LOG_DEBUG, "CreateDeleteSeriesRequest(): series->m_seriesId=%d", series->m_id);
-  // Determine the request method to use. If a recording is active we want to 
-  // cancel it instead of deleting it
-  std::string requestMethod = "CancelRecord";
-
-  // Create the request
-  request::ApiRequest request(requestMethod);
-
-  // Determine request parameters
-  request.AddParameter("RecordID", series->m_id);
 
   return request;
 }
@@ -418,47 +401,25 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 {
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
-  bool fIsSeries = false;
 
-  // Find the recording/timer - look for single / series
-  auto it = std::find_if(m_recordings.begin(), m_recordings.end(),
+  // Find the recording/timer
+  auto it = std::find_if(m_recordings.begin(), m_recordings.end(), 
     [id](const RecordingPtr &recording)
   {
-    return id == recording->m_id;
-  });
-  auto seriesItr = std::find_if(m_series.begin(), m_series.end(),
-    [id](const SeriesRecordingPtr &series)
-  {
-    return id == series->m_id;
+    return id == ContentIdentifier::GetUniqueId(recording.get());
   });
 
-  // if id doesn't match a recording, then it's a series
-  if (it == m_recordings.cend())
-  {
-    if (seriesItr == m_series.cend())
-    {
-      return false;
-    }
-    fIsSeries = true;
-  }
-    
+  if (it == m_recordings.end())
+    return false;
+
   // The request fails if the item doesn't exist
   try {
-    request::ApiRequest request = (fIsSeries)? 
-    CreateDeleteSeriesRequest(*seriesItr) : CreateDeleteRecordingRequest(*it);
+    request::ApiRequest request = CreateDeleteRecordingRequest(*it);
     PerformRequest(request);
 
-  // Delete the item from memory too
-  if (!fIsSeries)
-  {	
+    // Delete the item from memory too
     if (it != m_recordings.end())
       m_recordings.erase(it);
-  }
-  else
-  {
-    if (seriesItr != m_series.end())
-      m_series.erase(seriesItr);
-  } 
 
     // Fire events
     OnRecordingsUpdated();
@@ -487,59 +448,9 @@ void VBox::AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr progr
   RetrieveRecordings();
 }
 
-
-static void AddWeekdays(request::ApiRequest &rRequest, const unsigned int weekdays)
-{
-  if (weekdays & PVR_WEEKDAY_SUNDAY)
-  {
-    rRequest.AddParameter("Day", "Sun");
-  }
-  if (weekdays & PVR_WEEKDAY_MONDAY)
-  {
-    rRequest.AddParameter("Day", "Mon");
-  }
-  if (weekdays & PVR_WEEKDAY_TUESDAY)
-  {
-    rRequest.AddParameter("Day", "Tue");
-  }
-  if (weekdays & PVR_WEEKDAY_WEDNESDAY)
-  {
-    rRequest.AddParameter("Day", "Wed");
-  }
-  if (weekdays & PVR_WEEKDAY_THURSDAY)
-  {
-    rRequest.AddParameter("Day", "Thu");
-  }
-  if (weekdays & PVR_WEEKDAY_FRIDAY)
-  {
-    rRequest.AddParameter("Day", "Fri");
-  }
-  if (weekdays & PVR_WEEKDAY_SATURDAY)
-  {
-    rRequest.AddParameter("Day", "Sat");
-  }
-}
-
-void VBox::AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme)
-{
-  Log(LOG_DEBUG, "Series timer for channel %s, program %s", channel->m_name.c_str(), programme->m_title.c_str());
-  
-  // Add the timer
-  request::ApiRequest request("ScheduleProgramRecord");
-  request.AddParameter("ChannelID", channel->m_xmltvName);
-  request.AddParameter("ProgramTitle", programme->m_title);
-  request.AddParameter("StartTime", programme->m_startTime);
-  request.AddParameter("SeriesRecording", "YES");
-  PerformRequest(request);
-
-  // Refresh the recordings and timers
-  RetrieveRecordings();
-}
-
 void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
   const std::string title, const std::string description)
 {
-  Log(LOG_DEBUG, "Adding Manual timer for channel %s", channel->m_name.c_str());
   // Add the timer
   request::ApiRequest request("ScheduleChannelRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
@@ -547,9 +458,10 @@ void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
   request.AddParameter("EndTime", CreateTimestamp(endTime));
 
   // Manually set title and description. There is a bug in the VBox firmware 
-  // so we have to truncate the description for now.
+  // so we have to truncate the description.
   request.AddParameter("ProgramName", title);
- // request.AddParameter("Description", description.substr(0, 250));
+  request.AddParameter("Description", description.substr(0, 250));
+  request.AddParameter("SaveProgramInfo", "YES");
 
   PerformRequest(request);
 
@@ -557,24 +469,13 @@ void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
   RetrieveRecordings();
 }
 
-// implement timer with rule for manually defined series
-void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-  const std::string title, const std::string description, const unsigned int weekdays)
+void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime)
 {
-  Log(LOG_DEBUG, "Manual series timer for channel %s, weekdays = 0x%x", channel->m_name.c_str(), weekdays);
   // Add the timer
   request::ApiRequest request("ScheduleChannelRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
-  request.AddParameter("Periodic", "YES");
-  request.AddParameter("FromTime", CreateDailyTime(startTime));
-  request.AddParameter("ToTime", CreateDailyTime(endTime));
-
-  // Manually set title and description. There is a bug in the VBox firmware 
-  // so we have to truncate the description for now.
-  request.AddParameter("ProgramName", title);
-  //request.AddParameter("Description", description.substr(0, 250));
-
-  AddWeekdays(request, weekdays);
+  request.AddParameter("StartTime", CreateTimestamp(startTime));
+  request.AddParameter("EndTime", CreateTimestamp(endTime));
   PerformRequest(request);
 
   // Refresh the recordings and timers
@@ -586,11 +487,9 @@ int VBox::GetTimersAmount() const
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  int count = std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
+  return std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
     return recording->IsTimer();
   });
-  count += m_series.size();
-  return count;
 }
 
 const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
@@ -599,15 +498,6 @@ const std::vector<RecordingPtr>& VBox::GetRecordingsAndTimers() const
   std::unique_lock<std::mutex> lock(m_mutex);
 
   return m_recordings;
-}
-
-
-const std::vector<SeriesRecordingPtr>& VBox::GetSeriesTimers() const
-{
-  m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
-  std::unique_lock<std::mutex> lock(m_mutex);
-
-  return m_series;
 }
 
 const Schedule VBox::GetSchedule(const ChannelPtr &channel) const
@@ -655,13 +545,6 @@ std::string VBox::CreateTimestamp(const time_t unixTimestamp) const
   std::string tzOffset = m_backendInformation.timezoneOffset;
   
   return ::xmltv::Utilities::UnixTimeToXmltv(unixTimestamp, tzOffset);
-}
-
-std::string VBox::CreateDailyTime(const time_t unixTimestamp) const
-{
-  std::string tzOffset = m_backendInformation.timezoneOffset;
-
-  return ::xmltv::Utilities::UnixTimeToDailyTime(unixTimestamp, tzOffset);
 }
 
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
@@ -715,14 +598,13 @@ void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
 
       // Compare the results
       auto recordings = content.GetRecordings();
-      auto series = content.GetSeriesRecordings();
       std::unique_lock<std::mutex> lock(m_mutex);
 
       // Swap and notify if the contents have changed
-      if (!utilities::deref_equals(m_recordings, recordings) || !utilities::deref_equals(m_series, series))
+      if (!utilities::deref_equals(m_recordings, recordings))
       {
         m_recordings = std::move(content.GetRecordings());
-        m_series = std::move(content.GetSeriesRecordings());
+
         if (triggerEvent)
         {
           OnRecordingsUpdated();

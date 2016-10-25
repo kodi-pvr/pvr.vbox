@@ -90,20 +90,6 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
     if (element)
       m_starRating = element->GetText();
   }
-
-  // series IDs
-  for (element = xml->FirstChildElement("episode-num");
-    element != NULL; element = element->NextSiblingElement("episode-num"))
-  {
-    auto *seriesId = element->GetText();
-    if (!seriesId)
-      continue;
-    auto *pSystemAttr = element->Attribute("system");
-    if (!pSystemAttr)
-      pSystemAttr = "xmltv_ns";
-
-    m_seriesIds.insert(std::pair<std::string,std::string>(pSystemAttr, seriesId));
-  }
 }
 
 void Programme::ParseCredits(const XMLElement *creditsElement)
