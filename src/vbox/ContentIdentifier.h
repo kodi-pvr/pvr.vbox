@@ -23,6 +23,7 @@
 #include <functional>
 #include "Channel.h"
 #include "Recording.h"
+#include "SeriesRecording.h"
 #include "../xmltv/Programme.h"
 #include "../xmltv/Utilities.h"
 #include "../compat.h"
@@ -54,6 +55,18 @@ namespace vbox {
       std::hash<std::string> hasher;
       std::string timestamp = compat::to_string(::xmltv::Utilities::XmltvToUnixTime(recording->m_endTime));
       int uniqueId = hasher(std::string(recording->m_title) + timestamp);
+      return std::abs(uniqueId);
+    }
+
+    /**
+    * @return a unique ID for the series. This implementation must match
+    * that of xmltv::Programme so that series can be linked to programmes.
+    */
+    static unsigned int GetUniqueId(const vbox::SeriesRecording *series)
+    {
+      std::hash<std::string> hasher;
+      std::string timestamp = compat::to_string(::xmltv::Utilities::XmltvToUnixTime(series->m_endTime));
+      int uniqueId = hasher(std::string(series->m_title) + timestamp);
       return std::abs(uniqueId);
     }
 
