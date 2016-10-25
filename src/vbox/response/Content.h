@@ -24,6 +24,7 @@
 #include <vector>
 #include "../Channel.h"
 #include "../Recording.h"
+#include "../SeriesRecording.h"
 #include "../../xmltv/Guide.h"
 
 namespace tinyxml2 {
@@ -115,9 +116,11 @@ namespace vbox {
       virtual ~RecordingResponseContent() {};
 
       std::vector<RecordingPtr> GetRecordings() const;
+      std::vector<SeriesRecordingPtr> GetSeriesRecordings() const;
 
     private:
       RecordingPtr CreateRecording(const tinyxml2::XMLElement *xml) const;
+      SeriesRecordingPtr CreateSeriesRecording(const tinyxml2::XMLElement *xml) const;
       RecordingState GetState(const std::string &state) const;
     };
   }

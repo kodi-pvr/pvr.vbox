@@ -52,6 +52,7 @@ namespace vbox {
     bool operator== (const Recording &other)
     {
       return m_id == other.m_id &&
+        m_seriesId == other.m_seriesId &&
         m_channelId == other.m_channelId &&
         m_channelName == other.m_channelName &&
         m_url == other.m_url &&
@@ -99,6 +100,7 @@ namespace vbox {
     }
 
     unsigned int m_id;
+    unsigned int m_seriesId;
     std::string m_channelId;
     std::string m_channelName;
     std::string m_url;

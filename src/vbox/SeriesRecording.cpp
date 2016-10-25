@@ -19,16 +19,16 @@
 *
 */
 
-#include "Recording.h"
+#include "SeriesRecording.h"
 
 using namespace vbox;
 
-Recording::Recording(const std::string &channelId, 
-  const std::string &channelName, RecordingState state)
-  : m_id(0), m_seriesId(0), m_channelId(channelId), m_channelName(channelName), m_state(state)
+SeriesRecording::SeriesRecording(const std::string &channelId)
+	: m_id(0), m_scheduledId(0), m_channelId(channelId), m_fIsAuto(false), m_weekdays(0)
 {
+
 }
 
-Recording::~Recording()
+SeriesRecording::~SeriesRecording()
 {
 }
