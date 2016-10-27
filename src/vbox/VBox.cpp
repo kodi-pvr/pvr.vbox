@@ -197,7 +197,7 @@ void VBox::BackgroundUpdater()
 
   while (m_active)
   {
-    // Update recordings every iteration
+    // Update recordings every 12 iterations = 1 minute
     if (lapCounter % 12 == 0)
       RetrieveRecordings();
 
@@ -400,9 +400,9 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recor
 
 request::ApiRequest VBox::CreateDeleteSeriesRequest(const SeriesRecordingPtr &series) const
 {
-  Log(LOG_DEBUG, "CreateDeleteSeriesRequest(): series->m_seriesId=%d", series->m_id);
-  // Determine the request method to use. If a recording is active we want to 
-  // cancel it instead of deleting it
+  Log(LOG_DEBUG, "Removing series with ID %d", series->m_id);
+  // For a series, CancelRecord cancels next episodes, and if there's a current
+  // episode being recorded, it is stopped
   std::string requestMethod = "CancelRecord";
 
   // Create the request
@@ -546,10 +546,8 @@ void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
   request.AddParameter("StartTime", CreateTimestamp(startTime));
   request.AddParameter("EndTime", CreateTimestamp(endTime));
 
-  // Manually set title and description. There is a bug in the VBox firmware 
-  // so we have to truncate the description for now.
+  // Manually set title
   request.AddParameter("ProgramName", title);
- // request.AddParameter("Description", description.substr(0, 250));
 
   PerformRequest(request);
 
@@ -569,10 +567,8 @@ void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
   request.AddParameter("FromTime", CreateDailyTime(startTime));
   request.AddParameter("ToTime", CreateDailyTime(endTime));
 
-  // Manually set title and description. There is a bug in the VBox firmware 
-  // so we have to truncate the description for now.
+  // Manually set title
   request.AddParameter("ProgramName", title);
-  //request.AddParameter("Description", description.substr(0, 250));
 
   AddWeekdays(request, weekdays);
   PerformRequest(request);
