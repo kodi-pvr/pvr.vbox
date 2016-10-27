@@ -631,10 +631,10 @@ extern "C" {
         return channel->m_xmltvName == item->m_channelId;
       });
 
-	  if (it != channels.cend())
-		  timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
-	  else
-		  continue;
+      if (it != channels.cend())
+        timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
+      else
+        continue;
 
       strncpy(timer.strTitle, item->m_title.c_str(),
         sizeof(timer.strTitle));
@@ -767,18 +767,14 @@ extern "C" {
       case TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES:
       {
         if (!programme)
-        {
           return PVR_ERROR_INVALID_PARAMETERS;
-        }
         g_vbox->AddSeriesTimer(channel, programme);
         return PVR_ERROR_NO_ERROR;
       }
       case TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES:
       {
         if (!programme)
-        {
             return PVR_ERROR_INVALID_PARAMETERS;
-        }
         g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
         return PVR_ERROR_NO_ERROR;
       }
@@ -805,6 +801,15 @@ extern "C" {
       return PVR_ERROR_NO_ERROR;
 
     return PVR_ERROR_FAILED;
+  }
+
+  PVR_ERROR UpdateTimer(const PVR_TIMER &timer) 
+  {
+    PVR_ERROR err = DeleteTimer(timer, true);
+
+    if (err == PVR_ERROR_NO_ERROR)
+      return AddTimer(timer);
+    return err;
   }
 
   PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time_t iStart, time_t iEnd)
@@ -857,7 +862,7 @@ extern "C" {
 
       event.iFlags = EPG_TAG_FLAG_UNDEFINED;
       
-      if (programme->m_seriesIds.size() > 0)
+      if (!programme->m_seriesIds.empty())
       {
         VBox::Log(LOG_DEBUG, "GetEPGForChannel():programme %s marked as belonging to a series", programme->m_title.c_str());
         event.iFlags |= EPG_TAG_FLAG_IS_SERIES;
@@ -1021,15 +1026,6 @@ extern "C" {
   PVR_ERROR SetRecordingLastPlayedPosition(const PVR_RECORDING &recording, int lastplayedposition) { return PVR_ERROR_NOT_IMPLEMENTED; }
   int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
   PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
-  PVR_ERROR UpdateTimer(const PVR_TIMER &timer) {
-	//  return PVR_ERROR_NOT_IMPLEMENTED; 
-	  PVR_ERROR err = DeleteTimer(timer, true);
-	  if (err == PVR_ERROR_NO_ERROR)
-	  {
-			return AddTimer(timer);
-	  }
-	  return err;
-  }
   PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Miscellaneous unimplemented methods

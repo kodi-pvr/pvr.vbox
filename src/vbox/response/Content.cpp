@@ -220,6 +220,27 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   return recording;
 }
 
+static void AddWeekdayBits(unsigned int &rWeekdays, const char *pWeekdaysText)
+{
+  static unsigned int days[7] = { PVR_WEEKDAY_SUNDAY, PVR_WEEKDAY_MONDAY, PVR_WEEKDAY_TUESDAY,
+    PVR_WEEKDAY_WEDNESDAY, PVR_WEEKDAY_THURSDAY, PVR_WEEKDAY_FRIDAY, PVR_WEEKDAY_SATURDAY };
+  unsigned int dayInWeek = 0;
+  char *pDay;
+  char buf[32];
+
+  strcpy(buf, pWeekdaysText);
+  pDay = strtok(buf, ",");
+
+  while (pDay)
+  {
+    dayInWeek = atoi(pDay);
+    if (dayInWeek < 1 || dayInWeek > 7)
+      continue;
+    rWeekdays |= days[dayInWeek - 1];
+    pDay = strtok(NULL, ",");
+  }
+}
+
 SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
@@ -232,9 +253,7 @@ SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml
   const XMLElement *element = xml->FirstChildElement("schedule-record-id");
 
   if (element)
-  {
     series->m_scheduledId = atoi(element->GetText());
-  }
 
   element = xml->FirstChildElement("programme-title");
   if (element)
@@ -263,27 +282,9 @@ SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml
       series->m_endTime = element->GetText();
 
     element = xml->FirstChildElement("days-in-week");
-    // add day-bits to m_weekdays according to the days in this element
+    // add day-bits to m_weekdays according to the days in the "days-in-week" tag
     if (element && element->GetText())
-    {
-      static unsigned int days[7] = { PVR_WEEKDAY_SUNDAY, PVR_WEEKDAY_MONDAY, PVR_WEEKDAY_TUESDAY,
-        PVR_WEEKDAY_WEDNESDAY, PVR_WEEKDAY_THURSDAY, PVR_WEEKDAY_FRIDAY, PVR_WEEKDAY_SATURDAY };
-	  unsigned int dayInWeek = 0;
-      char *pDay;
-      char buf[32];
-
-      strcpy(buf, element->GetText());
-      pDay = strtok(buf, ",");
-
-      while (pDay)
-      {
-        dayInWeek = atoi(pDay);
-        if (dayInWeek < 1 || dayInWeek > 7)
-          continue;
-        series->m_weekdays |= days[dayInWeek - 1];
-        pDay = strtok(NULL, ",");
-      }
-    }
+      AddWeekdayBits(series->m_weekdays, element->GetText());
   }
 
   return series;

@@ -74,7 +74,7 @@ std::string ApiRequest::GetLocation() const
   std::string url = g_vbox->GetApiBaseUrl();
 
   // Append parameters (including method)
-  if (m_parameters.size() > 0)
+  if (!m_parameters.empty())
   {
     for (auto const &parameter : m_parameters)
     {

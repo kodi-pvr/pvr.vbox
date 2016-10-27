@@ -28,7 +28,3 @@ SeriesRecording::SeriesRecording(const std::string &channelId)
 {
 
 }
-
-SeriesRecording::~SeriesRecording()
-{
-}

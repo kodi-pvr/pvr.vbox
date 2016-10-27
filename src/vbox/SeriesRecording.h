@@ -25,48 +25,43 @@
 
 namespace vbox {
 
-	class SeriesRecording;
-	typedef std::unique_ptr<SeriesRecording> SeriesRecordingPtr;
+  class SeriesRecording;
+  typedef std::unique_ptr<SeriesRecording> SeriesRecordingPtr;
 
-	/**
-	* Represents a series
-	*/
-	class SeriesRecording
-	{
-	public:
-		SeriesRecording(const std::string &channelId);
-		~SeriesRecording();
+  /**
+  * Represents a series
+  */
+  class SeriesRecording
+  {
+  public:
+    SeriesRecording(const std::string &channelId);
+    ~SeriesRecording() = default;
 
-		bool operator== (const SeriesRecording &other)
-		{
-			return m_id == other.m_id &&
-				m_scheduledId == other.m_scheduledId &&
-				m_channelId == other.m_channelId &&
-				m_title == other.m_title &&
-				m_description == other.m_description &&
-				m_startTime == other.m_startTime &&
-				m_endTime == other.m_endTime;
-		}
+    bool operator== (const SeriesRecording &other)
+    {
+      return m_id == other.m_id &&
+        m_scheduledId == other.m_scheduledId &&
+        m_channelId == other.m_channelId &&
+        m_title == other.m_title &&
+        m_description == other.m_description &&
+        m_startTime == other.m_startTime &&
+        m_endTime == other.m_endTime;
+    }
 
-		bool operator!= (const SeriesRecording &other)
-		{
-			return !(*this == other);
-		}
+    bool operator!= (const SeriesRecording &other)
+    {
+      return !(*this == other);
+    }
 
-		/**
-		* Whether this object represents a series
-		* @return true if recording
-		*/
-
-		unsigned int m_id;
-		unsigned int m_scheduledId;
-		std::string m_channelId;
-		std::string m_title;
-		std::string m_description;
-		bool		  m_fIsAuto;
-		std::string m_startTime;
-		std::string m_endTime;
-		unsigned int m_weekdays;
-	};
+    unsigned int m_id;
+    unsigned int m_scheduledId;
+    std::string m_channelId;
+    std::string m_title;
+    std::string m_description;
+    bool m_fIsAuto;
+    std::string m_startTime;
+    std::string m_endTime;
+    unsigned int m_weekdays;
+  };
 
 }
