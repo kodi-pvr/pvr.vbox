@@ -1,0 +1,52 @@
+#pragma once
+/*
+*      Copyright (C) 2015 Sam Stenvall
+*
+*  This Program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2, or (at your option)
+*  any later version.
+*
+*  This Program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with XBMC; see the file COPYING.  If not, write to
+*  the Free Software Foundation, 51 Franklin Street, Fifth Floor, Boston,
+*  MA 02110-1301  USA
+*  http://www.gnu.org/copyleft/gpl.html
+*
+*/
+
+#include <string>
+#include <vector>
+#include <map>
+
+namespace vbox {
+
+  //typedef std::map<std::string, Category> CategoryMap;
+  typedef std::map<std::string, int> GenreMap;
+  typedef std::map<std::string, int> CategoryMap;
+  typedef CategoryMap * CategoryMapPtr;
+
+  const std::string CATEGORY_TO_GENRE_XML_PATH = "special://userdata/addon_data/pvr.vbox/category_to_genre_types.xml";
+
+  class CategoryGenreMapper
+  {
+  public:
+    CategoryGenreMapper();
+    ~CategoryGenreMapper() = default;
+    CategoryMapPtr Initialize(const std::string &xmlFileName);
+    bool LoadCategoryToGenreXML(const std::string &xmlFileName);
+    bool GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType);
+
+  private:
+    GenreMap m_genreMap;
+    CategoryMap m_categoryMap;
+  };
+
+  typedef CategoryGenreMapper * CategoryMapperPtr;
+
+}

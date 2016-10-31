@@ -43,7 +43,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr)
+  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenrelMapper(nullptr)
 {
 }
 
@@ -182,6 +182,8 @@ void VBox::BackgroundUpdater()
   // Retrieve everything in order once before starting the loop, without 
   // triggering the event handlers
   RetrieveChannels(false);
+
+  InitializeGenreMapper();
   RetrieveRecordings(false);
   RetrieveGuide(false);
 
@@ -855,6 +857,31 @@ void VBox::InitializeChannelMapper()
     LogException(e);
     Log(LOG_INFO, "Failed to load the external guide channel mapper");
   }
+}
+
+void VBox::InitializeGenreMapper()
+{
+  // Abort if we're already initialized or the external guide is not loaded
+  if (m_categoryGenrelMapper)
+    return;
+
+  Log(LOG_INFO, "Loading category genre mapper");
+
+  m_categoryGenrelMapper = CategoryMapperPtr(new CategoryGenreMapper());
+
+  try {
+    m_categoryGenrelMapper->Initialize(CATEGORY_TO_GENRE_XML_PATH);
+  }
+  catch (VBoxException &e)
+  {
+    LogException(e);
+    Log(LOG_INFO, "Failed to load the genre mapper");
+  }
+}
+
+bool VBox::GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType) const
+{
+  return m_categoryGenrelMapper->GetCategoriesGenreType(categories, rGenreType);
 }
 
 void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)

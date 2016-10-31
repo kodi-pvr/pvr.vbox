@@ -22,6 +22,8 @@ set(VBOX_SOURCES
                 src/compat.h)
 
 set(VBOX_SOURCES_VBOX
+                src/vbox/CategoryGenreMapper.h
+                src/vbox/CategoryGenreMapper.cpp
                 src/vbox/Channel.h
                 src/vbox/ChannelStreamingStatus.h
                 src/vbox/ChannelStreamingStatus.cpp
@@ -95,6 +97,7 @@ set(VBOX_RESOURCES
                 pvr.vbox/changelog.txt
                 pvr.vbox/icon.png
                 pvr.vbox/resources/settings.xml
+                pvr.vbox/resources/category_to_genre_types.xml
                 pvr.vbox/resources/language/resource.language.en_gb/strings.po)
 
 source_group("Resource Files" FILES ${VBOX_RESOURCES})
