@@ -30,6 +30,7 @@
 #include "Channel.h"
 #include "ChannelStreamingStatus.h"
 #include "GuideChannelMapper.h"
+#include "CategoryGenreMapper.h"
 #include "Recording.h"
 #include "SeriesRecording.h"
 #include "Exceptions.h"
@@ -166,6 +167,7 @@ namespace vbox {
 
     // EPG methods
     const Schedule GetSchedule(const ChannelPtr &channel) const;
+    int GetCategoriesGenreType(std::vector<std::string> &categories) const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -185,6 +187,7 @@ namespace vbox {
     void RetrieveGuide(bool triggerEvent = true);
     void RetrieveExternalGuide(bool triggerEvent = true);
     void InitializeChannelMapper();
+    void InitializeGenreMapper();
     void SwapChannelIcons(std::vector<ChannelPtr> &channels);
 
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
@@ -235,6 +238,11 @@ namespace vbox {
      * The guide channel mapper
      */
     GuideChannelMapperPtr m_guideChannelMapper;
+
+    /**
+     * The category<->genre mapper
+     */
+    CategoryMapperPtr m_categoryGenreMapper;
 
     /**
      * Handler for the startup state

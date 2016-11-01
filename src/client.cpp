@@ -843,12 +843,16 @@ extern "C" {
 
       std::string directors = xmltv::Utilities::ConcatenateStringList(programme->GetDirectors());
       std::string writers = xmltv::Utilities::ConcatenateStringList(programme->GetWriters());
-      std::string genres = xmltv::Utilities::ConcatenateStringList(programme->GetCategories());
+      std::vector<std::string> categories = programme->GetCategories();
+      std::string catStrings = xmltv::Utilities::ConcatenateStringList(categories);
 
       event.strDirector = directors.c_str();
       event.strWriter = writers.c_str();
-      event.strGenreDescription = genres.c_str();
-      
+
+      // use genre mapper to find the most common genre type (from categories)
+      event.iGenreType = g_vbox->GetCategoriesGenreType(categories);
+      event.strGenreDescription = catStrings.c_str();
+
       // Extract up to five cast members only
       std::vector<std::string> actorNames;
       const auto &actors = programme->GetActors();
