@@ -849,10 +849,8 @@ extern "C" {
       event.strDirector = directors.c_str();
       event.strWriter = writers.c_str();
 
-      int genreType;
       // use genre mapper to find the most common genre type (from categories)
-      g_vbox->GetCategoriesGenreType(categories, genreType);
-      event.iGenreType = genreType;
+      event.iGenreType = g_vbox->GetCategoriesGenreType(categories);
       event.strGenreDescription = catStrings.c_str();
 
       // Extract up to five cast members only
