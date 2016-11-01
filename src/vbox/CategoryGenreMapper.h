@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace vbox {
 
@@ -38,9 +39,9 @@ namespace vbox {
   public:
     CategoryGenreMapper();
     ~CategoryGenreMapper() = default;
-    CategoryMapPtr Initialize(const std::string &xmlFileName);
+    void Initialize(const std::string &xmlFileName);
     bool LoadCategoryToGenreXML(const std::string &xmlFileName);
-    bool GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType);
+    int GetCategoriesGenreType(std::vector<std::string> &categories);
 
   private:
     GenreMap m_genreMap;
@@ -48,5 +49,4 @@ namespace vbox {
   };
 
   typedef CategoryGenreMapper * CategoryMapperPtr;
-
 }
