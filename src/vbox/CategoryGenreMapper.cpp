@@ -47,13 +47,10 @@ CategoryGenreMapper::CategoryGenreMapper()
   m_genreMap["user"] = EPG_EVENT_CONTENTMASK_USERDEFINED;
 }
 
-CategoryMapPtr CategoryGenreMapper::Initialize(const std::string &xmlFileName)
+void CategoryGenreMapper::Initialize(const std::string &xmlFileName)
 {
   g_vbox->Log(ADDON::LOG_INFO, "Initializing genre mapper");
-
   LoadCategoryToGenreXML(xmlFileName);
-
-  return &m_categoryMap;
 }
 
 bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName) 
@@ -151,7 +148,7 @@ static void UpdateFinalMatch(std::map<int, int> &rMatchesMap, std::map<int, int>
   }
 }
 
-bool CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType)
+int CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string> &categories)
 {
   std::map<int, int> matches;
   std::map<int, int>::iterator finalMatch = matches.end();
@@ -177,13 +174,10 @@ bool CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string> &categ
   }
   //  if no category matches - use string and return no specific genre
   if (matches.empty())
-  {
-    rGenreType = EPG_GENRE_USE_STRING;
-    return false;
-  }
+    return EPG_GENRE_USE_STRING;
+  
   UpdateFinalMatch(matches, finalMatch);
   
   XBMC->Log(ADDON::LOG_DEBUG, "Final match is %d", finalMatch->first);
-  rGenreType = finalMatch->first;
-  return true;
+  return finalMatch->first;
 }
