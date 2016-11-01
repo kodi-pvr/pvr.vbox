@@ -167,7 +167,7 @@ namespace vbox {
 
     // EPG methods
     const Schedule GetSchedule(const ChannelPtr &channel) const;
-    bool GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType) const;
+    int GetCategoriesGenreType(std::vector<std::string> &categories) const;
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);

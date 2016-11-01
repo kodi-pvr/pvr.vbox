@@ -879,9 +879,9 @@ void VBox::InitializeGenreMapper()
   }
 }
 
-bool VBox::GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType) const
+int VBox::GetCategoriesGenreType(std::vector<std::string> &categories) const
 {
-  return m_categoryGenreMapper->GetCategoriesGenreType(categories, rGenreType);
+  return m_categoryGenreMapper->GetCategoriesGenreType(categories);
 }
 
 void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
