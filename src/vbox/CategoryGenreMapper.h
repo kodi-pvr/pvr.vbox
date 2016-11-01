@@ -27,10 +27,8 @@
 
 namespace vbox {
 
-  //typedef std::map<std::string, Category> CategoryMap;
   typedef std::map<std::string, int> GenreMap;
   typedef std::map<std::string, int> CategoryMap;
-  typedef CategoryMap * CategoryMapPtr;
 
   const std::string CATEGORY_TO_GENRE_XML_PATH = "special://userdata/addon_data/pvr.vbox/category_to_genre_types.xml";
 
@@ -48,5 +46,5 @@ namespace vbox {
     CategoryMap m_categoryMap;
   };
 
-  typedef CategoryGenreMapper * CategoryMapperPtr;
+  typedef std::unique_ptr<CategoryGenreMapper> CategoryMapperPtr;
 }
