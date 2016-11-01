@@ -662,9 +662,29 @@ std::string VBox::CreateDailyTime(const time_t unixTimestamp) const
   return ::xmltv::Utilities::UnixTimeToDailyTime(unixTimestamp, tzOffset);
 }
 
+bool VBox::IsDBContentUpdated(std::string &versionName, unsigned int currDBVersion, unsigned int &rNewDBVersion) const
+{
+  // check programs' databse version
+  request::ApiRequest request("QueryDataBaseVersion");
+  response::ResponsePtr response = PerformRequest(request);
+  response::Content content(response->GetReplyElement());
+  unsigned int newChannelsDBversion = content.GetUnsignedInteger(versionName);
+
+  rNewDBVersion = newChannelsDBversion;
+  // if version is the same as what we have set - our content is updated
+  return newChannelsDBversion == currDBVersion;
+}
+
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
 {
   try {
+    unsigned int newDBversion;
+    std::string channelsDBVerName("ChannelsDataBaseVersion");
+
+    // if same as last fetched channels, no need for fetching again
+    if (IsDBContentUpdated(channelsDBVerName, m_channelsDBVersion, newDBversion))
+      return;
+
     request::ApiRequest request("GetXmltvChannelsList");
     request.AddParameter("FromChIndex", "FirstChannel");
     request.AddParameter("ToChIndex", "LastChannel");
@@ -685,7 +705,9 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
     if (!utilities::deref_equals(m_channels, channels))
     {
       m_channels = channels;
-
+      Log(LOG_INFO, "Channels database version updated to %u", newDBversion);
+      m_channelsDBVersion = newDBversion;
+      
       if (triggerEvent)
         OnChannelsUpdated();
     }
@@ -745,6 +767,13 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
   Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
 
   try {
+        unsigned int newDBversion;
+    std::string progsDBVerName("ProgramsDataBaseVersion");
+
+    // if same as last fetched guide, no need for fetching again
+    if (IsDBContentUpdated(progsDBVerName, m_programsDBVersion, newDBversion))
+      return;
+
     // Retrieving the whole XMLTV file is too slow so we fetch sections in 
     // batches of 10 channels and merge the results
     int lastChannelIndex;
@@ -789,6 +818,8 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
     {
       std::unique_lock<std::mutex> lock(m_mutex);
       m_guide = guide;
+      Log(LOG_INFO, "Guide database version updated to %u", newDBversion);
+      m_programsDBVersion = newDBversion;
     }
 
     if (triggerEvent)
