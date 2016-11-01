@@ -242,7 +242,7 @@ namespace vbox {
     /**
      * The category<->genre mapper
      */
-    CategoryMapperPtr m_categoryGenrelMapper;
+    CategoryMapperPtr m_categoryGenreMapper;
 
     /**
      * Handler for the startup state

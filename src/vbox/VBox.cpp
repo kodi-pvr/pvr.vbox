@@ -43,7 +43,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenrelMapper(nullptr)
+  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr)
 {
 }
 
@@ -862,15 +862,15 @@ void VBox::InitializeChannelMapper()
 void VBox::InitializeGenreMapper()
 {
   // Abort if we're already initialized or the external guide is not loaded
-  if (m_categoryGenrelMapper)
+  if (m_categoryGenreMapper)
     return;
 
   Log(LOG_INFO, "Loading category genre mapper");
 
-  m_categoryGenrelMapper = CategoryMapperPtr(new CategoryGenreMapper());
+  m_categoryGenreMapper = CategoryMapperPtr(new CategoryGenreMapper());
 
   try {
-    m_categoryGenrelMapper->Initialize(CATEGORY_TO_GENRE_XML_PATH);
+    m_categoryGenreMapper->Initialize(CATEGORY_TO_GENRE_XML_PATH);
   }
   catch (VBoxException &e)
   {
@@ -881,7 +881,7 @@ void VBox::InitializeGenreMapper()
 
 bool VBox::GetCategoriesGenreType(std::vector<std::string> &categories, int &rGenreType) const
 {
-  return m_categoryGenrelMapper->GetCategoriesGenreType(categories, rGenreType);
+  return m_categoryGenreMapper->GetCategoriesGenreType(categories, rGenreType);
 }
 
 void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
