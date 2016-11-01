@@ -182,6 +182,7 @@ namespace vbox {
   private:
     
     void BackgroundUpdater();
+    bool IsDBContentUpdated(std::string &versionName, unsigned int currDBVersion, unsigned int &rNewDBVersion) const;
     void RetrieveChannels(bool triggerEvent = true);
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
@@ -253,6 +254,16 @@ namespace vbox {
      * The background update thread
      */
     std::thread m_backgroundThread;
+  
+    /**
+    * Contains the channel's database version, as they were last updated (0 before update)
+    */
+    std::atomic<unsigned int> m_channelsDBVersion;
+
+    /**
+    * Contains the guide's database version, as it was last updated (0 before update)
+    */
+    std::atomic<unsigned int> m_programsDBVersion;
 
     /**
      * Controls whether the background update thread should keep running or not
