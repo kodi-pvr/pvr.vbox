@@ -43,7 +43,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr)
+  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false)
 {
 }
 
@@ -173,6 +173,54 @@ void VBox::DetermineConnectionParams()
   Log(LOG_INFO, "    UPnP port: %d", params.upnpPort);
 }
 
+void VBox::InitScanningEPG(std::string &rScanMethod, std::string &rGetStatusMethod, std::string &rfIsScanningFlag)
+{
+  // determine wether the device is in External XMLTV mode (internal, not through Kodi definitions)
+  SendScanEPG(rScanMethod);
+  GetEpgDetectionState(rGetStatusMethod, rfIsScanningFlag);
+  // if state is not collecting EPG - we're not in External XMLTV  so 
+  // try the Live Signal mode syncing methods. If not - keep External XMLTV methods
+  if (m_epgScanState != EPGSCAN_SCANNING)
+  {
+    // send EPG scanning request (live signal)
+    rScanMethod = "ScanEPG";
+    SendScanEPG(rScanMethod);
+    rGetStatusMethod = "QueryEpgDetectionStatus";
+    rfIsScanningFlag = "IsInDetection";
+  }
+  // set EPG scan state
+  m_epgScanState = EPGSCAN_SCANNING;
+}
+
+void VBox::UpdateEpgScan(bool fRetrieveGuide)
+{
+  static std::string scanEpgMethod("SyncExternalXMLTVChannels");
+  static std::string epgStatusCheckMethod("QueryExternalXMLTVSyncStatus");
+  static std::string epgStatusCheckFlag("SyncInProgress");
+
+  switch (m_epgScanState)
+  {
+  case EPGSCAN_SHOULD_SCAN:
+    // find the correct methods for the guide's External XMLTV / Live Signal mode
+    InitScanningEPG(scanEpgMethod, epgStatusCheckMethod, epgStatusCheckFlag);
+  case EPGSCAN_SCANNING:
+  case EPGSCAN_FINISHED:
+    if (fRetrieveGuide)
+    {
+      // check for EPG detection state
+      GetEpgDetectionState(epgStatusCheckMethod, epgStatusCheckFlag);
+      // retrieve guide periodically (or when finished)
+      RetrieveGuide();
+      // if done detecting EPG - change flag to false
+      if (m_epgScanState == EPGSCAN_FINISHED)
+      {
+        XBMC->QueueNotification(ADDON::QUEUE_INFO, "EPG scanned and synced with guide");
+        m_epgScanState = EPGSCAN_NO_SCAN;
+      }
+    }
+  }
+}
+
 void VBox::BackgroundUpdater()
 {
   // Keep count of how many times the loop has run so we can perform some 
@@ -207,8 +255,20 @@ void VBox::BackgroundUpdater()
     if (lapCounter % 6 == 0)
       RetrieveChannels();
 
-    // Update the internal guide data every 12 * 60 iterations = 1 hour
-    if (lapCounter % (12 * 60) == 0)
+   // if supposed to scan EPG - send scan API and get guide every 5 minutes, until done scanning
+    if (m_epgScanState != EPGSCAN_NO_SCAN)
+      UpdateEpgScan(lapCounter % (12 * 5) == 0);
+    // one-time guide retrieval (from PVR manager settings)
+    else if (m_shouldSyncEpg)
+    {
+      if (m_settings.m_useExternalXmltv)
+        RetrieveExternalGuide();
+
+      RetrieveGuide();
+      m_shouldSyncEpg = false;
+    }
+    // if not collecting/syncing user's EPG - update the internal guide data every 12 * 60 iterations = 1 hour
+    else if (lapCounter % (12 * 60) == 0)
       RetrieveGuide();
 
     // Update the external guide data every 12 * 60 * 12 = 12 hours
@@ -320,6 +380,37 @@ const ChannelPtr VBox::GetCurrentChannel() const
 void VBox::SetCurrentChannel(const ChannelPtr &channel)
 {
   m_currentChannel = channel;
+}
+
+void VBox::StartEPGScan()
+{
+  m_epgScanState = EPGSCAN_SHOULD_SCAN;
+}
+
+void VBox::SyncEPGNow()
+{
+  m_shouldSyncEpg = true;
+}
+
+void VBox::SendScanEPG(std::string &rEpgDetectionCheckMethod) const
+{
+  // call method to send EPG detection command
+  request::ApiRequest request(rEpgDetectionCheckMethod);
+  request.AddParameter("ChannelID", "All");
+  response::ResponsePtr response = PerformRequest(request);
+  response::Content content(response->GetReplyElement());
+}
+
+void VBox::GetEpgDetectionState(std::string &methodName, std::string &flagName)
+{
+  // call method to check EPG detection status
+  request::ApiRequest request(methodName);
+  response::ResponsePtr response = PerformRequest(request);
+  response::Content content(response->GetReplyElement());
+
+  // set flag using a YES/NO flag
+  std::string isInlDetection = content.GetString(flagName);
+  m_epgScanState = (isInlDetection == "YES")? EPGSCAN_SCANNING : EPGSCAN_FINISHED;
 }
 
 ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel) const
