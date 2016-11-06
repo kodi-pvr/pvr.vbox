@@ -58,7 +58,7 @@ bool g_useExternalXmltv;
 std::string g_externalXmltvPath;
 bool g_preferExternalXmltv;
 bool g_useExternalXmltvIcons;
-bool g_setChannelIdUsingOrder;
+ChannelOrder g_setChannelIdUsingOrder;
 bool g_timeshiftEnabled;
 std::string g_timeshiftBufferPath;
 unsigned int MENUHOOK_ID_RESCAN_EPG = 1;
@@ -94,7 +94,7 @@ extern "C" {
     UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
     UPDATE_INT(g_useExternalXmltvIcons, "use_external_xmltv_icons", false);
-    UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", false);
+    UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", CH_ORDER_BY_LCN);
     UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
     UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
@@ -275,7 +275,7 @@ extern "C" {
     UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
     UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
     UPDATE_INT("use_external_xmltv_icons", bool, settings.m_useExternalXmltvIcons);
-    UPDATE_INT("set_channelid_using_order", bool, settings.m_setChannelIdUsingOrder);
+    UPDATE_INT("set_channelid_using_order", ChannelOrder, settings.m_setChannelIdUsingOrder);
     UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
     UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
 
@@ -419,8 +419,9 @@ extern "C" {
 
       // Override LCN if backend channel order should be forced
       ++i;
-      if (g_vbox->GetSettings().m_setChannelIdUsingOrder)
+      if (g_vbox->GetSettings().m_setChannelIdUsingOrder == CH_ORDER_BY_INDEX)
         channel.iChannelNumber = i;
+      // default - CH_ORDER_BY_LCN
       else
         channel.iChannelNumber = item->m_number;
 

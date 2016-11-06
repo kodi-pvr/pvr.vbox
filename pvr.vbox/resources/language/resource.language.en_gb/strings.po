@@ -71,7 +71,7 @@ msgid "Use channel icons from external XMLTV"
 msgstr ""
 
 msgctxt "#30105"
-msgid "Set channel numbers using backend channel order"
+msgid "Channel numbers set by"
 msgstr ""
 
 msgctxt "#30106"
@@ -82,7 +82,15 @@ msgctxt "#30107"
 msgid "Sync EPG"
 msgstr ""
 
-#empty strings from id 30108 to 30199
+msgctxt "#30108"
+msgid "LCN (Logical Channel Number) from backend"
+msgstr ""
+
+msgctxt "#30109"
+msgid "Channel index in backend"
+msgstr ""
+
+#empty strings from id 30110 to 30199
 
 msgctxt "#30200"
 msgid "Timeshift"
