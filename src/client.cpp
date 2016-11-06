@@ -61,6 +61,8 @@ bool g_useExternalXmltvIcons;
 bool g_setChannelIdUsingOrder;
 bool g_timeshiftEnabled;
 std::string g_timeshiftBufferPath;
+unsigned int MENUHOOK_ID_RESCAN_EPG = 1;
+unsigned int MENUHOOK_ID_SYNC_EPG = 2;
 
 extern "C" {
 
@@ -178,6 +180,21 @@ extern "C" {
           g_timeshiftBuffer = new timeshift::DummyBuffer();
 
         g_timeshiftBuffer->SetReadTimeout(g_vbox->GetConnectionParams().timeout);
+
+        // initializing TV Settings Client Specific menu hooks
+        PVR_MENUHOOK hook;
+
+        memset(&hook, 0, sizeof(PVR_MENUHOOK));
+        hook.iHookId = MENUHOOK_ID_RESCAN_EPG;
+        hook.iLocalizedStringId = 30106;
+        hook.category = PVR_MENUHOOK_SETTING;
+        PVR->AddMenuHook(&hook);
+
+        memset(&hook, 0, sizeof(PVR_MENUHOOK));
+        hook.iHookId = MENUHOOK_ID_SYNC_EPG;
+        hook.iLocalizedStringId = 30107;
+        hook.category = PVR_MENUHOOK_SETTING;
+        PVR->AddMenuHook(&hook);
       }
       catch (FirmwareVersionException &e) {
         XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
@@ -988,9 +1005,29 @@ extern "C" {
     return currentChannel != nullptr;
   }
   
+  PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &item)
+  {
+    if (menuhook.category == PVR_MENUHOOK_SETTING)
+    {
+      if (menuhook.iHookId == MENUHOOK_ID_RESCAN_EPG)
+      {
+        XBMC->QueueNotification(ADDON::QUEUE_INFO, "Rescanning EPG, this will take a while");
+        g_vbox->StartEPGScan();
+        return PVR_ERROR_NO_ERROR;
+      }
+      else if (menuhook.iHookId == MENUHOOK_ID_SYNC_EPG)
+      {
+        XBMC->QueueNotification(ADDON::QUEUE_INFO, "Getting EPG from VBox device");
+        g_vbox->SyncEPGNow();
+        return PVR_ERROR_NO_ERROR;
+      }
+	  return PVR_ERROR_INVALID_PARAMETERS;
+    }
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
   // Management methods
   PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
-  PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &item) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DeleteChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR RenameChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR MoveChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }

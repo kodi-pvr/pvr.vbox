@@ -94,6 +94,14 @@ namespace vbox {
     TIMER_VBOX_TYPE_MANUAL_SERIES
   };
 
+  enum EPGScanState
+  {
+    EPGSCAN_NO_SCAN = 0,
+    EPGSCAN_SHOULD_SCAN,
+    EPGSCAN_SCANNING,
+    EPGSCAN_FINISHED
+  };
+
   /**
    * The main class for interfacing with the VBox Gateway
    */
@@ -168,6 +176,8 @@ namespace vbox {
     // EPG methods
     const Schedule GetSchedule(const ChannelPtr &channel) const;
     int GetCategoriesGenreType(std::vector<std::string> &categories) const;
+    void StartEPGScan();
+    void SyncEPGNow();
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -190,6 +200,10 @@ namespace vbox {
     void InitializeChannelMapper();
     void InitializeGenreMapper();
     void SwapChannelIcons(std::vector<ChannelPtr> &channels);
+    void SendScanEPG(std::string &rEpgDetectionCheckMethod) const;
+    void GetEpgDetectionState(std::string &methodName, std::string &flagName);
+    void InitScanningEPG(std::string &rScanMethod, std::string &rGetStatusMethod, std::string &rfIsScanningFlag);
+    void UpdateEpgScan(bool fRetrieveGuide);
 
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::Request &request) const;
@@ -256,7 +270,12 @@ namespace vbox {
     std::thread m_backgroundThread;
   
     /**
-    * Contains the channel's database version, as they were last updated (0 before update)
+    * The state of EPG scanning - if set to EPGSCAN_SHOULD_SCAN --> EPG scanning starts
+    */
+    EPGScanState m_epgScanState;
+
+    /**
+    * Contains the channel's database version (as they were last updated)
     */
     std::atomic<unsigned int> m_channelsDBVersion;
 
@@ -269,6 +288,11 @@ namespace vbox {
      * Controls whether the background update thread should keep running or not
      */
     std::atomic<bool> m_active;
+
+    /**
+    * Controls whether the add-on should sync its EPG with the backend
+    */
+    std::atomic<bool> m_shouldSyncEpg;
 
     /**
      * The currently active channel, or the last active channel when no 
