@@ -1021,8 +1021,9 @@ extern "C" {
         g_vbox->SyncEPGNow();
         return PVR_ERROR_NO_ERROR;
       }
+	  return PVR_ERROR_INVALID_PARAMETERS;
     }
-    return PVR_ERROR_INVALID_PARAMETERS;
+    return PVR_ERROR_NOT_IMPLEMENTED;
   }
 
   // Management methods
