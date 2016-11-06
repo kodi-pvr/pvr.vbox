@@ -1013,14 +1013,16 @@ extern "C" {
       {
         XBMC->QueueNotification(ADDON::QUEUE_INFO, "Rescanning EPG, this will take a while");
         g_vbox->StartEPGScan();
+        return PVR_ERROR_NO_ERROR;
       }
       else if (menuhook.iHookId == MENUHOOK_ID_SYNC_EPG)
       {
         XBMC->QueueNotification(ADDON::QUEUE_INFO, "Getting EPG from VBox device");
         g_vbox->SyncEPGNow();
+        return PVR_ERROR_NO_ERROR;
       }
     }
-    return PVR_ERROR_NO_ERROR;
+    return PVR_ERROR_INVALID_PARAMETERS;
   }
 
   // Management methods
