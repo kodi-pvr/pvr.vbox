@@ -92,6 +92,7 @@ namespace vbox {
     bool m_preferExternalXmltv;
     bool m_useExternalXmltvIcons;
     ChannelOrder m_setChannelIdUsingOrder;
+    unsigned int m_remindMinsBeforeProg;
     bool m_timeshiftEnabled;
     std::string m_timeshiftBufferPath;
   };

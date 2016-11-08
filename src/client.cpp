@@ -37,6 +37,7 @@ using namespace vbox;
 // Initialize helpers
 CHelper_libXBMC_addon *XBMC = NULL;
 CHelper_libXBMC_pvr   *PVR = NULL;
+CHelper_libKODI_guilib  *GUI = NULL;
 
 // Initialize globals
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
@@ -59,10 +60,19 @@ std::string g_externalXmltvPath;
 bool g_preferExternalXmltv;
 bool g_useExternalXmltvIcons;
 ChannelOrder g_setChannelIdUsingOrder;
+unsigned int g_remindMinsBeforeProg;
 bool g_timeshiftEnabled;
 std::string g_timeshiftBufferPath;
+
+// settings context menu
 unsigned int MENUHOOK_ID_RESCAN_EPG = 1;
 unsigned int MENUHOOK_ID_SYNC_EPG = 2;
+// EPG context menu
+unsigned int MENUHOOK_ID_EPG_REMINDER = 1;
+unsigned int MENUHOOK_ID_CANCEL_EPG_REMINDER = 2;
+// channels context menu
+unsigned int MENUHOOK_ID_MANUAL_REMINDER = 1;
+unsigned int MENUHOOK_ID_CANCEL_CHANNEL_REMINDER = 2;
 
 extern "C" {
 
@@ -95,6 +105,7 @@ extern "C" {
     UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
     UPDATE_INT(g_useExternalXmltvIcons, "use_external_xmltv_icons", false);
     UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", CH_ORDER_BY_LCN);
+    UPDATE_INT(g_remindMinsBeforeProg, "reminder_mins_before_prog", 0);
     UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
     UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
@@ -110,12 +121,15 @@ extern "C" {
     // Instantiate helpers
     XBMC = new CHelper_libXBMC_addon;
     PVR = new CHelper_libXBMC_pvr;
+    GUI = new CHelper_libKODI_guilib;
 
     if (!XBMC->RegisterMe(hdl) ||
-      !PVR->RegisterMe(hdl))
+      !PVR->RegisterMe(hdl) || 
+      !GUI->RegisterMe(hdl) ) 
     {
       SAFE_DELETE(XBMC);
       SAFE_DELETE(PVR);
+      SAFE_DELETE(GUI);
       return ADDON_STATUS_PERMANENT_FAILURE;
     }
 
@@ -147,6 +161,7 @@ extern "C" {
     settings.m_preferExternalXmltv = g_preferExternalXmltv;
     settings.m_useExternalXmltvIcons = g_useExternalXmltvIcons;
     settings.m_setChannelIdUsingOrder = g_setChannelIdUsingOrder;
+    settings.m_remindMinsBeforeProg = g_remindMinsBeforeProg;
     settings.m_timeshiftEnabled = g_timeshiftEnabled;
     settings.m_timeshiftBufferPath = g_timeshiftBufferPath;
 
@@ -194,6 +209,32 @@ extern "C" {
         hook.iHookId = MENUHOOK_ID_SYNC_EPG;
         hook.iLocalizedStringId = 30107;
         hook.category = PVR_MENUHOOK_SETTING;
+        PVR->AddMenuHook(&hook);
+
+        // initialize EPG context menu
+        memset(&hook, 0, sizeof(PVR_MENUHOOK));
+        hook.iHookId = MENUHOOK_ID_EPG_REMINDER;
+        hook.iLocalizedStringId = 30110;
+        hook.category = PVR_MENUHOOK_EPG;
+        PVR->AddMenuHook(&hook);
+
+        memset(&hook, 0, sizeof(PVR_MENUHOOK));
+        hook.iHookId = MENUHOOK_ID_CANCEL_EPG_REMINDER;
+        hook.iLocalizedStringId = 30112;
+        hook.category = PVR_MENUHOOK_EPG;
+        PVR->AddMenuHook(&hook);
+
+        // initialize channels context menu
+        memset(&hook, 0, sizeof(PVR_MENUHOOK));
+        hook.iHookId = MENUHOOK_ID_MANUAL_REMINDER;
+        hook.iLocalizedStringId = 30111;
+        hook.category = PVR_MENUHOOK_CHANNEL;
+        PVR->AddMenuHook(&hook);
+
+        memset(&hook, 0, sizeof(PVR_MENUHOOK));
+        hook.iHookId = MENUHOOK_ID_CANCEL_CHANNEL_REMINDER;
+        hook.iLocalizedStringId = 30113;
+        hook.category = PVR_MENUHOOK_CHANNEL;
         PVR->AddMenuHook(&hook);
       }
       catch (FirmwareVersionException &e) {
@@ -276,6 +317,7 @@ extern "C" {
     UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
     UPDATE_INT("use_external_xmltv_icons", bool, settings.m_useExternalXmltvIcons);
     UPDATE_INT("set_channelid_using_order", ChannelOrder, settings.m_setChannelIdUsingOrder);
+    UPDATE_INT("reminder_mins_before_prog", unsigned int, settings.m_remindMinsBeforeProg)
     UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
     UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
 
@@ -1005,7 +1047,123 @@ extern "C" {
 
     return currentChannel != nullptr;
   }
-  
+
+  static bool SetEPGReminder(const PVR_MENUHOOK_DATA &item)
+  {
+    auto epgUid = item.data.iEpgUid;
+    ChannelPtr selectedChannel = nullptr;
+    const xmltv::ProgrammePtr programme = nullptr;
+
+    // find channel with the program in context
+    auto &channels = g_vbox->GetChannels();
+    auto it = std::find_if(channels.cbegin(), channels.cend(),
+      [&epgUid](const ChannelPtr &channel)
+    {
+      const Schedule schedule = g_vbox->GetSchedule(channel);
+      // Add a programme-based timer if the programme exists in the schedule
+      const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
+      return (programme != nullptr);
+    });
+    // if channel doesn't exist - return error
+    if (it == channels.cend())
+    {
+      XBMC->QueueNotification(QUEUE_ERROR, "Reminder could not find the requested channel");
+      return false;
+    }
+    else
+    {
+      // otherwise - get the program object and add a reminder with it as parameter
+      selectedChannel = *it;
+      const Schedule schedule = g_vbox->GetSchedule(selectedChannel);
+      const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
+      if (programme)
+      {
+        try {
+          g_vbox->AddReminder(selectedChannel, programme);
+        }
+        catch (VBoxException &e)
+        {
+          g_vbox->LogException(e);
+        }
+      }
+      else
+      {
+        XBMC->QueueNotification(QUEUE_ERROR, "Reminder could not find the requested channel");
+        return false;
+      }
+      XBMC->QueueNotification(QUEUE_INFO, "Reminder added");
+    }
+    return true;
+  }
+
+  const ChannelPtr FindChannelForEPGReminder(int epgUid)
+  {
+    const xmltv::ProgrammePtr programme = nullptr;
+    const std::vector<ChannelPtr> &channels = g_vbox->GetChannels();
+
+    // Find channel that contains this programme
+    const std::vector<ChannelPtr>::const_iterator it = std::find_if(channels.cbegin(), channels.cend(),
+      [&epgUid](const ChannelPtr &channel)
+    {
+      const Schedule schedule = g_vbox->GetSchedule(channel);
+      const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
+      return (programme);
+    });
+    // Find the channel's schedule
+    if (it == channels.cend())
+      XBMC->QueueNotification(QUEUE_WARNING, "Reminder could not find the requested channel");
+    return *it;
+  }
+
+  static time_t GetOffsetTime(time_t time)
+  {
+    std::string xmltvTime = g_vbox->CreateTimestamp(time);
+    std::string tzString = ::xmltv::Utilities::GetTimezoneOffset(xmltvTime);
+    return ::xmltv::Utilities::GetTimezoneAdjustment(tzString);
+  }
+
+  static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
+  {
+    time_t currTime = time(nullptr), reminderTime;
+    ChannelPtr selectedChannel = nullptr;
+    char buffer[256];
+
+    memset(buffer, 0, sizeof(buffer));
+    // get channel in context
+    selectedChannel = g_vbox->GetChannel(item.data.channel.iUniqueId);
+    if (!selectedChannel)
+      return false;
+
+    try {
+      // create the current time's formatted timestamp (for user input)
+      time_t tzOs = GetOffsetTime(currTime);
+      // add timezone offset
+      currTime += tzOs;
+      std::tm tm = *std::gmtime(&currTime);
+
+      // get program time & name (from user dialogs)
+      if (!GUI->Dialog_Numeric_ShowAndGetDate(tm, "Program starts at"))
+        return false;
+      if (!GUI->Dialog_Numeric_ShowAndGetTime(tm, "Program starts at"))
+        return false;
+      if (!GUI->Dialog_Keyboard_ShowAndGetInput(*buffer, sizeof(buffer), "Program title", true, false))
+        return false;
+
+      std::string progTitle(buffer); 
+      // remove timezone offset
+      reminderTime = compat::timegm(&tm) - tzOs;
+      // add reminder using manual time & title
+      g_vbox->AddReminder(selectedChannel, reminderTime, progTitle);
+    }
+    catch (VBoxException &e)
+    {
+      g_vbox->LogException(e);
+      return false;
+    }
+    XBMC->QueueNotification(QUEUE_INFO, "Reminder added");
+    return true;
+  }
+
   PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &item)
   {
     if (menuhook.category == PVR_MENUHOOK_SETTING)
@@ -1022,7 +1180,41 @@ extern "C" {
         g_vbox->SyncEPGNow();
         return PVR_ERROR_NO_ERROR;
       }
-	  return PVR_ERROR_INVALID_PARAMETERS;
+      return PVR_ERROR_INVALID_PARAMETERS;
+    }
+    if (menuhook.category == PVR_MENUHOOK_EPG)
+    {
+      if (menuhook.iHookId == MENUHOOK_ID_EPG_REMINDER)
+      {
+        if (SetEPGReminder(item))
+          return PVR_ERROR_NO_ERROR;
+      }
+      else if (menuhook.iHookId == MENUHOOK_ID_CANCEL_EPG_REMINDER)
+      {
+        if (g_vbox->KillProgramReminders(item.data.iEpgUid))
+          XBMC->QueueNotification(ADDON::QUEUE_INFO, "Reminder canceled");
+        else
+          XBMC->QueueNotification(ADDON::QUEUE_WARNING, "Program does not have a reminder to cancel");
+        return PVR_ERROR_NO_ERROR;
+      }
+      return PVR_ERROR_INVALID_PARAMETERS;
+    }
+    else if (menuhook.category == PVR_MENUHOOK_CHANNEL)
+    {
+      if (menuhook.iHookId == MENUHOOK_ID_MANUAL_REMINDER)
+      {
+        if (SetManualReminder(item))
+          return PVR_ERROR_NO_ERROR;
+      }
+      else if (menuhook.iHookId == MENUHOOK_ID_CANCEL_CHANNEL_REMINDER)
+      {
+        if (g_vbox->KillChannelReminders(g_vbox->GetChannel(item.data.channel.iUniqueId)))
+          XBMC->QueueNotification(ADDON::QUEUE_INFO, "Removed channel's existing reminders");
+        else
+          XBMC->QueueNotification(ADDON::QUEUE_WARNING, "Channel does not have reminders to cancel");
+        return PVR_ERROR_NO_ERROR;
+      }
+      return PVR_ERROR_INVALID_PARAMETERS;
     }
     return PVR_ERROR_NOT_IMPLEMENTED;
   }
