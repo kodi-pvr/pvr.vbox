@@ -25,6 +25,12 @@
 
 namespace vbox {
 
+  enum ChannelOrder
+  {
+    CH_ORDER_BY_LCN = 0,
+    CH_ORDER_BY_INDEX
+  };
+
   /**
    * Represents a set of parameters required to make a connection
    */
@@ -85,7 +91,7 @@ namespace vbox {
     std::string m_externalXmltvPath;
     bool m_preferExternalXmltv;
     bool m_useExternalXmltvIcons;
-    bool m_setChannelIdUsingOrder;
+    ChannelOrder m_setChannelIdUsingOrder;
     bool m_timeshiftEnabled;
     std::string m_timeshiftBufferPath;
   };
