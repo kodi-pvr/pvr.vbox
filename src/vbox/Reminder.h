@@ -29,20 +29,70 @@ namespace vbox {
 
   class ReminderManager;
 
+  /**
+  * Represents a single-program reminder. 
+  * Contains a message reminding the user of the program
+  */
   class Reminder
   {
   public:
+    
+    /**
+    * Creates a reminder from a channel and a specific program
+    * @param channel the channel containing the program to remind
+    * @param programme the program to remind
+    * @param minsInAdvance minutes before the program's start time to pop the reminder
+    */
     Reminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsInAdvance);
+    
+    /**
+    * Creates a reminder according to a manually given program name and its' start time
+    * @param channel the channel containing the program to remind
+    * @param startTime the program's original start time
+    * @param minsInAdvance minutes before the program's start time to pop the reminder
+    */
     Reminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsInAdvance);
-    ~Reminder() = default;
-    std::string GetReminderText(time_t currTime);
+    
+    /**
+    * For comparing reminders' pop times
+    */
+    bool operator< (const Reminder &other) const
+    {
+      return !(m_popTime < other.m_popTime);
+    }
+
+    /**
+    * Composes & returns a message for a certain moment in time, showing details 
+    * of the program and the time left for it to start
+    * @param currTime the current time of showing the reminder pop-up
+    * @return the reminder's pop-up message
+    */
+    std::string GetReminderText();
+
+    /**
+    * @return the reminder's pop time
+    */
     time_t GetPopTime() const;
+
+    /**
+    * @return the program's original start time
+    */
     time_t GetStartTime() const;
 
   private:
     friend ReminderManager;
 
+    /**
+    * Finds a channel's display number in the addon (LCN / index - varies by setting)
+    * @param channel the requested channel
+    * @return the channel's number
+    */
     static unsigned int FindChannelNumber(const ChannelPtr &channel);
+
+    /**
+    * Composes the reminder's message
+    * @param currTime the time of showing the popup (pop time)
+    */
     void ComposeMessage(time_t currTime);
 
     unsigned int m_minsInAdvance;
@@ -57,21 +107,4 @@ namespace vbox {
   };
 
   typedef std::shared_ptr<Reminder> ReminderPtr;
-
-  class ReminderComparison
-  {
-    bool reverse;
-  public:
-    ReminderComparison(const bool& revparam = true)
-    {
-      reverse = revparam;
-    }
-    bool operator() (ReminderPtr &lhs, ReminderPtr &rhs) const
-    {
-      if (reverse) 
-        return (lhs->GetPopTime() > rhs->GetPopTime());
-      else 
-        return (rhs->GetPopTime() > lhs->GetPopTime());
-    }
-  };
 }

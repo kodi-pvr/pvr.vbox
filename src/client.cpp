@@ -197,45 +197,15 @@ extern "C" {
         g_timeshiftBuffer->SetReadTimeout(g_vbox->GetConnectionParams().timeout);
 
         // initializing TV Settings Client Specific menu hooks
-        PVR_MENUHOOK hook;
+        PVR_MENUHOOK hooks[] = { { MENUHOOK_ID_RESCAN_EPG, 30106, PVR_MENUHOOK_SETTING },
+                                 { MENUHOOK_ID_SYNC_EPG, 30107, PVR_MENUHOOK_SETTING },
+                                 { MENUHOOK_ID_EPG_REMINDER, 30110, PVR_MENUHOOK_EPG },
+                                 { MENUHOOK_ID_CANCEL_EPG_REMINDER, 30112, PVR_MENUHOOK_EPG },
+                                 { MENUHOOK_ID_MANUAL_REMINDER, 30111, PVR_MENUHOOK_CHANNEL },
+                                 { MENUHOOK_ID_CANCEL_CHANNEL_REMINDER, 30113, PVR_MENUHOOK_CHANNEL } };
 
-        memset(&hook, 0, sizeof(PVR_MENUHOOK));
-        hook.iHookId = MENUHOOK_ID_RESCAN_EPG;
-        hook.iLocalizedStringId = 30106;
-        hook.category = PVR_MENUHOOK_SETTING;
-        PVR->AddMenuHook(&hook);
-
-        memset(&hook, 0, sizeof(PVR_MENUHOOK));
-        hook.iHookId = MENUHOOK_ID_SYNC_EPG;
-        hook.iLocalizedStringId = 30107;
-        hook.category = PVR_MENUHOOK_SETTING;
-        PVR->AddMenuHook(&hook);
-
-        // initialize EPG context menu
-        memset(&hook, 0, sizeof(PVR_MENUHOOK));
-        hook.iHookId = MENUHOOK_ID_EPG_REMINDER;
-        hook.iLocalizedStringId = 30110;
-        hook.category = PVR_MENUHOOK_EPG;
-        PVR->AddMenuHook(&hook);
-
-        memset(&hook, 0, sizeof(PVR_MENUHOOK));
-        hook.iHookId = MENUHOOK_ID_CANCEL_EPG_REMINDER;
-        hook.iLocalizedStringId = 30112;
-        hook.category = PVR_MENUHOOK_EPG;
-        PVR->AddMenuHook(&hook);
-
-        // initialize channels context menu
-        memset(&hook, 0, sizeof(PVR_MENUHOOK));
-        hook.iHookId = MENUHOOK_ID_MANUAL_REMINDER;
-        hook.iLocalizedStringId = 30111;
-        hook.category = PVR_MENUHOOK_CHANNEL;
-        PVR->AddMenuHook(&hook);
-
-        memset(&hook, 0, sizeof(PVR_MENUHOOK));
-        hook.iHookId = MENUHOOK_ID_CANCEL_CHANNEL_REMINDER;
-        hook.iLocalizedStringId = 30113;
-        hook.category = PVR_MENUHOOK_CHANNEL;
-        PVR->AddMenuHook(&hook);
+        for (int i = 0; i < sizeof(hooks) / sizeof(PVR_MENUHOOK); ++i)
+          PVR->AddMenuHook(&hooks[i]);
       }
       catch (FirmwareVersionException &e) {
         XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
@@ -1048,11 +1018,9 @@ extern "C" {
     return currentChannel != nullptr;
   }
 
-  static bool SetEPGReminder(const PVR_MENUHOOK_DATA &item)
+  bool SetProgramReminder(unsigned int epgUid)
   {
-    auto epgUid = item.data.iEpgUid;
     ChannelPtr selectedChannel = nullptr;
-    const xmltv::ProgrammePtr programme = nullptr;
 
     // find channel with the program in context
     auto &channels = g_vbox->GetChannels();
@@ -1060,14 +1028,13 @@ extern "C" {
       [&epgUid](const ChannelPtr &channel)
     {
       const Schedule schedule = g_vbox->GetSchedule(channel);
-      // Add a programme-based timer if the programme exists in the schedule
       const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
       return (programme != nullptr);
     });
     // if channel doesn't exist - return error
     if (it == channels.cend())
     {
-      XBMC->QueueNotification(QUEUE_ERROR, "Reminder could not find the requested channel");
+      XBMC->QueueNotification(QUEUE_ERROR, "Program not found for that channel");
       return false;
     }
     else
@@ -1084,14 +1051,10 @@ extern "C" {
         catch (VBoxException &e)
         {
           g_vbox->LogException(e);
+          return false;
         }
+        XBMC->QueueNotification(QUEUE_INFO, "Reminder added");
       }
-      else
-      {
-        XBMC->QueueNotification(QUEUE_ERROR, "Reminder could not find the requested channel");
-        return false;
-      }
-      XBMC->QueueNotification(QUEUE_INFO, "Reminder added");
     }
     return true;
   }
@@ -1186,12 +1149,12 @@ extern "C" {
     {
       if (menuhook.iHookId == MENUHOOK_ID_EPG_REMINDER)
       {
-        if (SetEPGReminder(item))
+        if (SetProgramReminder(item.data.iEpgUid))
           return PVR_ERROR_NO_ERROR;
       }
       else if (menuhook.iHookId == MENUHOOK_ID_CANCEL_EPG_REMINDER)
       {
-        if (g_vbox->KillProgramReminders(item.data.iEpgUid))
+        if (g_vbox->DeleteProgramReminders(item.data.iEpgUid))
           XBMC->QueueNotification(ADDON::QUEUE_INFO, "Reminder canceled");
         else
           XBMC->QueueNotification(ADDON::QUEUE_WARNING, "Program does not have a reminder to cancel");
@@ -1208,7 +1171,7 @@ extern "C" {
       }
       else if (menuhook.iHookId == MENUHOOK_ID_CANCEL_CHANNEL_REMINDER)
       {
-        if (g_vbox->KillChannelReminders(g_vbox->GetChannel(item.data.channel.iUniqueId)))
+        if (g_vbox->DeleteChannelReminders(g_vbox->GetChannel(item.data.channel.iUniqueId)))
           XBMC->QueueNotification(ADDON::QUEUE_INFO, "Removed channel's existing reminders");
         else
           XBMC->QueueNotification(ADDON::QUEUE_WARNING, "Channel does not have reminders to cancel");

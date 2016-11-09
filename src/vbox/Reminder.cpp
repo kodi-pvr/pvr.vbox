@@ -93,9 +93,9 @@ void Reminder::ComposeMessage(time_t currTime)
   }
 }
 
-std::string Reminder::GetReminderText(time_t currTime)
+std::string Reminder::GetReminderText()
 {
-  ComposeMessage(currTime);
+  ComposeMessage(time(nullptr));
   return m_msgText;
 }
 

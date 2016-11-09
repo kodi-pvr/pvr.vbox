@@ -72,9 +72,8 @@ bool ReminderManager::AddReminder(const ChannelPtr &channel, time_t startTime, s
 ReminderPtr ReminderManager::GetReminderToPop(time_t currTime)
 {
   if (m_reminders.empty())
-  {
     return nullptr;
-  }
+
   ReminderPtr reminder = m_reminders.top();
   if (reminder)
   {
@@ -91,29 +90,26 @@ ReminderPtr ReminderManager::GetReminderToPop(time_t currTime)
         g_vbox->Log(ADDON::LOG_DEBUG, "Reminder popped");
         return reminder;
       }
-      // reminder is too old - kill it
+      // reminder is too old (either popped or past the first 5 minutes of program) - delete it
       else
-      {
-        KillNextReminder();
-      }
+        DeleteNextReminder();
     }
   }
   return nullptr;
 }
 
-void ReminderManager::KillNextReminder()
+void ReminderManager::DeleteNextReminder()
 {
-  g_vbox->Log(ADDON::LOG_DEBUG, "Popping reminder!");
+  g_vbox->Log(ADDON::LOG_DEBUG, "Removing reminder!");
   m_reminders.pop();
   Save();
 }
 
-bool ReminderManager::KillChannelReminders(const ChannelPtr &rChannel)
+bool ReminderManager::DeleteChannelReminders(const ChannelPtr &rChannel)
 {
   bool fSuccess = false;
   ReminderQueue queue;
 
-  g_vbox->Log(ADDON::LOG_INFO, "KillChannelReminders(): in");
   while (!m_reminders.empty())
   {
     ReminderPtr reminder = m_reminders.top();
@@ -141,14 +137,13 @@ bool ReminderManager::KillChannelReminders(const ChannelPtr &rChannel)
     queue.push(reminder);
   }
   m_reminders = queue;
-  g_vbox->Log(ADDON::LOG_INFO, "KillChannelReminders(): out");
   if (fSuccess)
     Save();
   return fSuccess;
 }
 
 
-bool ReminderManager::KillProgramReminders(unsigned int epgUid)
+bool ReminderManager::DeleteProgramReminders(unsigned int epgUid)
 {
   bool fSuccess = false;
   ReminderQueue queue;
@@ -171,13 +166,11 @@ bool ReminderManager::KillProgramReminders(unsigned int epgUid)
     if (it != channels.end())
     {
       const ChannelPtr &selectedChannel = *it;
-      g_vbox->Log(ADDON::LOG_INFO, "KillProgramReminders(): found channel %s", selectedChannel->m_xmltvName.c_str());
       const Schedule schedule = g_vbox->GetSchedule(selectedChannel);
       const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
       // skip reminder if the EPG event is found
       if (programme && programme->m_title == reminder->m_progName && xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) == reminder->m_startTime)
       {
-        g_vbox->Log(ADDON::LOG_INFO, "KillProgramReminders(): found program. queue size %d, m_reminders size %d", queue.size(), m_reminders.size());
         fSuccess = true;
         continue;
       }
@@ -185,7 +178,6 @@ bool ReminderManager::KillProgramReminders(unsigned int epgUid)
     queue.push(reminder);
   }
   m_reminders = queue;
-  g_vbox->Log(ADDON::LOG_INFO, "KillProgramReminders(): out");
   if (fSuccess)
     Save();
   return fSuccess;
@@ -199,12 +191,11 @@ void ReminderManager::Load()
 
   if (!fileHandle)
   {
-    g_vbox->Log(ADDON::LOG_ERROR, "Could not open reminders XML");
-    return;
+    g_vbox->Log(ADDON::LOG_ERROR, "Could not open reminders XML, throwing exception");
+    throw vbox::InvalidXMLException("XML could not be opened" );
   }
 
-  while (!m_reminders.empty())
-    m_reminders.pop();
+  m_reminders = ReminderQueue();
 
   g_vbox->Log(ADDON::LOG_INFO, "Reading XML");
   // Read the XML
@@ -309,22 +300,3 @@ void ReminderManager::Save()
     XBMC->CloseFile(fileHandle);
   }
 }
-
-/*std::vector<ReminderPtr> ReminderManager::GetReminderVector()
-{
-  std::vector<ReminderPtr> vec;
-  ReminderQueue queue;
-
-  g_vbox->Log(ADDON::LOG_INFO, "GetReminderVector(): in");
-  while (!m_reminders.empty())
-  {
-    g_vbox->Log(ADDON::LOG_INFO, "GetReminderVector(): got 1");
-    ReminderPtr reminder = m_reminders.top();
-    m_reminders.pop();
-    vec.push_back(reminder);
-    queue.push(reminder);
-  }
-  m_reminders = queue;
-  g_vbox->Log(ADDON::LOG_INFO, "GetReminderVector(): out");
-  return vec;
-}*/

@@ -237,24 +237,21 @@ void VBox::RetrieveReminders()
     {
       LogException(e);
       Log(LOG_INFO, "Failed to load the reminders XML");
+      return;
     }
   }
   m_reminderManager->Load();
 }
 
-
-
-void VBox::CheckForActiveReminder()
+ReminderPtr VBox::GetActiveReminder()
 {
-  time_t currTime = time(nullptr);
-  // check if reminder needed
-  ReminderPtr reminder = m_reminderManager->GetReminderToPop(currTime);
+  // check if reminder needed now
+  return m_reminderManager->GetReminderToPop(time(nullptr));
+}
 
-  if (reminder)
-  {
-    GUI->Dialog_OK_ShowAndGetInput("Program reminder", std::string(reminder->GetReminderText(currTime)).c_str());
-    m_reminderManager->KillNextReminder();
-  }
+void VBox::DisplayReminder(const ReminderPtr &reminder)
+{
+  GUI->Dialog_OK_ShowAndGetInput("Program reminder", std::string(reminder->GetReminderText()).c_str());
 }
 
 void VBox::BackgroundUpdater()
@@ -285,8 +282,13 @@ void VBox::BackgroundUpdater()
   while (m_active)
   {
     // check for reminders each iteration
-    CheckForActiveReminder();
-
+    ReminderPtr reminder = GetActiveReminder();
+    if (reminder)
+    {
+      DisplayReminder(reminder);
+      m_reminderManager->DeleteNextReminder();
+    }
+      
     // Update recordings every 12 iterations = 1 minute
     if (lapCounter % 12 == 0)
       RetrieveRecordings();
@@ -432,14 +434,14 @@ bool VBox::AddReminder(const ChannelPtr &channel, time_t startTime, std::string 
   return m_reminderManager->AddReminder(channel, startTime, progName, m_settings.m_remindMinsBeforeProg);
 }
 
-bool VBox::KillChannelReminders(const ChannelPtr &channel)
+bool VBox::DeleteChannelReminders(const ChannelPtr &channel)
 {
-  return m_reminderManager->KillChannelReminders(channel);
+  return m_reminderManager->DeleteChannelReminders(channel);
 }
 
-bool VBox::KillProgramReminders(unsigned int epgUid)
+bool VBox::DeleteProgramReminders(unsigned int epgUid)
 {
-  return m_reminderManager->KillProgramReminders(epgUid);
+  return m_reminderManager->DeleteProgramReminders(epgUid);
 }
 
 void VBox::StartEPGScan()

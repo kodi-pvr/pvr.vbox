@@ -184,8 +184,8 @@ namespace vbox {
     // Reminder methods
     bool AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme);
     bool AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName);
-    bool KillChannelReminders(const ChannelPtr &channel);
-    bool KillProgramReminders(unsigned int epgUid);
+    bool DeleteChannelReminders(const ChannelPtr &channel);
+    bool DeleteProgramReminders(unsigned int epgUid);
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -205,7 +205,8 @@ namespace vbox {
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
     void RetrieveExternalGuide(bool triggerEvent = true);
-    void CheckForActiveReminder();
+    ReminderPtr GetActiveReminder();
+    void DisplayReminder(const ReminderPtr &reminder);
     void RetrieveReminders();
     void InitializeChannelMapper();
     void InitializeGenreMapper();
@@ -243,10 +244,10 @@ namespace vbox {
      */
     std::vector<RecordingPtr> m_recordings;
 
-	/**
-	* The list of recordings, including timeres
-	*/
-	std::vector<SeriesRecordingPtr> m_series;
+    /**
+    * The list of recordings, including timeres
+    */
+    std::vector<SeriesRecordingPtr> m_series;
 
     /**
      * The guide data. The XMLTV channel name is the key, the value is the 
