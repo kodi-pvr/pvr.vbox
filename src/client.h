@@ -22,6 +22,7 @@
 
 #include "libXBMC_addon.h"
 #include "libXBMC_pvr.h"
+#include <libKODI_guilib.h>
 #include "vbox/VBox.h"
 
 #ifdef TARGET_WINDOWS
@@ -31,6 +32,7 @@
 // Helpers
 extern ADDON::CHelper_libXBMC_addon *XBMC;
 extern CHelper_libXBMC_pvr          *PVR;
+extern CHelper_libKODI_guilib       *GUI;
 
 // Globals
 extern ADDON_STATUS g_status;

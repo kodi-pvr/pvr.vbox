@@ -33,6 +33,10 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/GuideChannelMapper.cpp
                 src/vbox/Recording.h
                 src/vbox/Recording.cpp
+                src/vbox/Reminder.h
+                src/vbox/Reminder.cpp
+                src/vbox/ReminderManager.h
+                src/vbox/ReminderManager.cpp
                 src/vbox/SeriesRecording.h
                 src/vbox/SeriesRecording.cpp
                 src/vbox/Settings.h

@@ -43,7 +43,7 @@ using namespace vbox;
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false)
+  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr)
 {
 }
 
@@ -221,6 +221,39 @@ void VBox::UpdateEpgScan(bool fRetrieveGuide)
   }
 }
 
+void VBox::RetrieveReminders()
+{
+  // Abort if we're already initialized
+  if (!m_reminderManager)
+  {
+    Log(LOG_INFO, "Loading reminders manager");
+
+    m_reminderManager = ReminderManagerPtr(new ReminderManager());
+
+    try {
+      m_reminderManager->Initialize();
+    }
+    catch (VBoxException &e)
+    {
+      LogException(e);
+      Log(LOG_INFO, "Failed to load the reminders XML");
+      return;
+    }
+  }
+  m_reminderManager->Load();
+}
+
+ReminderPtr VBox::GetActiveReminder()
+{
+  // check if reminder needed now
+  return m_reminderManager->GetReminderToPop(time(nullptr));
+}
+
+void VBox::DisplayReminder(const ReminderPtr &reminder)
+{
+  GUI->Dialog_OK_ShowAndGetInput("Program reminder", std::string(reminder->GetReminderText()).c_str());
+}
+
 void VBox::BackgroundUpdater()
 {
   // Keep count of how many times the loop has run so we can perform some 
@@ -230,6 +263,7 @@ void VBox::BackgroundUpdater()
   // Retrieve everything in order once before starting the loop, without 
   // triggering the event handlers
   RetrieveChannels(false);
+  RetrieveReminders();
 
   InitializeGenreMapper();
   RetrieveRecordings(false);
@@ -247,6 +281,14 @@ void VBox::BackgroundUpdater()
 
   while (m_active)
   {
+    // check for reminders each iteration
+    ReminderPtr reminder = GetActiveReminder();
+    if (reminder)
+    {
+      DisplayReminder(reminder);
+      m_reminderManager->DeleteNextReminder();
+    }
+      
     // Update recordings every 12 iterations = 1 minute
     if (lapCounter % 12 == 0)
       RetrieveRecordings();
@@ -380,6 +422,26 @@ const ChannelPtr VBox::GetCurrentChannel() const
 void VBox::SetCurrentChannel(const ChannelPtr &channel)
 {
   m_currentChannel = channel;
+}
+
+bool VBox::AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme)
+{
+  return m_reminderManager->AddReminder(channel, programme, m_settings.m_remindMinsBeforeProg);
+}
+
+bool VBox::AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName)
+{
+  return m_reminderManager->AddReminder(channel, startTime, progName, m_settings.m_remindMinsBeforeProg);
+}
+
+bool VBox::DeleteChannelReminders(const ChannelPtr &channel)
+{
+  return m_reminderManager->DeleteChannelReminders(channel);
+}
+
+bool VBox::DeleteProgramReminders(unsigned int epgUid)
+{
+  return m_reminderManager->DeleteProgramReminders(epgUid);
 }
 
 void VBox::StartEPGScan()
