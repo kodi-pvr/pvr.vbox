@@ -104,6 +104,12 @@ namespace vbox {
     EPGSCAN_FINISHED
   };
 
+  struct TimedStreamingStatus
+  {
+    ChannelStreamingStatus m_streamStatus;
+    time_t m_timestamp;
+  };
+
   /**
    * The main class for interfacing with the VBox Gateway
    */
@@ -151,7 +157,8 @@ namespace vbox {
     const ChannelPtr GetChannel(unsigned int uniqueId) const;
     const ChannelPtr GetCurrentChannel() const;
     void SetCurrentChannel(const ChannelPtr &channel);
-    ChannelStreamingStatus GetChannelStreamingStatus(const ChannelPtr &channel) const;
+    ChannelStreamingStatus GetChannelStreamingStatus(const ChannelPtr &channel);
+    void SetChannelStreamingStatus(const ChannelPtr &channel);
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -289,6 +296,11 @@ namespace vbox {
     * The state of EPG scanning - if set to EPGSCAN_SHOULD_SCAN --> EPG scanning starts
     */
     EPGScanState m_epgScanState;
+
+    /**
+    * The streaming status and the timestamp of when it was taken from the backend
+    */
+    TimedStreamingStatus m_lastStreamStatus;
 
     /**
     * Contains the channel's database version (as they were last updated)

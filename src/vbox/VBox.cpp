@@ -41,9 +41,11 @@ using namespace ADDON;
 using namespace vbox;
 
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
+const time_t STREAMING_STATUS_UPDATE_INTERVAL = 10;
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr)
+  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr), 
+  m_lastStreamStatus({ChannelStreamingStatus(), time(nullptr)})
 {
 }
 
@@ -475,7 +477,7 @@ void VBox::GetEpgDetectionState(std::string &methodName, std::string &flagName)
   m_epgScanState = (isInlDetection == "YES")? EPGSCAN_SCANNING : EPGSCAN_FINISHED;
 }
 
-ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel) const
+void VBox::SetChannelStreamingStatus(const ChannelPtr &channel)
 {
   ChannelStreamingStatus status;
 
@@ -502,7 +504,19 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel
     status.SetBer(content.GetString("BER"));
   }
 
-  return status;
+  m_lastStreamStatus.m_streamStatus = status;
+  m_lastStreamStatus.m_timestamp = time(nullptr);
+}
+
+ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel)
+{
+  time_t lastUpdateTime = m_lastStreamStatus.m_timestamp;
+  time_t currTime(time(nullptr));
+
+  if (currTime - lastUpdateTime >= STREAMING_STATUS_UPDATE_INTERVAL)
+    SetChannelStreamingStatus(channel);
+  
+  return m_lastStreamStatus.m_streamStatus;
 }
 
 bool VBox::SupportsRecordings() const

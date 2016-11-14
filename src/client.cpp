@@ -963,6 +963,7 @@ extern "C" {
     }
 
     CloseLiveStream();
+    g_vbox->SetChannelStreamingStatus(channelPtr);
     return false;
   }
 
