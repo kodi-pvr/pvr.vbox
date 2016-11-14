@@ -41,6 +41,7 @@ using namespace ADDON;
 using namespace vbox;
 
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
+const time_t MIN_SECONDS_BETWEEN_STREAM_STATUSES = 10;
 
 VBox::VBox(const Settings &settings)
   : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr), 
@@ -512,7 +513,7 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel
   time_t lastUpdateTime = m_lastStreamStatus.m_timestamp;
   time_t currTime(time(nullptr));
 
-  if (currTime - lastUpdateTime >= 10)
+  if (currTime - lastUpdateTime >= MIN_SECONDS_BETWEEN_STREAM_STATUSES)
     SetChannelStreamingStatus(channel);
   
   return m_lastStreamStatus.m_streamStatus;
