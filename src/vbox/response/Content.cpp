@@ -96,8 +96,8 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
 {
   // Extract data from the various <display-name> elements
   const XMLElement *displayElement = xml->FirstChildElement("display-name");
-
-  std::string name = displayElement->GetText();
+  const char *pChannelName = displayElement->GetText();
+  std::string name = pChannelName ? pChannelName : "";
   displayElement = displayElement->NextSiblingElement("display-name");
   std::string type = displayElement->GetText();
   displayElement = displayElement->NextSiblingElement("display-name");

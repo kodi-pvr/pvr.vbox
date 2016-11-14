@@ -37,7 +37,8 @@ Guide::Guide(const XMLElement *m_content)
   {
     // Create the channel
     std::string channelId = Utilities::UrlDecode(element->Attribute("id"));
-    std::string displayName = element->FirstChildElement("display-name")->GetText();
+    const char *pChannelName = element->FirstChildElement("display-name")->GetText();
+    std::string displayName = pChannelName ? pChannelName : "";
     ChannelPtr channel = ChannelPtr(new Channel(channelId, displayName));
 
     // Add channel icon if it exists
