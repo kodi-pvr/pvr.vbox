@@ -42,6 +42,8 @@ using namespace vbox;
 
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 const time_t STREAMING_STATUS_UPDATE_INTERVAL = 10;
+const int CHANNELS_PER_CHANNELBATCH = 100;
+const int CHANNELS_PER_EPGBATCH = 10;
 
 VBox::VBox(const Settings &settings)
   : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr), 
@@ -852,26 +854,59 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
     if (IsDBContentUpdated(channelsDBVerName, m_channelsDBVersion, newDBversion))
       return;
 
-    request::ApiRequest request("GetXmltvChannelsList");
-    request.AddParameter("FromChIndex", "FirstChannel");
-    request.AddParameter("ToChIndex", "LastChannel");
-    response::ResponsePtr response = PerformRequest(request);
-    response::XMLTVResponseContent content(response->GetReplyElement());
+    int lastChannelIndex;
 
-    auto channels = content.GetChannels();
-    std::unique_lock<std::mutex> lock(m_mutex);
-
-    // Optionally swap the channel icons for the ones in the external guide
-    if (m_settings.m_useExternalXmltvIcons &&
-      m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED)
     {
-      SwapChannelIcons(channels);
+      request::ApiRequest request("QueryXmltvNumOfChannels");
+      response::ResponsePtr response = PerformRequest(request);
+      response::Content content(response->GetReplyElement());
+
+      // get number of channels from backend
+      std::unique_lock<std::mutex> lock(m_mutex);
+      lastChannelIndex = content.GetUnsignedInteger("NumOfChannels");
+    }
+
+    std::vector<ChannelPtr> allChannels;
+
+    // Get channels in batches of 100
+    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += CHANNELS_PER_CHANNELBATCH)
+    {
+      // Abort immediately if the addon just got terminated
+      if (!m_active)
+        return;
+
+      int toIndex = std::min(fromIndex + (CHANNELS_PER_CHANNELBATCH - 1) , lastChannelIndex);
+      // Swallow exceptions, we don't want channel loading to fail just because 
+      // one request failed
+      try
+      {
+        request::ApiRequest request("GetXmltvChannelsList");
+        request.AddParameter("FromChIndex", fromIndex);
+        request.AddParameter("ToChIndex", toIndex);
+        response::ResponsePtr response = PerformRequest(request);
+        response::XMLTVResponseContent content(response->GetReplyElement());
+        auto channels = content.GetChannels();
+
+        // Optionally swap the channel icons for the ones in the external guide
+        if (m_settings.m_useExternalXmltvIcons &&
+          m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED)
+        {
+          SwapChannelIcons(channels);
+        }
+        // Add the batch to all channels
+        allChannels.insert(allChannels.end(), channels.begin(), channels.end());
+      }
+      catch (VBoxException &e)
+      {
+        LogException(e);
+      }
     }
 
     // Swap and notify if the contents have changed
-    if (!utilities::deref_equals(m_channels, channels))
+    if (!utilities::deref_equals(m_channels, allChannels))
     {
-      m_channels = channels;
+      std::unique_lock<std::mutex> lock(m_mutex);
+      m_channels = allChannels;
       Log(LOG_INFO, "Channels database version updated to %u", newDBversion);
       m_channelsDBVersion = newDBversion;
       
@@ -952,13 +987,13 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
     xmltv::Guide guide;
 
-    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += 10)
+    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += CHANNELS_PER_EPGBATCH)
     {
       // Abort immediately if the addon just got terminated
       if (!m_active)
         return;
 
-      int toIndex = std::min(fromIndex + 9, lastChannelIndex);
+      int toIndex = std::min(fromIndex + (CHANNELS_PER_EPGBATCH - 1), lastChannelIndex);
 
       // Swallow exceptions, we don't want guide loading to fail just because 
       // one request failed
