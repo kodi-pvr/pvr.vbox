@@ -645,6 +645,81 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   return false;
 }
 
+const RecordingMargins VBox::GetRecordingMargins(bool fBackendSingleMargin) const
+{
+  RecordingMargins margins;
+
+  memset(&margins, 0, sizeof(margins));
+  // get recording margins
+  request::ApiRequest request("GetRecordingsTimeOffset");
+  response::ResponsePtr response = PerformRequest(request);
+  response::Content content(response->GetReplyElement());
+
+  // If version < 2.57, there is one margin (for both before & after the program).
+  // In that case, get the margin for both before/after
+  if (fBackendSingleMargin)
+  {
+    margins.m_beforeMargin = content.GetUnsignedInteger("RecordingsTimeOffset");
+    margins.m_afterMargin = content.GetUnsignedInteger("RecordingsTimeOffset");
+  }
+  // Otherwise - get the matching margins
+  else
+  {
+    margins.m_beforeMargin = content.GetUnsignedInteger("MinutesPaddingBefore");
+    margins.m_afterMargin = content.GetUnsignedInteger("MinutesPaddingAfter");
+  }
+  Log(LOG_DEBUG, "GetRecordingMargins(): Current recording margins: %u and %u", margins.m_beforeMargin, margins.m_afterMargin);
+  return margins;
+}
+
+void VBox::SetRecordingMargins(RecordingMargins margins, bool fBackendSingleMargin)
+{
+  request::ApiRequest request("SetRecordingsTimeOffset");
+
+  // If version < 2.57, there is a single margin (for both before & after the program).
+  // In that case, set either margin (they're the same)
+  if (fBackendSingleMargin)
+  {
+    request.AddParameter("RecordingsTimeOffset", margins.m_beforeMargin);
+  }
+  // Otherwise, set the matching margins
+  else
+  {
+    request.AddParameter("MinutesPaddingBefore", margins.m_beforeMargin);
+    request.AddParameter("MinutesPaddingAfter", margins.m_afterMargin);
+  }
+  PerformRequest(request);
+}
+
+void VBox::UpdateRecordingMargins(RecordingMargins defaultMargins)
+{
+  // get  version from backend
+  SoftwareVersion version(SoftwareVersion::ParseString(m_backendInformation.version.GetString()) );
+  RecordingMargins updatedMargins;
+  bool fBackendSingleMargin = true;
+
+  // if version < 2.57 (support only for 1 margin), set updated margin for both  
+  // before + after the program times as the larger margin of the timer margins (before / after)
+  if (version < SoftwareVersion::ParseString("2.57"))
+  {
+    unsigned int maxMargin = std::max<unsigned int>(defaultMargins.m_beforeMargin, defaultMargins.m_afterMargin);
+    updatedMargins.m_beforeMargin = maxMargin;
+    updatedMargins.m_afterMargin = maxMargin;
+  }
+  // otherwise - set each margin as the matching default margin
+  else
+  {
+    updatedMargins.m_beforeMargin = defaultMargins.m_beforeMargin;
+    updatedMargins.m_afterMargin = defaultMargins.m_afterMargin;
+    fBackendSingleMargin = false;
+  }
+  const RecordingMargins currMargins = GetRecordingMargins(fBackendSingleMargin);
+
+  // set the updated margins in backend, if different from the current ones 
+  if (updatedMargins != currMargins)
+    g_vbox->SetRecordingMargins(updatedMargins, fBackendSingleMargin);
+}
+
 void VBox::AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme)
 {
   // Add the timer
