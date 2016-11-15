@@ -42,6 +42,8 @@ using namespace vbox;
 
 const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 const time_t STREAMING_STATUS_UPDATE_INTERVAL = 10;
+const int CHANNELS_PER_CHANNELBATCH = 100;
+const int CHANNELS_PER_EPGBATCH = 10;
 
 VBox::VBox(const Settings &settings)
   : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr), 
@@ -867,13 +869,13 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
     std::vector<ChannelPtr> allChannels;
 
     // Get channels in batches of 100
-    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += 100)
+    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += CHANNELS_PER_CHANNELBATCH)
     {
       // Abort immediately if the addon just got terminated
       if (!m_active)
         return;
 
-      int toIndex = std::min(fromIndex + 99, lastChannelIndex);
+      int toIndex = std::min(fromIndex + (CHANNELS_PER_CHANNELBATCH - 1) , lastChannelIndex);
       // Swallow exceptions, we don't want channel loading to fail just because 
       // one request failed
       try
@@ -985,13 +987,13 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
     xmltv::Guide guide;
 
-    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += 10)
+    for (int fromIndex = 1; fromIndex <= lastChannelIndex; fromIndex += CHANNELS_PER_EPGBATCH)
     {
       // Abort immediately if the addon just got terminated
       if (!m_active)
         return;
 
-      int toIndex = std::min(fromIndex + 9, lastChannelIndex);
+      int toIndex = std::min(fromIndex + (CHANNELS_PER_EPGBATCH - 1), lastChannelIndex);
 
       // Swallow exceptions, we don't want guide loading to fail just because 
       // one request failed
