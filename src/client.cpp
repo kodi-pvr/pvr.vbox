@@ -755,6 +755,8 @@ extern "C" {
     const Schedule schedule = g_vbox->GetSchedule(channel);
 
     try {
+      // update the recording margins in the backend
+      g_vbox->UpdateRecordingMargins( {timer.iMarginStart, timer.iMarginEnd} );
       // Set start time to now if it's missing
       time_t startTime = timer.startTime;
       time_t endTime = timer.endTime;
