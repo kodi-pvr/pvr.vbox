@@ -111,6 +111,19 @@ namespace vbox {
   };
 
   /**
+  * Represents the margin (in minutes) of the recordings' start & end times
+  */
+  struct RecordingMargins
+  {
+    unsigned int m_beforeMargin;
+    unsigned int m_afterMargin;
+    bool operator!=(const RecordingMargins &other)
+    {
+      return (!(m_beforeMargin == other.m_beforeMargin && m_afterMargin == other.m_afterMargin));
+    }
+  };
+
+  /**
    * The main class for interfacing with the VBox Gateway
    */
   class VBox
@@ -181,6 +194,7 @@ namespace vbox {
     void AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
       const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
     const std::vector<SeriesRecordingPtr>& GetSeriesTimers() const;
+    void UpdateRecordingMargins(RecordingMargins defaultMargins);
 
     // EPG methods
     const Schedule GetSchedule(const ChannelPtr &channel) const;
@@ -222,6 +236,8 @@ namespace vbox {
     void GetEpgDetectionState(std::string &methodName, std::string &flagName);
     void InitScanningEPG(std::string &rScanMethod, std::string &rGetStatusMethod, std::string &rfIsScanningFlag);
     void UpdateEpgScan(bool fRetrieveGuide);
+    const RecordingMargins GetRecordingMargins(bool fBackendSingleMargin) const;
+    void SetRecordingMargins(RecordingMargins margin, bool fBackendSingleMargin);
 
     void LogGuideStatistics(const ::xmltv::Guide &guide) const;
     response::ResponsePtr PerformRequest(const request::Request &request) const;
