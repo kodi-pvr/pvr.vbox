@@ -906,27 +906,22 @@ std::string VBox::CreateDailyTime(const time_t unixTimestamp) const
   return ::xmltv::Utilities::UnixTimeToDailyTime(unixTimestamp, tzOffset);
 }
 
-bool VBox::IsDBContentUpdated(std::string &versionName, unsigned int currDBVersion, unsigned int &rNewDBVersion) const
+unsigned int VBox::GetDBVersion(std::string &versionName) const
 {
-  // check programs' databse version
+  // get the backend's database version
   request::ApiRequest request("QueryDataBaseVersion");
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
-  unsigned int newChannelsDBversion = content.GetUnsignedInteger(versionName);
-
-  rNewDBVersion = newChannelsDBversion;
-  // if version is the same as what we have set - our content is updated
-  return newChannelsDBversion == currDBVersion;
+  return content.GetUnsignedInteger(versionName);
 }
 
 void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
 {
   try {
-    unsigned int newDBversion;
     std::string channelsDBVerName("ChannelsDataBaseVersion");
-
+    unsigned int newDBversion = GetDBVersion(channelsDBVerName);
     // if same as last fetched channels, no need for fetching again
-    if (IsDBContentUpdated(channelsDBVerName, m_channelsDBVersion, newDBversion))
+    if (newDBversion == m_channelsDBVersion)
       return;
 
     int lastChannelIndex;
@@ -1044,11 +1039,11 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
   Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
 
   try {
-    unsigned int newDBversion;
     std::string progsDBVerName("ProgramsDataBaseVersion");
+    unsigned int newDBversion = GetDBVersion(progsDBVerName);
 
-    // if same as last fetched guide, no need for fetching again
-    if (IsDBContentUpdated(progsDBVerName, m_programsDBVersion, newDBversion) && !m_shouldSyncEpg)
+    // if same as last fetched guide, no need for fetching again (unless syncing EPG)
+    if (!m_shouldSyncEpg && newDBversion == m_programsDBVersion)
       return;
 
     // Retrieving the whole XMLTV file is too slow so we fetch sections in 
