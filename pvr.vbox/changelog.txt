@@ -1,3 +1,15 @@
+3.6.0
+    - Added series (timer rules) implementation for manual + series
+	- Added genre mapping from category tags
+	- Added channels & guide database version check to prevent redundant fetching
+	- Added rescannig EPG (in the backend) to TV settings client specific menu
+	- Added fetching EPG (from backend to addon) to TV settings client specific menu
+	- Changed display of channel order setting in settings screen
+	- Added popup reminders (no switch) setting / canceling from EPG + channels context menus (in client actions)
+	- Added support for setting recording margins in TV Settings (if version is 2.57+, both can be set, otherwise - larger margin is set for both ends)
+	- Reduced getting signal status frequency to a minimum of 10 seconds
+	- Fixed crashes caused by channel names containing only whitespaces
+
 3.5.0
     - fixed Travis CI builds
     - ignore guide programs with the title "String format is not supported"
