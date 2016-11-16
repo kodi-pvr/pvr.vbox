@@ -1044,11 +1044,11 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
   Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
 
   try {
-        unsigned int newDBversion;
+    unsigned int newDBversion;
     std::string progsDBVerName("ProgramsDataBaseVersion");
 
     // if same as last fetched guide, no need for fetching again
-    if (!m_shouldSyncEpg && IsDBContentUpdated(progsDBVerName, m_programsDBVersion, newDBversion))
+    if (IsDBContentUpdated(progsDBVerName, m_programsDBVersion, newDBversion) && !m_shouldSyncEpg)
       return;
 
     // Retrieving the whole XMLTV file is too slow so we fetch sections in 
