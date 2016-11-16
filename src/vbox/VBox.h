@@ -221,7 +221,7 @@ namespace vbox {
   private:
     
     void BackgroundUpdater();
-    bool IsDBContentUpdated(std::string &versionName, unsigned int currDBVersion, unsigned int &rNewDBVersion) const;
+    unsigned int GetDBVersion(std::string &versionName) const;
     void RetrieveChannels(bool triggerEvent = true);
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
