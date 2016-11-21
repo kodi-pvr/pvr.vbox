@@ -228,7 +228,7 @@ static void AddWeekdayBits(unsigned int &rWeekdays, const char *pWeekdaysText)
   char *pDay;
   char buf[32];
 
-  strcpy(buf, pWeekdaysText);
+  strncpy(buf, pWeekdaysText, sizeof(buf));
   pDay = strtok(buf, ",");
 
   while (pDay)
