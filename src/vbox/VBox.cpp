@@ -589,48 +589,44 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 {
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
-  bool fIsSeries = false;
 
-  // Find the recording/timer - look for single / series
-  auto it = std::find_if(m_recordings.begin(), m_recordings.end(),
-    [id](const RecordingPtr &recording)
-  {
-    return id == recording->m_id;
-  });
-  auto seriesItr = std::find_if(m_series.begin(), m_series.end(),
-    [id](const SeriesRecordingPtr &series)
-  {
-    return id == series->m_id;
-  });
-
-  // if id doesn't match a recording, then it's a series
-  if (it == m_recordings.cend())
-  {
-    if (seriesItr == m_series.cend())
-    {
-      return false;
-    }
-    fIsSeries = true;
-  }
-    
   // The request fails if the item doesn't exist
   try {
-    request::ApiRequest request = (fIsSeries)? 
-    CreateDeleteSeriesRequest(*seriesItr) : CreateDeleteRecordingRequest(*it);
-    PerformRequest(request);
+    // Find the recording/timer - look for a single recording
+    auto it = std::find_if(m_recordings.begin(), m_recordings.end(),
+      [id](const RecordingPtr &recording)
+    {
+      return id == recording->m_id;
+    });
 
-  // Delete the item from memory too
-  if (!fIsSeries)
-  {	
-    if (it != m_recordings.end())
+    // if it matches a single recording - create and send delete request for recording
+    if (it != m_recordings.cend())
+    {
+      request::ApiRequest request = CreateDeleteRecordingRequest(*it);
+      PerformRequest(request);
+      // remove recording object from memory
       m_recordings.erase(it);
-  }
-  else
-  {
-    if (seriesItr != m_series.end())
+    }
+    // if id doesn't match a recording, it's a series
+    else
+    {
+      // look for a series with that ID and throw exception if not found
+      auto seriesItr = std::find_if(m_series.begin(), m_series.end(),
+        [id](const SeriesRecordingPtr &series)
+      {
+        return id == series->m_id;
+      });
+      if (seriesItr == m_series.cend())
+      {
+        throw vbox::RequestFailedException("Could not find timer's ID in backend");
+      }
+      // create and send cancel request for that series recording
+      request::ApiRequest request = CreateDeleteSeriesRequest(*seriesItr);
+      PerformRequest(request);
+      // remove series object from memory
       m_series.erase(seriesItr);
-  } 
-
+    }
+    
     // Fire events
     OnRecordingsUpdated();
     OnTimersUpdated();

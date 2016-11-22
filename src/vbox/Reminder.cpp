@@ -84,7 +84,7 @@ void Reminder::ComposeMessage(time_t currTime)
 
   if (currTime < m_startTime && minutes > 0)
   {
-    sprintf(minBuf, "%u", (m_startTime - currTime) / 60);
+    sprintf(minBuf, "%li", (m_startTime - currTime) / 60);
     m_msgText += "in:     " + std::string(minBuf) + " minutes";
   }
   else
