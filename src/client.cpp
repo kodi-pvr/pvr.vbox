@@ -1233,7 +1233,7 @@ extern "C" {
 
   // Timeshift methods
   void PauseStream(bool bPaused) {}
-  bool SeekTime(int, bool, double*) { return false; }
+  bool SeekTime(double, bool, double*) { return false; }
   void SetSpeed(int) {};
   time_t GetPlayingTime() { return 0; }
   bool IsTimeshifting(void) { return false; }
