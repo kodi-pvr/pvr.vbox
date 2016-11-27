@@ -616,15 +616,18 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
       {
         return id == series->m_id;
       });
-      if (seriesItr == m_series.cend())
+      if (seriesItr != m_series.end())
+      {
+        // create and send cancel request for that series recording
+        request::ApiRequest request = CreateDeleteSeriesRequest(*seriesItr);
+        PerformRequest(request);
+        // remove series object from memory
+        m_series.erase(seriesItr);
+      }
+      else
       {
         throw vbox::RequestFailedException("Could not find timer's ID in backend");
       }
-      // create and send cancel request for that series recording
-      request::ApiRequest request = CreateDeleteSeriesRequest(*seriesItr);
-      PerformRequest(request);
-      // remove series object from memory
-      m_series.erase(seriesItr);
     }
     
     // Fire events
