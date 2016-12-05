@@ -1,3 +1,6 @@
+4.0.0
+    - Initial Kodi v18 version
+
 3.6.0
     - Added series (timer rules) implementation for manual + series
 	- Added genre mapping from category tags
