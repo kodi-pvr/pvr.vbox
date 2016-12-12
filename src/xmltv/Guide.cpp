@@ -60,6 +60,10 @@ Guide::Guide(const XMLElement *m_content)
     std::string channelId = Utilities::UrlDecode(element->Attribute("channel"));
     xmltv::ProgrammePtr programme(new Programme(element));
 
+    // Drop program if missing start/end times or channel
+    if (programme->m_channelName.empty() || programme->m_startTime.empty() || programme->m_endTime.empty())
+      continue;
+
     // Add the programme to the channel's schedule only if the title was parsable
     if (programme->m_title != Programme::STRING_FORMAT_NOT_SUPPORTED)
       m_schedules[channelId]->AddProgramme(programme);
