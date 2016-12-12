@@ -170,7 +170,10 @@ int Utilities::QueryIntText(const tinyxml2::XMLElement *element)
   if (element->GetText())
   {
     try {
-      std::string content = element->GetText();
+      const char *pText = element->GetText();
+      if (!pText)
+        throw std::invalid_argument("No text in element");
+      std::string content = pText;
       value = compat::stoi(content);
     }
     catch (std::invalid_argument) {
@@ -188,7 +191,10 @@ unsigned int Utilities::QueryUnsignedText(const tinyxml2::XMLElement *element)
   if (element->GetText())
   {
     try {
-      std::string content = element->GetText();
+      const char *pText = element->GetText();
+      if (!pText)
+        throw std::invalid_argument("No text in element");
+      std::string content = pText;
       value = compat::stoui(content);
     }
     catch (std::invalid_argument) {

@@ -61,8 +61,13 @@ void Response::ParseStatus()
   // Not all response types always return the status element
   if (statusElement)
   {
-    errorCode = xmltv::Utilities::QueryIntText(statusElement->FirstChildElement("ErrorCode"));
-    errorDescription = statusElement->FirstChildElement("ErrorDescription")->GetText();
+    XMLElement *errCodeEl = statusElement->FirstChildElement("ErrorCode");
+    XMLElement *errDescEl = statusElement->FirstChildElement("ErrorDescription");
+
+    if (errCodeEl)
+      errorCode = xmltv::Utilities::QueryIntText(errCodeEl);
+    if (errDescEl)
+       errorDescription = xmltv::Utilities::GetStdString(errDescEl->GetText());
 
     m_error.code = static_cast<ErrorCode>(errorCode);
     m_error.description = errorDescription;
