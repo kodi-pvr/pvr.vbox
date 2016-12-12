@@ -32,24 +32,22 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   : m_year(0)
 {
   // Construct a basic event
-  m_startTime = xml->Attribute("start");
-  m_endTime = xml->Attribute("stop");
-  m_channelName = Utilities::UrlDecode(xml->Attribute("channel"));
+  m_startTime = xmltv::Utilities::GetStdString(xml->Attribute("start"));
+  m_endTime = xmltv::Utilities::GetStdString(xml->Attribute("stop"));
+  m_channelName = Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
 
   // Title
   const XMLElement *element = xml->FirstChildElement("title");
   if (element)
-    m_title = element->GetText();
-
+    m_title = xmltv::Utilities::GetStdString(element->GetText());
   // Subtitle
   element = xml->FirstChildElement("sub-title");
   if (element)
-    m_subTitle = element->GetText();
-
+    m_subTitle = xmltv::Utilities::GetStdString(element->GetText());
   // Description
   element = xml->FirstChildElement("desc");
   if (element)
-    m_description = element->GetText();
+    m_description = xmltv::Utilities::GetStdString(element->GetText());
 
   // Credits
   element = xml->FirstChildElement("credits");
@@ -64,15 +62,15 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   // Icon
   element = xml->FirstChildElement("icon");
   if (element)
-    m_icon = element->Attribute("src");
+    m_icon = xmltv::Utilities::GetStdString(element->Attribute("src"));
 
   // Categories. Skip "movie" and "series" since most people treat categories 
   // as genres
   for (element = xml->FirstChildElement("category");
     element != NULL; element = element->NextSiblingElement("category"))
   {
-    auto *category = element->GetText();
-    if (!category)
+    std::string category = xmltv::Utilities::GetStdString(element->GetText());
+    if (category.empty())
       continue;
 
     std::string genre(category);
@@ -88,21 +86,21 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   {
     element = element->FirstChildElement("value");
     if (element)
-      m_starRating = element->GetText();
+      m_starRating = xmltv::Utilities::GetStdString(element->GetText());
   }
 
   // series IDs
   for (element = xml->FirstChildElement("episode-num");
     element != NULL; element = element->NextSiblingElement("episode-num"))
   {
-    auto *seriesId = element->GetText();
-    if (!seriesId)
+    std::string seriesId = xmltv::Utilities::GetStdString(element->GetText());
+    if (seriesId.empty())
       continue;
-    auto *pSystemAttr = element->Attribute("system");
-    if (!pSystemAttr)
-      pSystemAttr = "xmltv_ns";
+    std::string systemAttr = xmltv::Utilities::GetStdString(element->Attribute("system"));
+    if (systemAttr.empty())
+      systemAttr = "xmltv_ns";
 
-    m_seriesIds.insert(std::pair<std::string,std::string>(pSystemAttr, seriesId));
+    m_seriesIds.insert(std::pair<std::string,std::string>(systemAttr, seriesId));
   }
 }
 

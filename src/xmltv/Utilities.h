@@ -120,5 +120,17 @@ namespace xmltv {
      */
     static std::string ConcatenateStringList(const std::vector<std::string> &vector, 
       const std::string &separator = ", ");
+
+    /**
+    * Validates the given text (if exists) and returns it as a valid std::string
+    * @cStr the c-style string
+    * @return value is "" if cStr is NULL, and an std::string of the cStr
+    */
+    static std::string GetStdString(const char *cStr)
+    {
+      if (cStr)
+        return cStr;
+      return "";
+    }
   };
 }
