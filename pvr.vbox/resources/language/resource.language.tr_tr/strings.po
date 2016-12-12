@@ -64,6 +64,46 @@ msgctxt "#30104"
 msgid "Use channel icons from external XMLTV"
 msgstr "Kanal simgelerini harici XMLTV den kullan"
 
+msgctxt "#30105"
+msgid "Channel numbers set by"
+msgstr "Kanal numaralarını belirle"
+
+msgctxt "#30106"
+msgid "VBox device rescan of EPG (will take a while)"
+msgstr "Elektronik Program Rehberi, VBOX aygıtıyla yeniden taranıyor (uzun sürebilir)"
+
+msgctxt "#30107"
+msgid "Sync EPG"
+msgstr "Elektronik Program Rehberi'ni eşle"
+
+msgctxt "#30108"
+msgid "LCN (Logical Channel Number) from backend"
+msgstr "Arka arayüzden LCN (Mantıksal Kanal Numarası)"
+
+msgctxt "#30109"
+msgid "Channel index in backend"
+msgstr "Arka arayüzde kanal indeksi"
+
+msgctxt "#30110"
+msgid "Remind me"
+msgstr "Hatırlat"
+
+msgctxt "#30111"
+msgid "Manual reminder"
+msgstr "Hatırlatma kur"
+
+msgctxt "#30112"
+msgid "Cancel reminder (if exists)"
+msgstr "Hatırlatmayı iptal et (varsa)"
+
+msgctxt "#30113"
+msgid "Cancel all the channel's reminders"
+msgstr "Kanalın tüm hatırlatmalarını iptal et"
+
+msgctxt "#30114"
+msgid "Reminder time (minutes before program starts)"
+msgstr "Hatırlatma zamanı (Program başlamadan kaç dakika önce)"
+
 msgctxt "#30200"
 msgid "Timeshift"
 msgstr "Zaman Kaydırma"
