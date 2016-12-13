@@ -65,12 +65,16 @@ void Response::ParseStatus()
     XMLElement *errDescEl = statusElement->FirstChildElement("ErrorDescription");
 
     if (errCodeEl)
+    {
       errorCode = xmltv::Utilities::QueryIntText(errCodeEl);
+      m_error.code = static_cast<ErrorCode>(errorCode);
+    }
+      
     if (errDescEl)
-       errorDescription = xmltv::Utilities::GetStdString(errDescEl->GetText());
-
-    m_error.code = static_cast<ErrorCode>(errorCode);
-    m_error.description = errorDescription;
+    {
+      errorDescription = xmltv::Utilities::GetStdString(errDescEl->GetText());
+      m_error.description = errorDescription;
+    }  
   }
 }
 
