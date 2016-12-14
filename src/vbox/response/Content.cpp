@@ -36,8 +36,8 @@ std::string Content::GetString(const std::string &parameter) const
 {
   const XMLElement *element = GetParameterElement(parameter);
   
-  if (element && element->GetText())
-    return std::string(element->GetText());
+  if (element)
+    return xmltv::Utilities::GetStdString(element->GetText());
 
   return "";
 }
@@ -96,14 +96,13 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
 {
   // Extract data from the various <display-name> elements
   const XMLElement *displayElement = xml->FirstChildElement("display-name");
-  const char *pChannelName = displayElement->GetText();
-  std::string name = pChannelName ? pChannelName : "";
+  std::string name(xmltv::Utilities::GetStdString(displayElement->GetText()));
   displayElement = displayElement->NextSiblingElement("display-name");
-  std::string type = displayElement->GetText();
+  std::string type(xmltv::Utilities::GetStdString(displayElement->GetText()));
   displayElement = displayElement->NextSiblingElement("display-name");
-  std::string uniqueId = displayElement->GetText();
+  std::string uniqueId(xmltv::Utilities::GetStdString(displayElement->GetText()));
   displayElement = displayElement->NextSiblingElement("display-name");
-  std::string encryption = displayElement->GetText();
+  std::string encryption(xmltv::Utilities::GetStdString(displayElement->GetText()));
   std::string xmltvName = ::xmltv::Utilities::UrlDecode(xml->Attribute("id"));
 
   // Create the channel with some basic information
@@ -116,7 +115,7 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
   if (displayElement)
   {
     // The LCN is sometimes just a digit and sometimes lcn_X
-    std::string lcnValue = displayElement->GetText();
+    std::string lcnValue(xmltv::Utilities::GetStdString(displayElement->GetText()));
 
     if (lcnValue.find("lcn_") != std::string::npos)
       lcnValue = lcnValue.substr(4);
@@ -167,15 +166,15 @@ std::vector<SeriesRecordingPtr> RecordingResponseContent::GetSeriesRecordings() 
 RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
-  std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
-  std::string channelName = xml->FirstChildElement("channel-name")->GetText();
-  RecordingState state = GetState(xml->FirstChildElement("state")->GetText());
+  std::string channelId = xmltv::Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
+  std::string channelName = GetString("channel-name");
+  RecordingState state = GetState(GetString("state"));
 
   // Construct the object
   RecordingPtr recording(new Recording(channelId, channelName, state));
 
   // Add additional properties
-  recording->m_startTime = xml->Attribute("start");
+  recording->m_startTime = xmltv::Utilities::GetStdString(xml->Attribute("start"));
 
   if (xml->FirstChildElement("record-id"))
     recording->m_id = xmltv::Utilities::QueryUnsignedText(xml->FirstChildElement("record-id"));
@@ -190,7 +189,7 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
     recording->m_endTime = xmltv::Utilities::UnixTimeToXmltv(time(nullptr) + 86400);
 
   if (xml->FirstChildElement("programme-title"))
-    recording->m_title = xml->FirstChildElement("programme-title")->GetText();
+    recording->m_title = xmltv::Utilities::GetStdString(xml->FirstChildElement("programme-title")->GetText());
   else
   {
     // TODO: Some recordings don't have a name, especially external ones
@@ -201,21 +200,11 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   }
 
   // Some recordings may have certain tags, but they can be empty
-  const XMLElement *element = xml->FirstChildElement("programme-desc");
-
-  if (element && element->GetText())
-    recording->m_description = element->GetText();
-
-  element = xml->FirstChildElement("url");
-
-  if (element && element->GetText())
-    recording->m_url = element->GetText();
+  recording->m_description = GetString("programme-desc");
+  recording->m_url = GetString("url");
 
   // Extract the "local target" (filename), it is needed on rare occasions
-  element = xml->FirstChildElement("LocalTarget");
-
-  if (element)
-    recording->m_filename = element->GetText();
+  recording->m_filename = GetString("LocalTarget");
 
   return recording;
 }
@@ -244,31 +233,22 @@ static void AddWeekdayBits(unsigned int &rWeekdays, const char *pWeekdaysText)
 SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml2::XMLElement *xml) const
 {
   // Extract mandatory properties
-  std::string channelId = xmltv::Utilities::UrlDecode(xml->Attribute("channel"));
+  std::string channelId = xmltv::Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
 
   // Construct the object
   SeriesRecordingPtr series(new SeriesRecording(channelId));
 
-  series->m_id = atoi(xml->Attribute("series-id"));
+  series->m_id = atoi(xmltv::Utilities::GetStdString(xml->Attribute("series-id")).c_str());
   const XMLElement *element = xml->FirstChildElement("schedule-record-id");
 
   if (element)
-    series->m_scheduledId = atoi(element->GetText());
+    series->m_scheduledId = xmltv::Utilities::QueryIntText(element);
 
-  element = xml->FirstChildElement("programme-title");
-  if (element)
-    series->m_title = element->GetText();
+  series->m_title = GetString("programme-title");
 
   // Some recordings may have certain tags, but they can be empty
-  element = xml->FirstChildElement("programme-desc");
-
-  if (element && element->GetText())
-    series->m_description = element->GetText();
-
-  element = xml->FirstChildElement("start");
-
-  if (element && element->GetText())
-    series->m_startTime = element->GetText();
+  series->m_description = GetString("programme-desc");
+  series->m_startTime = GetString("start");
 
   element = xml->FirstChildElement("crid");
 
@@ -276,15 +256,12 @@ SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml
     series->m_fIsAuto = true;
   else
   {
-    element = xml->FirstChildElement("stop");
-
-    if (element && element->GetText())
-      series->m_endTime = element->GetText();
+    series->m_endTime = GetString("stop");
 
     element = xml->FirstChildElement("days-in-week");
     // add day-bits to m_weekdays according to the days in the "days-in-week" tag
-    if (element && element->GetText())
-      AddWeekdayBits(series->m_weekdays, element->GetText());
+    if (element)
+      AddWeekdayBits(series->m_weekdays, xmltv::Utilities::GetStdString(element->GetText()).c_str());
   }
 
   return series;
