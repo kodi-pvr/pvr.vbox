@@ -167,8 +167,18 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
 {
   // Extract mandatory properties
   std::string channelId = xmltv::Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
-  std::string channelName = GetString("channel-name");
-  RecordingState state = GetState(GetString("state"));
+  
+  const XMLElement *element = xml->FirstChildElement("channel-name");
+  if (!element)
+    return nullptr;
+
+  std::string channelName = xmltv::Utilities::GetStdString(element->GetText());
+
+  element = xml->FirstChildElement("state");
+  if (!element)
+    return nullptr;
+
+  RecordingState state = GetState(xmltv::Utilities::GetStdString(element->GetText()));
 
   // Construct the object
   RecordingPtr recording(new Recording(channelId, channelName, state));
@@ -176,20 +186,23 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   // Add additional properties
   recording->m_startTime = xmltv::Utilities::GetStdString(xml->Attribute("start"));
 
-  if (xml->FirstChildElement("record-id"))
-    recording->m_id = xmltv::Utilities::QueryUnsignedText(xml->FirstChildElement("record-id"));
+  element = xml->FirstChildElement("record-id");
+  if (element)
+    recording->m_id = xmltv::Utilities::QueryUnsignedText(element);
 
-  if (xml->FirstChildElement("series-id"))
-	  recording->m_seriesId = xmltv::Utilities::QueryUnsignedText(xml->FirstChildElement("series-id"));
-  
+  element = xml->FirstChildElement("series-id");
+  if (element)
+	  recording->m_seriesId = xmltv::Utilities::QueryUnsignedText(element);
+
   // TODO: External recordings don't have an end time, default to one hour
   if (xml->Attribute("stop") != NULL)
-    recording->m_endTime = xml->Attribute("stop");
+    recording->m_endTime = xmltv::Utilities::GetStdString(xml->Attribute("stop"));
   else
     recording->m_endTime = xmltv::Utilities::UnixTimeToXmltv(time(nullptr) + 86400);
 
-  if (xml->FirstChildElement("programme-title"))
-    recording->m_title = xmltv::Utilities::GetStdString(xml->FirstChildElement("programme-title")->GetText());
+  element = xml->FirstChildElement("programme-title");
+  if (element)
+    recording->m_title = xmltv::Utilities::GetStdString(element->GetText());
   else
   {
     // TODO: Some recordings don't have a name, especially external ones
@@ -200,11 +213,17 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   }
 
   // Some recordings may have certain tags, but they can be empty
-  recording->m_description = GetString("programme-desc");
-  recording->m_url = GetString("url");
+  element = xml->FirstChildElement("programme-desc");
+  if (element)
+    recording->m_description = xmltv::Utilities::GetStdString(element->GetText());
+  element = xml->FirstChildElement("url");
+  if (element)
+    recording->m_url = xmltv::Utilities::GetStdString(element->GetText());
 
   // Extract the "local target" (filename), it is needed on rare occasions
-  recording->m_filename = GetString("LocalTarget");
+  element = xml->FirstChildElement("LocalTarget");
+  if (element)
+    recording->m_filename = xmltv::Utilities::GetStdString(element->GetText());
 
   return recording;
 }
@@ -244,11 +263,19 @@ SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml
   if (element)
     series->m_scheduledId = xmltv::Utilities::QueryIntText(element);
 
-  series->m_title = GetString("programme-title");
+  element = xml->FirstChildElement("programme-title");
+  if (element)
+    series->m_title = xmltv::Utilities::GetStdString(element->GetText());
+  else
 
   // Some recordings may have certain tags, but they can be empty
-  series->m_description = GetString("programme-desc");
-  series->m_startTime = GetString("start");
+  element = xml->FirstChildElement("programme-desc");
+  if (element)
+    series->m_description = xmltv::Utilities::GetStdString(element->GetText());
+
+  element = xml->FirstChildElement("start");
+  if (element)
+    series->m_startTime = xmltv::Utilities::GetStdString(element->GetText());
 
   element = xml->FirstChildElement("crid");
 
@@ -256,7 +283,9 @@ SeriesRecordingPtr RecordingResponseContent::CreateSeriesRecording(const tinyxml
     series->m_fIsAuto = true;
   else
   {
-    series->m_endTime = GetString("stop");
+    element = xml->FirstChildElement("stop");
+    if (element)
+      series->m_endTime = xmltv::Utilities::GetStdString(element->GetText());
 
     element = xml->FirstChildElement("days-in-week");
     // add day-bits to m_weekdays according to the days in the "days-in-week" tag
