@@ -1,5 +1,5 @@
 3.6.0
-    - Added series (timer rules) implementation for manual + series
+	- Added series (timer rules) implementation for manual + series
 	- Added genre mapping from category tags
 	- Added channels & guide database version check to prevent redundant fetching
 	- Added rescannig EPG (in the backend) to TV settings client specific menu
@@ -11,23 +11,23 @@
 	- Fixed crashes caused by channel names containing only whitespaces
 
 3.5.0
-    - fixed Travis CI builds
-    - ignore guide programs with the title "String format is not supported"
-    - fixed major buffering and stuttering on Kodi Krypton
-    - support channel icons from the backend again
-    - minor refactoring
+	- fixed Travis CI builds
+	- ignore guide programs with the title "String format is not supported"
+	- fixed major buffering and stuttering on Kodi Krypton
+	- support channel icons from the backend again
+	- minor refactoring
 
 3.4.4
- - updated Language files from Transifex
+	- updated Language files from Transifex
 
 3.4.3
- - updated Language files from Transifex
+	- updated Language files from Transifex
 
 3.4.2
- - updated Language files from Transifex
+	- updated Language files from Transifex
 
 3.4.1
- - updated Language files from Transifex
+	- updated Language files from Transifex
 
 3.4.0
 	- Cmake: rename find_package kodi to Kodi
@@ -57,13 +57,13 @@
 	- Added support for all VBox Comm product families (2 letters, starts with "V")
 
 2.1.7
-- updated Language files from Transifex
+	- updated Language files from Transifex
 
 2.1.6
-- updated Language files from Transifex
+	- updated Language files from Transifex
 
 2.1.5
-- updated Language files from Transifex
+	- updated Language files from Transifex
 
 2.1.4
 	- fixed a deadlock that could occur once the addon had been running for some time
