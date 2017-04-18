@@ -29,7 +29,9 @@ namespace timeshift {
   /**
    * The basic type all buffers operate on
    */
-#ifndef _WIN32
+#ifdef _WIN32
+  #include <windows.h>
+#else
   typedef unsigned char byte;
 #endif
 
