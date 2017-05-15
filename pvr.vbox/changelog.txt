@@ -1,3 +1,8 @@
+4.0.3
+	- set dependency versions automatic during build
+	- removed never used kodi to addon functions
+	- improve build system
+
 4.0.2
 	- fixed some Coverity issues
 	- fixed Travis CI builds

@@ -97,7 +97,7 @@ source_group("Library Files\\tinyxml2" FILES ${VBOX_LIBRARIES_TINYXML2})
 # Resource files
 set(VBOX_RESOURCES 
                 README.md
-                pvr.vbox/addon.xml
+                pvr.vbox/addon.xml.in
                 pvr.vbox/changelog.txt
                 pvr.vbox/icon.png
                 pvr.vbox/resources/settings.xml
