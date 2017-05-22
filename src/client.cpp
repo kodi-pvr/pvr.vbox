@@ -286,10 +286,6 @@ extern "C" {
 #undef UPDATE_STR
   }
 
-  void ADDON_Stop()
-  {
-  }
-
   void OnSystemSleep()
   {
   }
