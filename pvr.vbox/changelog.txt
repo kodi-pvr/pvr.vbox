@@ -1,4 +1,7 @@
 4.0.5
+	- Remove of never used addon interface function
+
+4.0.5
 	- Update Debian package control
 	- PVR addon callback way changes
 
