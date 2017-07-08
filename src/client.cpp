@@ -333,6 +333,10 @@ extern "C" {
       pCapabilities->bSupportsTimers = true;
     }
 
+    pCapabilities->bSupportsRecordingsRename = false;
+    pCapabilities->bSupportsRecordingsLifetimeChange = false;
+    pCapabilities->bSupportsDescrambleInfo = false;
+
     return PVR_ERROR_NO_ERROR;
   }
 
@@ -909,6 +913,11 @@ extern "C" {
     return PVR_ERROR_NO_ERROR;
   }
 
+  PVR_ERROR GetDescrambleInfo(PVR_DESCRAMBLE_INFO*)
+  {
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
   bool OpenLiveStream(const PVR_CHANNEL &channel)
   {
     // Find the channel
@@ -1182,6 +1191,7 @@ extern "C" {
   
   // Recording methods (not supported by VBox)
   PVR_ERROR RenameRecording(const PVR_RECORDING &recording) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR SetRecordingLifetime(const PVR_RECORDING*) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR SetRecordingPlayCount(const PVR_RECORDING &recording, int count) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR SetRecordingLastPlayedPosition(const PVR_RECORDING &recording, int lastplayedposition) { return PVR_ERROR_NOT_IMPLEMENTED; }
   int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
