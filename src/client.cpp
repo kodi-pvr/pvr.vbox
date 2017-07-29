@@ -414,12 +414,7 @@ extern "C" {
         strncpy(channel.strInputFormat, "video/mp2t",
           sizeof(channel.strInputFormat));
       }
-      else
-      {
-        // TODO: Kodi can't reliably play radio channels using ReadLiveStream()
-        strncpy(channel.strStreamURL, item->m_url.c_str(),
-          sizeof(channel.strStreamURL));
-      }
+
       VBox::Log(LOG_INFO, "Adding channel %d: %s. Icon: %s",
                 channel.iChannelNumber, channel.strChannelName, channel.strIconPath);
 
