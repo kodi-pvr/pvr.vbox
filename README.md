@@ -84,10 +84,9 @@ The addon follows semantic versioning. Each release is tagged with its respectiv
 
 ### Useful links
 
-* [Kodi's PVR user support] (http://forum.kodi.tv/forumdisplay.php?fid=167)
-* [Kodi's PVR development support] (http://forum.kodi.tv/forumdisplay.php?fid=136)
-* [Kodi's about VBox TV Gateway] (http://kodi.wiki/view/VBox_Home_TV_Gateway)
-* [Coverity Scan for pvr.vbox] (https://scan.coverity.com/projects/4605?tab=overview)
+* [Kodi's PVR user support](http://forum.kodi.tv/forumdisplay.php?fid=167)
+* [Kodi's PVR development support](http://forum.kodi.tv/forumdisplay.php?fid=136)
+* [Kodi's about VBox TV Gateway](http://kodi.wiki/view/VBox_Home_TV_Gateway)
 
 ###  License
 
