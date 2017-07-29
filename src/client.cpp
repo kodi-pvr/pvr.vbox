@@ -1174,9 +1174,6 @@ extern "C" {
   long long PositionRecordedStream(void) { return -1; }
   long long LengthRecordedStream(void) { return 0; }
 
-  // Channel stream methods
-  bool SwitchChannel(const PVR_CHANNEL &channel) { CloseLiveStream(); return OpenLiveStream(channel); }
-
   // Demuxer methods
   void DemuxReset(void) {}
   void DemuxFlush(void) {}
