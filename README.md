@@ -18,7 +18,23 @@ of the addon, to make it easier for others to possible contribute.
 4. `cmake -DADDONS_TO_BUILD=pvr.vbox -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/kodi-build/addons -DPACKAGE_ZIP=1 ../../xbmc/cmake/addons`
 5. `make`
 
-### Settings
+#### Windows
+
+These instructions may be outdated. I'm assuming here that you'll check
+out all source code into `C:\Projects`, you'll have to adjust that if
+you use another path.
+
+1. Check out the Kodi source from Github (`C:\Projects\xbmc`) and make sure you have Microsoft Visual Studio 2013 installed.
+2. Check out this repository (`C:\Projects\pvr.vbox`)
+3. This step has to be done once only. Go to `C:\Projects\xbmc\project\cmake\addons\addons`. You'll see there's a folder for each binary addon. In order to build your locally checked out copy of the addon instead of the version that is bundled with Kodi you'll need to open the file `pvr.vbox/pvr.vbox.txt` and change its contents to the following: `pvr.vbox file://C:/Projects/pvr.vbox`.
+4. Open a command prompt (or Powershell) and browse to `C:\Projects\xbmc\tools\windows`. From here, run `prepare-binary-addons-dev.bat clean` and then `prepare-binary-addons-dev.bat pvr.vbox`.
+5. Go to `C:\Projects\xbmc\project\cmake\addons\build` and open and build the `kodi-addons.sln` solution.
+6. The addon DLL is built and located in `C:\Projects\xbmc\addons`. If you run Kodi now from inside Visual Studio the addon will appear automatically under "System addons". If you don't want to bother compiling Kodi from source, install it as you normally would and copy the `pvr.vbox` into `%APPDATA%\Kodi\addons`.
+7. Run Kodi, configure and enable the addon, then enable Live TV.
+
+
+
+## Settings
 
 This list contains some explanation for the non-obvious settings:
 
@@ -45,22 +61,6 @@ When the addon starts, it looks for and loads channel name mappings from a file 
 ```
 
 When creating the default map, only channels which names match perfectly will be mapped automatically. The rest of the channel mappings are empty, like MTV3 HD and Nelonen HD in the example above. To map these to the correct channels, simply modify the file and restart Kodi.
-
-### Build instructions
-
-The main instructions for how to build PVR addons using the new build system can be found [here](http://forum.kodi.tv/showthread.php?tid=219166). Here's a short guide since those instructions only work out-of-the-box for addons that are already officially part of Kodi. Note that the build system was recently reworked and the steps to set up a development environment will surely get easier over time.
-
-I'm assuming here that you'll check out all source code into `C:\Projects`, you'll have to adjust that if you use another path.
-
-#### Windows
-
-1. Check out the Kodi source from Github (`C:\Projects\xbmc`) and make sure you have Microsoft Visual Studio 2013 installed.
-2. Check out this repository (`C:\Projects\pvr.vbox`)
-3. This step has to be done once only. Go to `C:\Projects\xbmc\project\cmake\addons\addons`. You'll see there's a folder for each binary addon. In order to build your locally checked out copy of the addon instead of the version that is bundled with Kodi you'll need to open the file `pvr.vbox/pvr.vbox.txt` and change its contents to the following: `pvr.vbox file://C:/Projects/pvr.vbox`.
-4. Open a command prompt (or Powershell) and browse to `C:\Projects\xbmc\tools\windows`. From here, run `prepare-binary-addons-dev.bat clean` and then `prepare-binary-addons-dev.bat pvr.vbox`.
-5. Go to `C:\Projects\xbmc\project\cmake\addons\build` and open and build the `kodi-addons.sln` solution.
-6. The addon DLL is built and located in `C:\Projects\xbmc\addons`. If you run Kodi now from inside Visual Studio the addon will appear automatically under "System addons". If you don't want to bother compiling Kodi from source, install it as you normally would and copy the `pvr.vbox` into `%APPDATA%\Kodi\addons`.
-7. Run Kodi, configure and enable the addon, then enable Live TV.
 
 ### Architecture
 
