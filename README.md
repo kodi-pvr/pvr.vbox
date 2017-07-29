@@ -21,6 +21,7 @@ of the addon, to make it easier for others to possible contribute.
 ### Settings
 
 This list contains some explanation for the non-obvious settings:
+
 * `Connection`: There are two tabs in the settings dialog with identical settings, which means you can configure your addon to contact the VBox TV Gateway using both its internal and external address/port. This is useful for e.g. a laptop which is not permanently inside your internal network. When the addon starts it first attempts to make a connection using the internal settings. If that fails, it will try the external settings instead. The addon restarts itself if the connection is lost so it will automatically switch back without having to restart Kodi.
   * `HTTP and UPnP port`: You'll only need to change these from their respective defaults if you wish to use a VBox TV Gateway over the Internet (i.e. the external connection settings tab) and you're using asymmetric port forwarding (e.g. port 8080 -> 80 and 12345 -> 55555). The HTTP port is used to communicate with the device while the UPnP port is used when streaming media.
 * `Prefer external EPG over OTA`: If a specific channel has guide data both from the VBox itself and from the external XMLTV file, this setting controls which guide data is used. Note that the external data is always used if the VBox doesn't provide any guide data for a specific channel.
@@ -79,7 +80,7 @@ Similar to the XMLTV code, the code for the timeshift buffer is fairly generic a
 
 ### Versioning
 
-The addon follows semantic verisoning. Each release is tagged with its respective version number. Since each release of Kodi requires a separate branch for the addon, the major version changes whenever the Kodi version changes. This means that versions `1.x.x` are for Kodi v15, versions `2.x.x` are for Kodi v16 and so on.
+The addon follows semantic versioning. Each release is tagged with its respective version number. Since each release of Kodi requires a separate branch for the addon, the major version changes whenever the Kodi version changes. This means that versions `1.x.x` are for Kodi v15, versions `2.x.x` are for Kodi v16 and so on.
 
 ### Useful links
 
