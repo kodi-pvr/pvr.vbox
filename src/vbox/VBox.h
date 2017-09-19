@@ -172,6 +172,7 @@ namespace vbox {
     void SetCurrentChannel(const ChannelPtr &channel);
     ChannelStreamingStatus GetChannelStreamingStatus(const ChannelPtr &channel);
     void SetChannelStreamingStatus(const ChannelPtr &channel);
+    PVR_ERROR GetChannelStreamProperties(const PVR_CHANNEL*, PVR_NAMED_VALUE*, unsigned int*);
 
     // Recording methods
     bool SupportsRecordings() const;

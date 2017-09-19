@@ -521,6 +521,23 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel
   return m_lastStreamStatus.m_streamStatus;
 }
 
+PVR_ERROR VBox::GetChannelStreamProperties(const PVR_CHANNEL* channel, PVR_NAMED_VALUE* props, unsigned int* prop_size)
+{
+  const ChannelPtr chanptr = GetChannel(channel->iUniqueId);
+  if (chanptr)
+  {
+    strncpy(props[0].strName, PVR_STREAM_PROPERTY_STREAMURL,
+      sizeof(props[0].strName)-1);
+	props[0].strName[sizeof(props[0].strName)-1] = '\0';
+    strncpy(props[0].strValue, chanptr->m_url.c_str(),
+      sizeof(props[0].strValue)-1);
+	props[0].strValue[sizeof(props[0].strValue)-1] = '\0';
+    *prop_size = 1;
+    return PVR_ERROR_NO_ERROR;
+  }
+  return PVR_ERROR_UNKNOWN;
+}
+
 bool VBox::SupportsRecordings() const
 {
   return m_backendInformation.externalMediaStatus.present;

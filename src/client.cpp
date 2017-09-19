@@ -464,9 +464,6 @@ extern "C" {
       strncpy(recording.strRecordingId, compat::to_string(id).c_str(),
         sizeof(recording.strRecordingId));
 
-      strncpy(recording.strStreamURL, item->m_url.c_str(),
-        sizeof(recording.strStreamURL));
-
       strncpy(recording.strTitle, item->m_title.c_str(),
         sizeof(recording.strTitle));
 
@@ -824,7 +821,7 @@ extern "C" {
 
       event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
       event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
-      event.iChannelNumber = channel.iChannelNumber;
+      event.iUniqueChannelId = channel.iUniqueId;
       event.iUniqueBroadcastId = ContentIdentifier::GetUniqueId(programme.get());
       event.strTitle = programme->m_title.c_str();
       event.strPlot = programme->m_description.c_str();
@@ -1149,6 +1146,15 @@ extern "C" {
     return PVR_ERROR_NOT_IMPLEMENTED;
   }
 
+  PVR_ERROR GetChannelStreamProperties(const PVR_CHANNEL* channel, PVR_NAMED_VALUE* props, unsigned int* prop_size)
+  {
+    if ((!channel) || (!props) || (!prop_size))
+      return PVR_ERROR_FAILED;
+    if (g_vbox)
+      return g_vbox->GetChannelStreamProperties(channel, props, prop_size);
+    return PVR_ERROR_SERVER_ERROR; 
+  }
+
   // Management methods
   PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DeleteChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
@@ -1173,6 +1179,7 @@ extern "C" {
   long long SeekRecordedStream(long long iPosition, int iWhence /* = SEEK_SET */) { return 0; }
   long long PositionRecordedStream(void) { return -1; }
   long long LengthRecordedStream(void) { return 0; }
+  PVR_ERROR GetRecordingStreamProperties(const PVR_RECORDING*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Demuxer methods
   void DemuxReset(void) {}
@@ -1190,8 +1197,10 @@ extern "C" {
   PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
   PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
 
-  // Miscellaneous unimplemented methods
-  unsigned int GetChannelSwitchDelay(void) { return 0; }
+  // EPG Methods
+  PVR_ERROR IsEPGTagRecordable(const EPG_TAG*, bool*) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR IsEPGTagPlayable(const EPG_TAG*, bool*) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR GetEPGTagStreamProperties(const EPG_TAG*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Timeshift methods
   void PauseStream(bool bPaused) {}
@@ -1199,7 +1208,4 @@ extern "C" {
   void SetSpeed(int) {};
   time_t GetPlayingTime() { return 0; }
   bool IsTimeshifting(void) { return false; }
-
-  // Deprecated (unused)
-  const char * GetLiveStreamURL(const PVR_CHANNEL &channel) { return ""; }
 }
