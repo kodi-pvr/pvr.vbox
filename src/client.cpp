@@ -464,9 +464,6 @@ extern "C" {
       strncpy(recording.strRecordingId, compat::to_string(id).c_str(),
         sizeof(recording.strRecordingId));
 
-      strncpy(recording.strStreamURL, item->m_url.c_str(),
-        sizeof(recording.strStreamURL));
-
       strncpy(recording.strTitle, item->m_title.c_str(),
         sizeof(recording.strTitle));
 
@@ -824,7 +821,7 @@ extern "C" {
 
       event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
       event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
-      event.iChannelNumber = channel.iChannelNumber;
+      event.iUniqueChannelId = channel.iUniqueId;
       event.iUniqueBroadcastId = ContentIdentifier::GetUniqueId(programme.get());
       event.strTitle = programme->m_title.c_str();
       event.strPlot = programme->m_description.c_str();
@@ -1189,9 +1186,12 @@ extern "C" {
   int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
   PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
   PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR GetRecordingStreamProperties(const PVR_RECORDING*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
-  // Miscellaneous unimplemented methods
-  unsigned int GetChannelSwitchDelay(void) { return 0; }
+  // EPG Methods
+  PVR_ERROR IsEPGTagRecordable(const EPG_TAG*, bool*) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR IsEPGTagPlayable(const EPG_TAG*, bool*) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR GetEPGTagStreamProperties(const EPG_TAG*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Timeshift methods
   void PauseStream(bool bPaused) {}
@@ -1199,7 +1199,9 @@ extern "C" {
   void SetSpeed(int) {};
   time_t GetPlayingTime() { return 0; }
   bool IsTimeshifting(void) { return false; }
+  
+  // Miscellaneous unimplemented methods
+  PVR_ERROR GetStreamTimes(PVR_STREAM_TIMES *) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR GetChannelStreamProperties(const PVR_CHANNEL*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
-  // Deprecated (unused)
-  const char * GetLiveStreamURL(const PVR_CHANNEL &channel) { return ""; }
 }
