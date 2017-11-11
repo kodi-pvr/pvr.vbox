@@ -24,17 +24,16 @@
 #include <ctime>
 #include "../client.h"
 
-namespace timeshift {
-
-  /**
-   * The basic type all buffers operate on
-   */
+/**
+* The basic type all buffers operate on
+*/
 #ifdef _WIN32
-  #include <windows.h>
+#include <windows.h>
 #else
-  typedef unsigned char byte;
+typedef unsigned char byte;
 #endif
 
+namespace timeshift {
   /**
    * Base class for all timeshift buffers
    */
