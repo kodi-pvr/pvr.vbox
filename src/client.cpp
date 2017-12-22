@@ -940,11 +940,6 @@ extern "C" {
     return g_timeshiftBuffer->Read(pBuffer, iBufferSize);
   }
 
-  long long PositionLiveStream(void)
-  {
-    return g_timeshiftBuffer->Position();
-  }
-
   long long LengthLiveStream(void)
   {
     return g_timeshiftBuffer->Length();
@@ -965,16 +960,6 @@ extern "C" {
     return g_vbox->GetSettings().m_timeshiftEnabled;
   }
 
-  time_t GetBufferTimeStart()
-  {
-    return g_timeshiftBuffer->GetStartTime();
-  }
-
-  time_t GetBufferTimeEnd()
-  {
-    return g_timeshiftBuffer->GetEndTime();
-  }
-  
   bool IsRealTimeStream(void) 
   {
 	  const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
@@ -1146,11 +1131,17 @@ extern "C" {
     return PVR_ERROR_NOT_IMPLEMENTED;
   }
 
+  // Stream times
+  PVR_ERROR GetStreamTimes(PVR_STREAM_TIMES *)
+  {
+    // TODO: Addon API 5.8.0
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
   // Management methods
   PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DeleteChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR RenameChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
-  PVR_ERROR MoveChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DialogChannelSettings(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DialogAddChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR OpenDialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
@@ -1168,7 +1159,6 @@ extern "C" {
   void CloseRecordedStream(void) {}
   int ReadRecordedStream(unsigned char *pBuffer, unsigned int iBufferSize) { return 0; }
   long long SeekRecordedStream(long long iPosition, int iWhence /* = SEEK_SET */) { return 0; }
-  long long PositionRecordedStream(void) { return -1; }
   long long LengthRecordedStream(void) { return 0; }
 
   // Demuxer methods
@@ -1177,7 +1167,7 @@ extern "C" {
   void DemuxAbort(void) {}
   DemuxPacket* DemuxRead(void) { return NULL; }
   PVR_ERROR GetStreamProperties(PVR_STREAM_PROPERTIES* pProperties) { return PVR_ERROR_NOT_IMPLEMENTED; }
-  
+
   // Recording methods (not supported by VBox)
   PVR_ERROR RenameRecording(const PVR_RECORDING &recording) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR SetRecordingLifetime(const PVR_RECORDING*) { return PVR_ERROR_NOT_IMPLEMENTED; }
@@ -1197,11 +1187,9 @@ extern "C" {
   void PauseStream(bool bPaused) {}
   bool SeekTime(double, bool, double*) { return false; }
   void SetSpeed(int) {};
-  time_t GetPlayingTime() { return 0; }
   bool IsTimeshifting(void) { return false; }
-  
+
   // Miscellaneous unimplemented methods
-  PVR_ERROR GetStreamTimes(PVR_STREAM_TIMES *) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR GetChannelStreamProperties(const PVR_CHANNEL*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
 }
