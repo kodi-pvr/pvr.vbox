@@ -1,3 +1,6 @@
+4.3.2
+    - Updated to PVR addon API v5.9.0
+
 4.3.0
     - Updated to PVR addon API v5.8.0
 
