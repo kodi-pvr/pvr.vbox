@@ -498,6 +498,32 @@ extern "C" {
     }
   }
 
+  PVR_ERROR GetRecordingStreamProperties(
+    const PVR_RECORDING* recording, PVR_NAMED_VALUE* properties, unsigned int* iPropertiesCount)
+  {
+    if (!recording || !properties || !iPropertiesCount)
+      return PVR_ERROR_SERVER_ERROR;
+
+    if (*iPropertiesCount < 1)
+      return PVR_ERROR_INVALID_PARAMETERS;
+
+    unsigned int id = compat::stoui(recording->strRecordingId);
+    auto &recordings = g_vbox->GetRecordingsAndTimers();
+    auto recIt = std::find_if(recordings.begin(), recordings.end(),
+      [id](const RecordingPtr &item)
+    {
+      return item->IsRecording() && id == item->m_id;
+    });
+
+    if (recIt == recordings.end())
+      return PVR_ERROR_SERVER_ERROR;
+
+    strncpy(properties[0].strName, PVR_STREAM_PROPERTY_STREAMURL, sizeof(properties[0].strName) - 1);
+    strncpy(properties[0].strValue, (*recIt)->m_url.c_str(), sizeof(properties[0].strValue) - 1);
+    *iPropertiesCount = 1;
+    return PVR_ERROR_NO_ERROR;
+  }
+
   PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size)
   {
     int numOfTimerTypes = 0;
@@ -1176,7 +1202,6 @@ extern "C" {
   int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
   PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
   PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
-  PVR_ERROR GetRecordingStreamProperties(const PVR_RECORDING*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // EPG Methods
   PVR_ERROR IsEPGTagRecordable(const EPG_TAG*, bool*) { return PVR_ERROR_NOT_IMPLEMENTED; }
