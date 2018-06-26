@@ -1,3 +1,6 @@
+4.4.1
+    - Fix recordings playback not working (was broken since v4.2.0)
+
 4.4.0
     - Updated to PVR addon API v5.10.0
 
