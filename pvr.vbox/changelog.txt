@@ -1,3 +1,6 @@
+3.6.13
+	- Fixed wrong size caused crash in Android Oreo (8)
+
 3.6.7
 	- add missing changelog entries
 	- reformat the changelog
