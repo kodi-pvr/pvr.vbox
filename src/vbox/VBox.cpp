@@ -44,6 +44,7 @@ const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 const time_t STREAMING_STATUS_UPDATE_INTERVAL = 10;
 const int CHANNELS_PER_CHANNELBATCH = 100;
 const int CHANNELS_PER_EPGBATCH = 10;
+const size_t VBOX_LOG_BUFFER = 16384;
 
 VBox::VBox(const Settings &settings)
   : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr), 
@@ -1250,11 +1251,11 @@ response::ResponsePtr VBox::PerformRequest(const request::Request &request) cons
 
 void VBox::Log(const ADDON::addon_log level, const char *format, ...)
 {
-  char *buf = new char[16384];
+  char *buf = new char[VBOX_LOG_BUFFER];
   size_t c = sprintf(buf, "pvr.vbox - ");
   va_list va;
   va_start(va, format);
-  vsnprintf(buf + c, sizeof(buf) - c, format, va);
+  vsnprintf(buf + c, VBOX_LOG_BUFFER - c, format, va);
   va_end(va);
   XBMC->Log(level, "%s", buf);
   delete[] buf;
