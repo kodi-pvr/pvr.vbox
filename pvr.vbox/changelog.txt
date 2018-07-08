@@ -1,3 +1,6 @@
+4.4.3
+    - Fixed wrong size caused crash in Android Oreo (8)
+	
 4.4.1
     - Fix recordings playback not working (was broken since v4.2.0)
 
