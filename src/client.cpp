@@ -826,9 +826,9 @@ extern "C" {
     return err;
   }
 
-  PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time_t iStart, time_t iEnd)
+  PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, int iChannelUid, time_t iStart, time_t iEnd)
   {
-    const ChannelPtr channelPtr = g_vbox->GetChannel(channel.iUniqueId);
+    const ChannelPtr channelPtr = g_vbox->GetChannel(iChannelUid);
 
     if (!channelPtr)
       return PVR_ERROR_INVALID_PARAMETERS;
@@ -847,7 +847,7 @@ extern "C" {
 
       event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
       event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
-      event.iUniqueChannelId = channel.iUniqueId;
+      event.iUniqueChannelId = iChannelUid;
       event.iUniqueBroadcastId = ContentIdentifier::GetUniqueId(programme.get());
       event.strTitle = programme->m_title.c_str();
       event.strPlot = programme->m_description.c_str();
@@ -1192,6 +1192,7 @@ extern "C" {
   void DemuxFlush(void) {}
   void DemuxAbort(void) {}
   DemuxPacket* DemuxRead(void) { return NULL; }
+  void FillBuffer(bool mode) {}
   PVR_ERROR GetStreamProperties(PVR_STREAM_PROPERTIES* pProperties) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Recording methods (not supported by VBox)
@@ -1213,7 +1214,6 @@ extern "C" {
   void PauseStream(bool bPaused) {}
   bool SeekTime(double, bool, double*) { return false; }
   void SetSpeed(int) {};
-  bool IsTimeshifting(void) { return false; }
 
   // Miscellaneous unimplemented methods
   PVR_ERROR GetChannelStreamProperties(const PVR_CHANNEL*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }

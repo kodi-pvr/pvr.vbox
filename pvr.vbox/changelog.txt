@@ -1,3 +1,6 @@
+5.0.0
+    - Update to PVR addon API v6.0.0
+
 4.4.3
     - Fixed wrong size caused crash in Android Oreo (8)
 	
