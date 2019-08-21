@@ -23,7 +23,7 @@
 #include <string>
 #include "Channel.h"
 #include "../xmltv/Programme.h"
-#include "xbmc_pvr_types.h"
+#include "kodi/xbmc_pvr_types.h"
 
 namespace vbox {
 
