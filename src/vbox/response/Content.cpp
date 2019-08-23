@@ -20,7 +20,7 @@
 */
 
 #include "Content.h"
-#include "xbmc_pvr_types.h"
+#include "kodi/xbmc_pvr_types.h"
 #include "lib/tinyxml2/tinyxml2.h"
 #include "../Channel.h"
 #include "../../xmltv/Utilities.h"
