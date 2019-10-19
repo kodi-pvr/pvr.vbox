@@ -27,6 +27,7 @@
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
 #include "vbox/ContentIdentifier.h"
+#include "vbox/RecordingReader.h"
 #include "timeshift/DummyBuffer.h"
 #include "timeshift/FilesystemBuffer.h"
 #include "xmltv/Utilities.h"
@@ -43,6 +44,7 @@ CHelper_libKODI_guilib  *GUI = NULL;
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
 VBox *g_vbox = nullptr;
 timeshift::Buffer *g_timeshiftBuffer = nullptr;
+RecordingReader* recordingReader = nullptr;
 
 std::string g_internalHostname;
 std::string g_externalHostname;
@@ -455,7 +457,11 @@ extern "C" {
       unsigned int id = item->m_id;
 
       recording.recordingTime = startTime;
-      recording.iDuration = static_cast<int>(endTime - startTime);
+      std::time_t now = std::time(nullptr);
+      if (now > endTime)
+        recording.iDuration = static_cast<int>(endTime - startTime);
+      else
+        recording.iDuration = static_cast<int>(now - startTime);
       recording.iEpgEventId = id;
 
       strncpy(recording.strChannelName, item->m_channelName.c_str(),
@@ -470,11 +476,26 @@ extern "C" {
       strncpy(recording.strPlot, item->m_description.c_str(),
         sizeof(recording.strPlot));
 
-      /* TODO: PVR API 5.0.0: Implement this */
       recording.iChannelUid = PVR_CHANNEL_INVALID_UID;
-
-      /* TODO: PVR API 5.1.0: Implement this */
       recording.channelType = PVR_RECORDING_CHANNEL_TYPE_UNKNOWN;
+
+      // Find the recordings channel and use its unique ID if we find one
+      auto &channels = g_vbox->GetChannels();
+      auto it = std::find_if(channels.cbegin(), channels.cend(),
+        [&item](const ChannelPtr &channel)
+      {
+        return channel->m_xmltvName == item->m_channelId;
+      });
+
+      if (it != channels.cend())
+      {
+        ChannelPtr channel = *it;
+        recording.iChannelUid = ContentIdentifier::GetUniqueId(channel);
+        if (channel->m_radio)
+          recording.channelType = PVR_RECORDING_CHANNEL_TYPE_RADIO;
+        else
+          recording.channelType = PVR_RECORDING_CHANNEL_TYPE_TV;
+      }
 
       PVR->TransferRecordingEntry(handle, &recording);
     }
@@ -498,16 +519,14 @@ extern "C" {
     }
   }
 
-  PVR_ERROR GetRecordingStreamProperties(
-    const PVR_RECORDING* recording, PVR_NAMED_VALUE* properties, unsigned int* iPropertiesCount)
+  // Recording stream methods
+  bool OpenRecordedStream(const PVR_RECORDING& recording)
   {
-    if (!recording || !properties || !iPropertiesCount)
-      return PVR_ERROR_SERVER_ERROR;
+    if (recordingReader)
+      SAFE_DELETE(recordingReader);
+    recordingReader = nullptr;
 
-    if (*iPropertiesCount < 1)
-      return PVR_ERROR_INVALID_PARAMETERS;
-
-    unsigned int id = compat::stoui(recording->strRecordingId);
+    unsigned int id = compat::stoui(recording.strRecordingId);
     auto &recordings = g_vbox->GetRecordingsAndTimers();
     auto recIt = std::find_if(recordings.begin(), recordings.end(),
       [id](const RecordingPtr &item)
@@ -518,10 +537,55 @@ extern "C" {
     if (recIt == recordings.end())
       return PVR_ERROR_SERVER_ERROR;
 
-    strncpy(properties[0].strName, PVR_STREAM_PROPERTY_STREAMURL, sizeof(properties[0].strName) - 1);
-    strncpy(properties[0].strValue, (*recIt)->m_url.c_str(), sizeof(properties[0].strValue) - 1);
-    *iPropertiesCount = 1;
-    return PVR_ERROR_NO_ERROR;
+    std::time_t now = std::time(nullptr), start = 0, end = 0;
+    std::string channelName = recording.strChannelName;
+    time_t recordingTime = recording.recordingTime;
+    auto timerIt = std::find_if(recordings.begin(), recordings.end(),
+      [now, channelName, recordingTime](const RecordingPtr &item)
+    {
+      return item->IsTimer() && item->IsRunning(now, channelName, recordingTime);
+    });
+    if (timerIt != recordings.end())
+    {
+      auto& timer = *timerIt;
+      start = xmltv::Utilities::XmltvToUnixTime(timer->m_startTime);
+      end = xmltv::Utilities::XmltvToUnixTime(timer->m_endTime);
+    }
+    
+    recordingReader = new RecordingReader((*recIt)->m_url.c_str(), start, end, recording.iDuration);
+
+    return recordingReader->Start();
+  }
+
+  void CloseRecordedStream(void)
+  {
+    if (recordingReader)
+      SAFE_DELETE(recordingReader);
+    recordingReader = nullptr;
+  }
+
+  int ReadRecordedStream(unsigned char* buffer, unsigned int size)
+  {
+    if (!recordingReader)
+      return 0;
+
+    return recordingReader->ReadData(buffer, size);
+  }
+
+  long long SeekRecordedStream(long long position, int whence)
+  {
+    if (!recordingReader)
+      return 0;
+
+    return recordingReader->Seek(position, whence);
+  }
+
+  long long LengthRecordedStream(void)
+  {
+    if (!recordingReader)
+      return -1;
+
+    return recordingReader->Length();
   }
 
   PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size)
@@ -961,6 +1025,7 @@ extern "C" {
   void CloseLiveStream(void)
   {
     g_timeshiftBuffer->Close();
+    g_vbox->SetCurrentChannel(nullptr);
   }
 
   int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)
@@ -993,6 +1058,41 @@ extern "C" {
 	  const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
 
     return currentChannel != nullptr;
+  }
+
+  // Stream times
+  PVR_ERROR GetStreamTimes(PVR_STREAM_TIMES* times)
+  {
+    // Addon API 5.8.0
+    if (!times)
+      return PVR_ERROR_INVALID_PARAMETERS;
+
+    if (IsRealTimeStream() && g_timeshiftBuffer && g_vbox->GetSettings().m_timeshiftEnabled)
+    {
+      times->startTime = g_timeshiftBuffer->GetStartTime();
+      times->ptsStart = 0;
+      times->ptsBegin = 0;
+      times->ptsEnd = (!g_timeshiftBuffer->CanSeekStream()) ? 0
+        : (g_timeshiftBuffer->GetEndTime() - g_timeshiftBuffer->GetStartTime()) * DVD_TIME_BASE;
+
+      return PVR_ERROR_NO_ERROR;
+    }
+    else if (recordingReader)
+    {
+      times->startTime = 0;
+      times->ptsStart = 0;
+      times->ptsBegin = 0;
+      times->ptsEnd = static_cast<int64_t>(recordingReader->CurrentDuration()) * DVD_TIME_BASE;
+
+      return PVR_ERROR_NO_ERROR;
+    }
+
+    return PVR_ERROR_NOT_IMPLEMENTED;
+  }
+
+  void PauseStream(bool bPaused)
+  {
+    // TODO: Setting for timeshift on pause as well as always
   }
 
   bool SetProgramReminder(unsigned int epgUid)
@@ -1140,13 +1240,6 @@ extern "C" {
     return PVR_ERROR_NOT_IMPLEMENTED;
   }
 
-  // Stream times
-  PVR_ERROR GetStreamTimes(PVR_STREAM_TIMES *)
-  {
-    // TODO: Addon API 5.8.0
-    return PVR_ERROR_NOT_IMPLEMENTED;
-  }
-
   // Management methods
   PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR DeleteChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
@@ -1163,12 +1256,6 @@ extern "C" {
   PVR_ERROR GetChannelGroups(ADDON_HANDLE handle, bool bRadio) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR GetChannelGroupMembers(ADDON_HANDLE handle, const PVR_CHANNEL_GROUP &group) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
-  // Recording stream methods
-  bool OpenRecordedStream(const PVR_RECORDING &recording) { return false; }
-  void CloseRecordedStream(void) {}
-  int ReadRecordedStream(unsigned char *pBuffer, unsigned int iBufferSize) { return 0; }
-  long long SeekRecordedStream(long long iPosition, int iWhence /* = SEEK_SET */) { return 0; }
-  long long LengthRecordedStream(void) { return 0; }
 
   // Demuxer methods
   void DemuxReset(void) {}
@@ -1194,12 +1281,12 @@ extern "C" {
   PVR_ERROR GetEPGTagEdl(const EPG_TAG* epgTag, PVR_EDL_ENTRY edl[], int *size) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
   // Timeshift methods
-  void PauseStream(bool bPaused) {}
   bool SeekTime(double, bool, double*) { return false; }
   void SetSpeed(int) {};
 
   // Miscellaneous unimplemented methods
   PVR_ERROR GetChannelStreamProperties(const PVR_CHANNEL*, PVR_NAMED_VALUE*, unsigned int*) { return PVR_ERROR_NOT_IMPLEMENTED; }
+  PVR_ERROR GetRecordingStreamProperties(const PVR_RECORDING* recording, PVR_NAMED_VALUE* properties, unsigned int* iPropertiesCount) { return PVR_ERROR_NOT_IMPLEMENTED; }
   PVR_ERROR GetStreamReadChunkSize(int* chunksize) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
 }
