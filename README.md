@@ -18,7 +18,35 @@ of the addon, to make it easier for others to possible contribute.
 4. `cmake -DADDONS_TO_BUILD=pvr.vbox -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/kodi-build/addons -DPACKAGE_ZIP=1 ../../xbmc/cmake/addons`
 5. `make`
 
-#### Windows
+### Mac OSX
+
+In order to build the addon on mac the steps are different to Linux and Windows as the cmake command above will not produce an addon that will run in kodi. Instead using make directly as per the supported build steps for kodi on mac we can build the tools and just the addon on it's own. Following this we copy the addon into kodi. Note that we checkout kodi to a separate directory as this repo will only only be used to build the addon and nothing else.
+
+#### Build tools and initial addon build
+
+1. Get the repos
+ * `cd $HOME`
+ * `git clone https://github.com/xbmc/xbmc xbmc-addon`
+ * `git clone https://github.com/kodi-pvr/pvr.vbox`
+2. Build the kodi tools
+ * `cd $HOME/xbmc-addon/tools/depends`
+ * `./bootstrap`
+ * `./configure --host=x86_64-apple-darwin`
+ * `make -j$(getconf _NPROCESSORS_ONLN)`
+3. Build the addon
+ * `cd $HOME/xbmc-addon`
+ * `make -j$(getconf _NPROCESSORS_ONLN) -C tools/depends/target/binary-addons ADDONS="pvr.vbox" ADDON_SRC_PREFIX=$HOME`
+
+Note that the steps in the following section need to be performed before the addon is installed and you can run it in Kodi.
+
+#### To rebuild the addon and copy to kodi after changes (after the initial addon build)
+
+1. `cd $HOME/pvr.vbox`
+2. `./build-install-mac.sh ../xbmc-addon`
+
+If you would prefer to run the rebuild steps manually instead of using the above helper script check the appendix [here](#manual-steps-to-rebuild-the-addon-on-macosx)
+
+### Windows
 
 These instructions may be outdated. I'm assuming here that you'll check
 out all source code into `C:\Projects`, you'll have to adjust that if
@@ -31,8 +59,6 @@ you use another path.
 5. Go to `C:\Projects\xbmc\project\cmake\addons\build` and open and build the `kodi-addons.sln` solution.
 6. The addon DLL is built and located in `C:\Projects\xbmc\addons`. If you run Kodi now from inside Visual Studio the addon will appear automatically under "System addons". If you don't want to bother compiling Kodi from source, install it as you normally would and copy the `pvr.vbox` into `%APPDATA%\Kodi\addons`.
 7. Run Kodi, configure and enable the addon, then enable Live TV.
-
-
 
 ## Settings
 
@@ -92,3 +118,23 @@ The addon follows semantic versioning. Each release is tagged with its respectiv
 
 The code is licensed under the GNU GPL version 2 license.
 
+## Appendix
+
+### Manual Steps to rebuild the addon on MacOSX
+
+The following steps can be followed manually instead of using the `build-install-mac.sh` in the root of the addon repo after the [initial addon build](#build-tools-and-initial-addon-build) has been completed.
+
+**To rebuild the addon after changes**
+
+1. `rm tools/depends/target/binary-addons/.installed-macosx*`
+2. `make -j$(getconf _NPROCESSORS_ONLN) -C tools/depends/target/binary-addons ADDONS="pvr.vbox" ADDON_SRC_PREFIX=$HOME`
+
+or
+
+1. `cd tools/depends/target/binary-addons/macosx*`
+2. `make`
+
+**Copy the addon to the Kodi addon directory on Mac**
+
+1. `rm -rf "$HOME/Library/Application Support/Kodi/addons/pvr.vbox"`
+2. `cp -rf $HOME/xbmc-addon/addons/pvr.vbox "$HOME/Library/Application Support/Kodi/addons"`
