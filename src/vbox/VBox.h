@@ -207,6 +207,7 @@ namespace vbox {
     bool AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName);
     bool DeleteChannelReminders(const ChannelPtr &channel);
     bool DeleteProgramReminders(unsigned int epgUid);
+    const ChannelPtr FindChannelForEPGReminder(int epgUid);
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);

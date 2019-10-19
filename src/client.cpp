@@ -633,6 +633,8 @@ extern "C" {
       case RecordingState::RECORDING:
         timer.state = PVR_TIMER_STATE_RECORDING;
         break;
+      case RecordingState::RECORDING_ERROR:
+        break;
       }
 
       // Find the timer's channel and use its unique ID
@@ -1032,25 +1034,6 @@ extern "C" {
       }
     }
     return true;
-  }
-
-  const ChannelPtr FindChannelForEPGReminder(int epgUid)
-  {
-    const xmltv::ProgrammePtr programme = nullptr;
-    const std::vector<ChannelPtr> &channels = g_vbox->GetChannels();
-
-    // Find channel that contains this programme
-    const std::vector<ChannelPtr>::const_iterator it = std::find_if(channels.cbegin(), channels.cend(),
-      [&epgUid](const ChannelPtr &channel)
-    {
-      const Schedule schedule = g_vbox->GetSchedule(channel);
-      const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
-      return (programme);
-    });
-    // Find the channel's schedule
-    if (it == channels.cend())
-      XBMC->QueueNotification(QUEUE_WARNING, "Reminder could not find the requested channel");
-    return *it;
   }
 
   static time_t GetOffsetTime(time_t time)
