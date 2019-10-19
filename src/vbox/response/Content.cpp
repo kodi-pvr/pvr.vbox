@@ -200,6 +200,14 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
   else
     recording->m_endTime = xmltv::Utilities::UnixTimeToXmltv(time(nullptr) + 86400);
 
+  std::time_t now = std::time(nullptr);
+  std::time_t startTime = xmltv::Utilities::XmltvToUnixTime(recording->m_startTime);
+  std::time_t endTime = xmltv::Utilities::XmltvToUnixTime(recording->m_endTime);
+  if (startTime > now && now < endTime)
+    recording->m_duration = static_cast<int>(now - startTime);
+  else
+    recording->m_duration = static_cast<int>(endTime - startTime);
+
   element = xml->FirstChildElement("programme-title");
   if (element)
     recording->m_title = xmltv::Utilities::GetStdString(element->GetText());

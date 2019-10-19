@@ -20,6 +20,7 @@
 *
 */
 
+#include <ctime>
 #include <string>
 #include <memory>
 
@@ -60,6 +61,7 @@ namespace vbox {
         m_description == other.m_description &&
         m_startTime == other.m_startTime &&
         m_endTime == other.m_endTime &&
+        m_duration == other.m_duration &&
         m_state == other.m_state;
     }
 
@@ -67,6 +69,8 @@ namespace vbox {
     {
       return !(*this == other);
     }
+
+    bool IsRunning(const std::time_t now, const std::string& channelName, std::time_t startTime) const;
 
     /**
      * Whether this object represents a timer
@@ -109,6 +113,7 @@ namespace vbox {
     std::string m_description;
     std::string m_startTime;
     std::string m_endTime;
+    int m_duration;
 
   private:
     RecordingState m_state;
