@@ -33,7 +33,7 @@ RecordingReader::RecordingReader(const std::string& streamURL, std::time_t start
   : m_streamURL(streamURL), m_start(start), m_end(end), m_duration(duration)
 {
   m_readHandle = XBMC->CURLCreate(m_streamURL.c_str());
-  (void)XBMC->CURLOpen(m_readHandle, XFILE::READ_NO_CACHE);
+  XBMC->CURLOpen(m_readHandle, XFILE::READ_NO_CACHE);
   m_len = XBMC->GetFileLength(m_readHandle);
   m_nextReopen = std::time(nullptr) + REOPEN_INTERVAL;
 
@@ -47,7 +47,7 @@ RecordingReader::RecordingReader(const std::string& streamURL, std::time_t start
               m_start, m_end, m_duration);
 }
 
-RecordingReader::~RecordingReader(void)
+RecordingReader::~RecordingReader()
 {
   if (m_readHandle)
     XBMC->CloseFile(m_readHandle);
@@ -69,7 +69,7 @@ ssize_t RecordingReader::ReadData(unsigned char* buffer, unsigned int size)
     {
       /* reopen stream */
       g_vbox->Log(ADDON::LOG_DEBUG, "%s RecordingReader: Reopening stream...", __FUNCTION__);
-      (void)XBMC->CURLOpen(m_readHandle, XFILE::READ_REOPEN | XFILE::READ_NO_CACHE);
+      XBMC->CURLOpen(m_readHandle, XFILE::READ_REOPEN | XFILE::READ_NO_CACHE);
       m_len = XBMC->GetFileLength(m_readHandle);
       XBMC->SeekFile(m_readHandle, m_pos, SEEK_SET);
 
