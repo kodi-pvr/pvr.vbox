@@ -47,7 +47,7 @@ const int CHANNELS_PER_EPGBATCH = 10;
 const size_t VBOX_LOG_BUFFER = 16384;
 
 VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr), 
+  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr),
   m_lastStreamStatus({ChannelStreamingStatus(), time(nullptr)})
 {
 }
@@ -97,13 +97,13 @@ void VBox::Initialize()
   // Check that the backend uses a compatible software version
   if (m_backendInformation.version < SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION))
   {
-    std::string error = std::string("Firmware version ") + 
+    std::string error = std::string("Firmware version ") +
       MINIMUM_SOFTWARE_VERSION + " or higher is required";
 
     throw FirmwareVersionException(error);
   }
 
-  // Query external media status. The request will error if no external media 
+  // Query external media status. The request will error if no external media
   // is attached
   try {
     request::ApiRequest mediaRequest("QueryExternalMediaStatus");
@@ -183,7 +183,7 @@ void VBox::InitScanningEPG(std::string &rScanMethod, std::string &rGetStatusMeth
   // determine wether the device is in External XMLTV mode (internal, not through Kodi definitions)
   SendScanEPG(rScanMethod);
   GetEpgDetectionState(rGetStatusMethod, rfIsScanningFlag);
-  // if state is not collecting EPG - we're not in External XMLTV  so 
+  // if state is not collecting EPG - we're not in External XMLTV  so
   // try the Live Signal mode syncing methods. If not - keep External XMLTV methods
   if (m_epgScanState != EPGSCAN_SCANNING)
   {
@@ -263,11 +263,11 @@ void VBox::DisplayReminder(const ReminderPtr &reminder)
 
 void VBox::BackgroundUpdater()
 {
-  // Keep count of how many times the loop has run so we can perform some 
+  // Keep count of how many times the loop has run so we can perform some
   // tasks only on some iterations
   static unsigned int lapCounter = 1;
 
-  // Retrieve everything in order once before starting the loop, without 
+  // Retrieve everything in order once before starting the loop, without
   // triggering the event handlers
   RetrieveChannels(false);
   RetrieveReminders();
@@ -295,7 +295,7 @@ void VBox::BackgroundUpdater()
       DisplayReminder(reminder);
       m_reminderManager->DeleteNextReminder();
     }
-      
+
     // Update recordings every 12 iterations = 1 minute
     if (lapCounter % 12 == 0)
       RetrieveRecordings();
@@ -539,7 +539,7 @@ ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel
 
   if (currTime - lastUpdateTime >= STREAMING_STATUS_UPDATE_INTERVAL)
     SetChannelStreamingStatus(channel);
-  
+
   return m_lastStreamStatus.m_streamStatus;
 }
 
@@ -572,8 +572,8 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recor
 {
   RecordingState state = recording->GetState();
   unsigned int idToDelete = (recording->m_seriesId > 0)? recording->m_seriesId : recording->m_id;
-  
-  // Determine the request method to use. If a recording is active we want to 
+
+  // Determine the request method to use. If a recording is active we want to
   // cancel it instead of deleting it
   std::string requestMethod = "DeleteRecord";
 
@@ -651,7 +651,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
         throw vbox::RequestFailedException("Could not find timer's ID in backend");
       }
     }
-    
+
     // Fire events
     OnRecordingsUpdated();
     OnTimersUpdated();
@@ -719,7 +719,7 @@ void VBox::UpdateRecordingMargins(RecordingMargins defaultMargins)
   RecordingMargins updatedMargins;
   bool fBackendSingleMargin = true;
 
-  // if version < 2.57 (support only for 1 margin), set updated margin for both  
+  // if version < 2.57 (support only for 1 margin), set updated margin for both
   // before + after the program times as the larger margin of the timer margins (before / after)
   if (version < SoftwareVersion::ParseString("2.57"))
   {
@@ -736,7 +736,7 @@ void VBox::UpdateRecordingMargins(RecordingMargins defaultMargins)
   }
   const RecordingMargins currMargins = GetRecordingMargins(fBackendSingleMargin);
 
-  // set the updated margins in backend, if different from the current ones 
+  // set the updated margins in backend, if different from the current ones
   if (updatedMargins != currMargins)
     g_vbox->SetRecordingMargins(updatedMargins, fBackendSingleMargin);
 }
@@ -790,7 +790,7 @@ static void AddWeekdays(request::ApiRequest &rRequest, const unsigned int weekda
 void VBox::AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme)
 {
   Log(LOG_DEBUG, "Series timer for channel %s, program %s", channel->m_name.c_str(), programme->m_title.c_str());
-  
+
   // Add the timer
   request::ApiRequest request("ScheduleProgramRecord");
   request.AddParameter("ChannelID", channel->m_xmltvName);
@@ -882,7 +882,7 @@ const Schedule VBox::GetSchedule(const ChannelPtr &channel) const
   Schedule schedule;
   schedule.schedule = m_guide.GetSchedule(channel->m_xmltvName);
 
-  // Try to use the external guide data if a) it's loaded, b) the user prefers 
+  // Try to use the external guide data if a) it's loaded, b) the user prefers
   // it or c) if no schedule was found
   if (m_stateHandler.GetState() >= StartupState::EXTERNAL_GUIDE_LOADED &&
     (m_settings.m_preferExternalXmltv || !schedule.schedule))
@@ -916,7 +916,7 @@ std::string VBox::GetApiBaseUrl() const
 std::string VBox::CreateTimestamp(const time_t unixTimestamp) const
 {
   std::string tzOffset = m_backendInformation.timezoneOffset;
-  
+
   return ::xmltv::Utilities::UnixTimeToXmltv(unixTimestamp, tzOffset);
 }
 
@@ -967,7 +967,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
         return;
 
       int toIndex = std::min(fromIndex + (CHANNELS_PER_CHANNELBATCH - 1) , lastChannelIndex);
-      // Swallow exceptions, we don't want channel loading to fail just because 
+      // Swallow exceptions, we don't want channel loading to fail just because
       // one request failed
       try
       {
@@ -1000,7 +1000,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
       m_channels = allChannels;
       Log(LOG_INFO, "Channels database version updated to %u", newDBversion);
       m_channelsDBVersion = newDBversion;
-      
+
       if (triggerEvent)
         OnChannelsUpdated();
     }
@@ -1045,7 +1045,7 @@ void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
     }
     catch (VBoxException &e)
     {
-      // Intentionally don't return, the request fails if there are no 
+      // Intentionally don't return, the request fails if there are no
       // recordings (which is technically not an error)
       LogException(e);
     }
@@ -1067,7 +1067,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
     if (!m_shouldSyncEpg && newDBversion == m_programsDBVersion)
       return;
 
-    // Retrieving the whole XMLTV file is too slow so we fetch sections in 
+    // Retrieving the whole XMLTV file is too slow so we fetch sections in
     // batches of 10 channels and merge the results
     int lastChannelIndex;
 
@@ -1086,7 +1086,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
 
       int toIndex = std::min(fromIndex + (CHANNELS_PER_EPGBATCH - 1), lastChannelIndex);
 
-      // Swallow exceptions, we don't want guide loading to fail just because 
+      // Swallow exceptions, we don't want guide loading to fail just because
       // one request failed
       try
       {
@@ -1162,7 +1162,7 @@ void VBox::RetrieveExternalGuide(bool triggerEvent/* = true*/)
 void VBox::InitializeChannelMapper()
 {
   // Abort if we're already initialized or the external guide is not loaded
-  if (m_guideChannelMapper || 
+  if (m_guideChannelMapper ||
     m_stateHandler.GetState() < StartupState::EXTERNAL_GUIDE_LOADED)
   {
     return;
@@ -1266,7 +1266,7 @@ response::ResponsePtr VBox::PerformRequest(const request::Request &request) cons
   }
 
   // The request failed completely
-  throw RequestFailedException("Unable to perform request (" + 
+  throw RequestFailedException("Unable to perform request (" +
     request.GetIdentifier() + ")");
 }
 
@@ -1287,4 +1287,3 @@ void VBox::LogException(VBoxException &e)
   std::string message = "Request failed: " + std::string(e.what());
   Log(LOG_ERROR, message.c_str());
 }
-  

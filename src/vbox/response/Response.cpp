@@ -69,12 +69,12 @@ void Response::ParseStatus()
       errorCode = xmltv::Utilities::QueryIntText(errCodeEl);
       m_error.code = static_cast<ErrorCode>(errorCode);
     }
-      
+
     if (errDescEl)
     {
       errorDescription = xmltv::Utilities::GetStdString(errDescEl->GetText());
       m_error.description = errorDescription;
-    }  
+    }
   }
 }
 

@@ -35,7 +35,7 @@ using namespace vbox::response;
 std::string Content::GetString(const std::string &parameter) const
 {
   const XMLElement *element = GetParameterElement(parameter);
-  
+
   if (element)
     return xmltv::Utilities::GetStdString(element->GetText());
 
@@ -167,7 +167,7 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
 {
   // Extract mandatory properties
   std::string channelId = xmltv::Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
-  
+
   const XMLElement *element = xml->FirstChildElement("channel-name");
   if (!element)
     return nullptr;

@@ -283,7 +283,7 @@ void ReminderManager::Save()
   g_vbox->Log(ADDON::LOG_INFO, "Save(4): queue size %d, m_reminders size %d", queue.size(), m_reminders.size());
   m_reminders = queue;
   g_vbox->Log(ADDON::LOG_INFO, "Save(5): queue size %d, m_reminders size %d", queue.size(), m_reminders.size());
-  
+
   XBMC->DeleteFile(REMINDERS_XML.c_str());
   // Save the file
   void *fileHandle = XBMC->OpenFileForWrite(REMINDERS_XML.c_str(), false);

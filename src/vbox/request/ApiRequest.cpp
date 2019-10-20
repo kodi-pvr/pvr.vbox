@@ -50,7 +50,7 @@ ApiRequest::ApiRequest(const std::string &method)
 
   // Add external IP and port options to the methods that support it
   if (std::find(
-    externalCapableMethods.cbegin(), 
+    externalCapableMethods.cbegin(),
     externalCapableMethods.cend(), method) != externalCapableMethods.cend())
   {
     AddParameter("ExternalIP", g_vbox->GetConnectionParams().hostname);

@@ -53,14 +53,14 @@ unsigned int Reminder::FindChannelNumber(const ChannelPtr &channel)
 
 Reminder::Reminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsInAdvance) :
   m_minsInAdvance(minsInAdvance), m_startTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime)),
-  m_popTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) - (60 * m_minsInAdvance)), m_progName(programme->m_title), 
+  m_popTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) - (60 * m_minsInAdvance)), m_progName(programme->m_title),
   m_channelName(channel->m_name), m_channelXmltvName(channel->m_xmltvName)
 {
   m_channelNum = FindChannelNumber(channel);
 }
 
 Reminder::Reminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsInAdvance) :
-  m_minsInAdvance(minsInAdvance), m_startTime(startTime), 
+  m_minsInAdvance(minsInAdvance), m_startTime(startTime),
   m_popTime(startTime - (60 * m_minsInAdvance)), m_progName(progName),
   m_channelName(channel->m_name), m_channelXmltvName(channel->m_xmltvName)
 {
@@ -72,7 +72,7 @@ void Reminder::ComposeMessage(time_t currTime)
   char buf[32], minBuf[32];
 
   memset(minBuf, 0, sizeof(buf));
-  
+
   sprintf(buf, "[%u] ", m_channelNum);
 
   m_msgTitle = "Program reminder:";

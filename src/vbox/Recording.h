@@ -46,7 +46,7 @@ namespace vbox {
   class Recording
   {
   public:
-    Recording(const std::string &channelId, 
+    Recording(const std::string &channelId,
       const std::string &channelName, RecordingState state);
     ~Recording();
 
@@ -78,7 +78,7 @@ namespace vbox {
      */
     bool IsTimer() const
     {
-      return m_state == RecordingState::SCHEDULED || 
+      return m_state == RecordingState::SCHEDULED ||
         m_state == RecordingState::RECORDING;
     }
 
@@ -88,7 +88,7 @@ namespace vbox {
      */
     bool IsRecording() const
     {
-      return m_state == RecordingState::RECORDED || 
+      return m_state == RecordingState::RECORDED ||
         m_state == RecordingState::RECORDING ||
         m_state == RecordingState::RECORDING_ERROR ||
         m_state == RecordingState::EXTERNAL;

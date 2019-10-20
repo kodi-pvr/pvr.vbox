@@ -64,7 +64,7 @@ ChannelMappings GuideChannelMapper::CreateDefaultMappings()
   ChannelMappings mappings;
   std::vector<std::string> channelNames = m_vboxGuide.GetChannelNames();
 
-  // Add a mapping for every channel which display names matches, otherwise 
+  // Add a mapping for every channel which display names matches, otherwise
   // leave it empty
   for (const std::string &channelName : channelNames)
   {
