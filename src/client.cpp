@@ -342,31 +342,31 @@ PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
   return PVR_ERROR_NO_ERROR;
 }
 
-const char *GetBackendName(void)
+const char *GetBackendName()
 {
   static std::string backendName = g_vbox->GetBackendName();
   return backendName.c_str();
 }
 
-const char *GetBackendVersion(void)
+const char *GetBackendVersion()
 {
   static std::string backendVersion = g_vbox->GetBackendVersion();
   return backendVersion.c_str();
 }
 
-const char *GetConnectionString(void)
+const char *GetConnectionString()
 {
   static std::string connectionString = g_vbox->GetConnectionString();
   return connectionString.c_str();
 }
 
-const char *GetBackendHostname(void)
+const char *GetBackendHostname()
 {
   static std::string backendHostname = g_vbox->GetBackendHostname();
   return backendHostname.c_str();
 }
 
-int GetChannelsAmount(void)
+int GetChannelsAmount()
 {
   try {
     return g_vbox->GetChannelsAmount();
@@ -557,7 +557,7 @@ bool OpenRecordedStream(const PVR_RECORDING& recording)
   return recordingReader->Start();
 }
 
-void CloseRecordedStream(void)
+void CloseRecordedStream()
 {
   if (recordingReader)
     SAFE_DELETE(recordingReader);
@@ -580,7 +580,7 @@ long long SeekRecordedStream(long long position, int whence)
   return recordingReader->Seek(position, whence);
 }
 
-long long LengthRecordedStream(void)
+long long LengthRecordedStream()
 {
   if (!recordingReader)
     return -1;
@@ -660,7 +660,7 @@ types[numOfTimerTypes].iAttributes =
   return PVR_ERROR_NO_ERROR;
 }
 
-int GetTimersAmount(void)
+int GetTimersAmount()
 {
   return g_vbox->GetTimersAmount();
 }
@@ -1022,7 +1022,7 @@ bool OpenLiveStream(const PVR_CHANNEL &channel)
   return false;
 }
 
-void CloseLiveStream(void)
+void CloseLiveStream()
 {
   g_timeshiftBuffer->Close();
   g_vbox->SetCurrentChannel(nullptr);
@@ -1033,7 +1033,7 @@ int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)
   return g_timeshiftBuffer->Read(pBuffer, iBufferSize);
 }
 
-long long LengthLiveStream(void)
+long long LengthLiveStream()
 {
   return g_timeshiftBuffer->Length();
 }
@@ -1043,17 +1043,17 @@ long long SeekLiveStream(long long iPosition, int iWhence /* = SEEK_SET */)
   return g_timeshiftBuffer->Seek(iPosition, iWhence);
 }
 
-bool CanPauseStream(void)
+bool CanPauseStream()
 {
   return g_vbox->GetSettings().m_timeshiftEnabled;
 }
 
-bool CanSeekStream(void)
+bool CanSeekStream()
 {
   return g_vbox->GetSettings().m_timeshiftEnabled;
 }
 
-bool IsRealTimeStream(void)
+bool IsRealTimeStream()
 {
   const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
 
@@ -1241,27 +1241,27 @@ PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &it
 }
 
 // Management methods
-PVR_ERROR DialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
+PVR_ERROR DialogChannelScan() { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR DeleteChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR RenameChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR DialogChannelSettings(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR DialogAddChannel(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
-PVR_ERROR OpenDialogChannelScan(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
+PVR_ERROR OpenDialogChannelScan() { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR OpenDialogChannelSettings(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR OpenDialogChannelAdd(const PVR_CHANNEL &channel) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR UndeleteRecording(const PVR_RECORDING& recording) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
 // Channel group methods
-int GetChannelGroupsAmount(void) { return PVR_ERROR_NOT_IMPLEMENTED; }
+int GetChannelGroupsAmount() { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR GetChannelGroups(ADDON_HANDLE handle, bool bRadio) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR GetChannelGroupMembers(ADDON_HANDLE handle, const PVR_CHANNEL_GROUP &group) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
 
 // Demuxer methods
-void DemuxReset(void) {}
-void DemuxFlush(void) {}
-void DemuxAbort(void) {}
-DemuxPacket* DemuxRead(void) { return NULL; }
+void DemuxReset() {}
+void DemuxFlush() {}
+void DemuxAbort() {}
+DemuxPacket* DemuxRead() { return NULL; }
 void FillBuffer(bool mode) {}
 PVR_ERROR GetStreamProperties(PVR_STREAM_PROPERTIES* pProperties) { return PVR_ERROR_NOT_IMPLEMENTED; }
 
