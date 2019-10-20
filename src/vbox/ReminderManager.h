@@ -57,7 +57,7 @@ namespace vbox {
     * @return the success of adding the newly created reminder
     */
     bool AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsBeforePop);
-    
+
     /**
     * Creates and stores a reminder with a given channel, and a manually given program name and its' start time
     * @param channel the channel containing the program to remind

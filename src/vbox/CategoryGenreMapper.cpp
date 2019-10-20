@@ -53,7 +53,7 @@ void CategoryGenreMapper::Initialize(const std::string &xmlFileName)
   LoadCategoryToGenreXML(xmlFileName);
 }
 
-bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName) 
+bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName)
 {
   if (!XBMC->FileExists(xmlFileName.c_str(), false))
   {
@@ -175,9 +175,9 @@ int CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string> &catego
   //  if no category matches - use string and return no specific genre
   if (matches.empty())
     return EPG_GENRE_USE_STRING;
-  
+
   UpdateFinalMatch(matches, finalMatch);
-  
+
   XBMC->Log(ADDON::LOG_DEBUG, "Final match is %d", finalMatch->first);
   return finalMatch->first;
 }

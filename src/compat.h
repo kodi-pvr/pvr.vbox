@@ -43,14 +43,14 @@ namespace compat
   template<typename T> int stoi(const T& value)
   {
     std::istringstream iss(value);
-    
+
     int result;
     iss >> result;
     return result;
   }
 
   /**
-   * Android doesn't fully support C++11 so std::stol() is missing, we provide 
+   * Android doesn't fully support C++11 so std::stol() is missing, we provide
    * a limited version which does the job
    */
   template<typename T> long stol(const T& value)

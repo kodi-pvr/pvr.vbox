@@ -25,7 +25,7 @@
 #include <vector>
 #include <memory>
 
-// Visual Studio can't handle type names longer than 255 characters in debug 
+// Visual Studio can't handle type names longer than 255 characters in debug
 // mode, disable that warning since it's not important
 #ifdef _MSC_VER
 #pragma warning(disable : 4503)
@@ -63,7 +63,7 @@ namespace xmltv {
     const ProgrammePtr GetProgramme(int programmeUniqueId) const;
 
     /**
-     * Returns a schedule segment containing all programmes between the 
+     * Returns a schedule segment containing all programmes between the
      * specified timestamps
      * @param startTime the start time
      * @param endTime the end time
