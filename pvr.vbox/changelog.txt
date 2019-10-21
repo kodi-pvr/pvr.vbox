@@ -1,6 +1,12 @@
+5.3.0
+		- Implement GetStreamTimes API for timeshifting and recordings support
+    - Mac build script
+    - Fix compiler warnings
+    - Add appveyor.yml
+
 5.2.0
     - Recompile for 6.1.0 PVR Addon API compatibility
-	
+
 5.1.0
     - Update to GUI addon API v5.14.0
 
@@ -9,7 +15,7 @@
 
 4.4.3
     - Fixed wrong size caused crash in Android Oreo (8)
-	
+
 4.4.1
     - Fix recordings playback not working (was broken since v4.2.0)
 
@@ -68,10 +74,10 @@
 	- fixed recordings and timers not loading
 
 3.6.5
-	- updated Language files from Transifex 
+	- updated Language files from Transifex
 
 3.6.4
-	- updated Language files from Transifex 
+	- updated Language files from Transifex
 
 3.6.3
 	- fixed crash caused by empty XML strings
@@ -80,7 +86,7 @@
 
 3.6.2
 	- fixed more Coverity issues
-	- updated Language files from Transifex 
+	- updated Language files from Transifex
 
 3.6.1
 	- fixed some Coverity issues
@@ -174,7 +180,7 @@
 
 2.0.1
 	- support event/programme icons from external guide data
-	- improve XMLTV reading, should hopefully fix some issues 
+	- improve XMLTV reading, should hopefully fix some issues
 
 2.0.0
 	- updated to PVR Addon API v2.0.0
@@ -263,7 +269,7 @@
 	- fixed some issues with the timeshift buffer
 	- fixed Linux build (thanks dhead666)
 	- changed so that recordings without an ID (mostly external ones) are not visible since they can't be deleted
-	- 
+	-
 0.9.4
 	- fixed compatibility with older tinyxml2 libraries
 	- fixed Debian packaging

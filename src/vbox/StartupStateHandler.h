@@ -65,7 +65,7 @@ namespace vbox {
       std::unique_lock<std::mutex> lock(m_mutex);
 
       // Wait for the state to change
-      m_condition.wait_for(lock, std::chrono::seconds(STATE_WAIT_TIMEOUT), 
+      m_condition.wait_for(lock, std::chrono::seconds(STATE_WAIT_TIMEOUT),
         [this, state]()
       {
         return m_state >= state;
@@ -102,7 +102,7 @@ namespace vbox {
   private:
 
     /**
-     * The maximum amount of seconds to block while waiting for a state 
+     * The maximum amount of seconds to block while waiting for a state
      * change
      */
     const static int STATE_WAIT_TIMEOUT;

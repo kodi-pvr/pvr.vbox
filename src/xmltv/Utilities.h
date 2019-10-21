@@ -46,13 +46,13 @@ namespace xmltv {
     /**
      * Returns the timezone offset part of the specified XMLTV timestamp
      * @param timestamp an XMLTV timestamp
-     * @return the timezone offset, e.g. "+0200", or an empty string if no 
+     * @return the timezone offset, e.g. "+0200", or an empty string if no
      * timezone offset could be parsed.
      */
     static std::string GetTimezoneOffset(const std::string timestamp);
 
     /**
-     * Converts the specified timezone offset into the number of seconds it 
+     * Converts the specified timezone offset into the number of seconds it
      * differs from UTC
      * @param tzOffset the timezone offset, e.g. "+0200"
      * @return the number of seconds to adjust
@@ -67,7 +67,7 @@ namespace xmltv {
     static time_t XmltvToUnixTime(const std::string &time);
 
     /**
-      * Converts a UTC time_t to an XMLTV datetime string, optionally adjusted 
+      * Converts a UTC time_t to an XMLTV datetime string, optionally adjusted
       * for the specified timezone offset
       * @param time a UNIX timestamp
       * @param tzOffset the timezone offset, e.g. "+0200"
@@ -85,13 +85,13 @@ namespace xmltv {
     static std::string UnixTimeToDailyTime(const time_t timestamp, const std::string tzOffset = "");
 
     /**
-     * Parses the contents of the specified element into an integer. We need 
+     * Parses the contents of the specified element into an integer. We need
      * this for backward-compatibility with older versions of tinyxml2.
      */
     static int QueryIntText(const tinyxml2::XMLElement *element);
 
     /**
-     * Parses the contents of the specified element into an unsigned integer. 
+     * Parses the contents of the specified element into an unsigned integer.
      * We need this for backward-compatibility with older versions of tinyxml2.
      */
     static unsigned int QueryUnsignedText(const tinyxml2::XMLElement *element);
@@ -118,7 +118,7 @@ namespace xmltv {
      * @param separator the separator
      * @return a concatenated string
      */
-    static std::string ConcatenateStringList(const std::vector<std::string> &vector, 
+    static std::string ConcatenateStringList(const std::vector<std::string> &vector,
       const std::string &separator = ", ");
 
     /**

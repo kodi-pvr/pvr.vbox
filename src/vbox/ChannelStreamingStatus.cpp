@@ -86,7 +86,7 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
   }
   catch (std::invalid_argument)
   {
-    
+
   }
 
   return rfLevel;

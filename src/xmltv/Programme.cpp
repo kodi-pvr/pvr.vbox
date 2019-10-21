@@ -64,7 +64,7 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   if (element)
     m_icon = xmltv::Utilities::GetStdString(element->Attribute("src"));
 
-  // Categories. Skip "movie" and "series" since most people treat categories 
+  // Categories. Skip "movie" and "series" since most people treat categories
   // as genres
   for (element = xml->FirstChildElement("category");
     element != NULL; element = element->NextSiblingElement("category"))
