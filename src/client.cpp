@@ -23,7 +23,6 @@
 #include "p8-platform/util/util.h"
 #include "kodi/xbmc_pvr_dll.h"
 #include "client.h"
-#include "compat.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
 #include "vbox/ContentIdentifier.h"
@@ -467,7 +466,7 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
     strncpy(recording.strChannelName, item->m_channelName.c_str(),
       sizeof(recording.strChannelName));
 
-    strncpy(recording.strRecordingId, compat::to_string(id).c_str(),
+    strncpy(recording.strRecordingId, std::to_string(id).c_str(),
       sizeof(recording.strRecordingId));
 
     strncpy(recording.strTitle, item->m_title.c_str(),
@@ -506,7 +505,7 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
 PVR_ERROR DeleteRecording(const PVR_RECORDING &recording)
 {
   try {
-    unsigned int id = compat::stoui(recording.strRecordingId);
+    unsigned int id = static_cast<unsigned int>(std::stoi(recording.strRecordingId));
 
     if (g_vbox->DeleteRecordingOrTimer(id))
       return PVR_ERROR_NO_ERROR;
@@ -526,7 +525,7 @@ bool OpenRecordedStream(const PVR_RECORDING& recording)
     SAFE_DELETE(recordingReader);
   recordingReader = nullptr;
 
-  unsigned int id = compat::stoui(recording.strRecordingId);
+  unsigned int id = static_cast<unsigned int>(std::stoi(recording.strRecordingId));
   auto &recordings = g_vbox->GetRecordingsAndTimers();
   auto recIt = std::find_if(recordings.begin(), recordings.end(),
     [id](const RecordingPtr &item)

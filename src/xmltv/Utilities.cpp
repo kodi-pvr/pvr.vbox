@@ -20,7 +20,6 @@
 */
 
 #include "Utilities.h"
-#include "../compat.h"
 #include "lib/tinyxml2/tinyxml2.h"
 #include <algorithm>
 #include <iterator>
@@ -205,7 +204,7 @@ int Utilities::QueryIntText(const tinyxml2::XMLElement *element)
       if (!pText)
         throw std::invalid_argument("No text in element");
       std::string content = pText;
-      value = compat::stoi(content);
+      value = std::stoi(content);
     }
     catch (std::invalid_argument) {
 
@@ -226,7 +225,7 @@ unsigned int Utilities::QueryUnsignedText(const tinyxml2::XMLElement *element)
       if (!pText)
         throw std::invalid_argument("No text in element");
       std::string content = pText;
-      value = compat::stoui(content);
+      value = static_cast<unsigned int>(std::stoi(content));
     }
     catch (std::invalid_argument) {
 

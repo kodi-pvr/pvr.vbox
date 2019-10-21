@@ -22,7 +22,6 @@
 #include "ApiRequest.h"
 #include "../../client.h"
 #include "../../xmltv/Utilities.h"
-#include "../../compat.h"
 #include <algorithm>
 
 using namespace vbox::request;
@@ -89,7 +88,7 @@ std::string ApiRequest::GetLocation() const
 
   // Optionally append the connection timeout
   if (m_timeout > 0)
-    url += "|connection-timeout=" + compat::to_string(m_timeout);
+    url += "|connection-timeout=" + std::to_string(m_timeout);
 
   return url;
 }
@@ -106,12 +105,12 @@ void ApiRequest::AddParameter(const std::string &name, const std::string &value)
 
 void ApiRequest::AddParameter(const std::string &name, int value)
 {
-  m_parameters[name].push_back(compat::to_string(value));
+  m_parameters[name].push_back(std::to_string(value));
 }
 
 void ApiRequest::AddParameter(const std::string &name, unsigned int value)
 {
-  m_parameters[name].push_back(compat::to_string(value));
+  m_parameters[name].push_back(std::to_string(value));
 }
 
 void ApiRequest::SetTimeout(int timeout)
