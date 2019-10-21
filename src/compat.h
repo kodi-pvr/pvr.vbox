@@ -73,30 +73,4 @@ namespace compat
     iss >> result;
     return result;
   }
-
-  /**
-   * Android doesn't have timegm() and Windows calls it _mkgmtime()
-   * Source: http://linux.die.net/man/3/timegm
-   */
-  inline time_t timegm(struct tm *tm)
-  {
-#ifdef _WIN32
-    return _mkgmtime(tm);
-#else
-    time_t ret;
-    char *tz;
-
-    tz = getenv("TZ");
-    setenv("TZ", "", 1);
-    tzset();
-    ret = mktime(tm);
-    if (tz)
-      setenv("TZ", tz, 1);
-    else
-      unsetenv("TZ");
-    tzset();
-
-    return ret;
-#endif
-  }
 }
