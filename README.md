@@ -1,11 +1,10 @@
-[![Build Status](https://travis-ci.org/kodi-pvr/pvr.vbox.svg?branch=master)](https://travis-ci.org/kodi-pvr/pvr.vbox)
+[![Build Status](https://travis-ci.org/kodi-pvr/pvr.vbox.svg?branch=Leia)](https://travis-ci.org/kodi-pvr/pvr.vbox/branches)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/kodi-pvr/pvr.vuplus?branch=Leia&svg=true)](https://ci.appveyor.com/project/kodi-pvr/pvr-vuplus?branch=Leia)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5120/badge.svg)](https://scan.coverity.com/projects/5120)
 
 # VBox Home TV Gateway PVR Client
 
-This repository provides a [Kodi](http://kodi.tv) PVR addon for
-interfacing with the VBox Communications XTi TV Gateway devices. This 
-README serves as a quick overview of the functionality and architecture 
+This repository provides a [Kodi](http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi TV Gateway devices. This README serves as a quick overview of the functionality and architecture
 of the addon, to make it easier for others to possible contribute.
 
 ## Build instructions
@@ -48,9 +47,7 @@ If you would prefer to run the rebuild steps manually instead of using the above
 
 ### Windows
 
-These instructions may be outdated. I'm assuming here that you'll check
-out all source code into `C:\Projects`, you'll have to adjust that if
-you use another path.
+These instructions may be outdated. I'm assuming here that you'll check out all source code into `C:\Projects`, you'll have to adjust that if you use another path.
 
 1. Check out the Kodi source from Github (`C:\Projects\xbmc`) and make sure you have Microsoft Visual Studio 2013 installed.
 2. Check out this repository (`C:\Projects\pvr.vbox`)
@@ -66,27 +63,7 @@ This list contains some explanation for the non-obvious settings:
 
 * `Connection`: There are two tabs in the settings dialog with identical settings, which means you can configure your addon to contact the VBox TV Gateway using both its internal and external address/port. This is useful for e.g. a laptop which is not permanently inside your internal network. When the addon starts it first attempts to make a connection using the internal settings. If that fails, it will try the external settings instead. The addon restarts itself if the connection is lost so it will automatically switch back without having to restart Kodi.
   * `HTTP and UPnP port`: You'll only need to change these from their respective defaults if you wish to use a VBox TV Gateway over the Internet (i.e. the external connection settings tab) and you're using asymmetric port forwarding (e.g. port 8080 -> 80 and 12345 -> 55555). The HTTP port is used to communicate with the device while the UPnP port is used when streaming media.
-* `Prefer external EPG over OTA`: If a specific channel has guide data both from the VBox itself and from the external XMLTV file, this setting controls which guide data is used. Note that the external data is always used if the VBox doesn't provide any guide data for a specific channel.
 * `Timeshift buffer path`: The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels!
-
-### Using external XMLTV guide data
-
-The addon supports specifying the path to an XMLTV file which will be used for guide data for channels that the VBox doesn't provide any EPG data for. You can also make the addon prefer the external guide data by enabling the `Prefer external EPG over OTA` checkbox in the settings (see above for possible caveats). For this feature to work, the addon needs a way to map channel names from the VBox with channel names in the XMLTV file.
-
-When the addon starts, it looks for and loads channel name mappings from a file named `channel_mappings.xml` in the addon's data folder (`userdata\addon_data\pvr.vbox`). If this file doesn't exist it is created. The file has the following structure:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<xmltvmap>
-    <mapping vbox-name="Yle TV1" xmltv-name="Yle TV1"/>
-    <mapping vbox-name="Yle TV2" xmltv-name="Yle TV2"/>
-    <mapping vbox-name="MTV3 HD" xmltv-name=""/>
-    <mapping vbox-name="Nelonen HD" xmltv-name=""/>
-    ...
-</xmltvmap>
-```
-
-When creating the default map, only channels which names match perfectly will be mapped automatically. The rest of the channel mappings are empty, like MTV3 HD and Nelonen HD in the example above. To map these to the correct channels, simply modify the file and restart Kodi.
 
 ### Architecture
 
@@ -101,7 +78,7 @@ The `vbox::VBox` class which `client.cpp` interfaces with is designed so that an
 * the request failed to execute, i.e. the backend was unavailable
 * the XML parsing failed, i.e. the response was invalid
 * the request succeeded but the response represented an error
- 
+
 Similar to the XMLTV code, the code for the timeshift buffer is fairly generic and lives in a separate `timeshift` namespace. Currently there is a base class for all buffers and two implementations, a `FilesystemBuffer` which buffers the data to a file on disc, and a `DummyBuffer` which just relays the read operations to the underlying input handle. This is required since Kodi uses a different code paths depending on whether clients handle input streams on their own or not, and we need this particular code path for other features like signal status handling to work.
 
 ### Versioning

@@ -56,10 +56,6 @@ int g_externalUpnpPort;
 int g_internalConnectionTimeout;
 int g_externalConnectionTimeout;
 
-bool g_useExternalXmltv;
-std::string g_externalXmltvPath;
-bool g_preferExternalXmltv;
-bool g_useExternalXmltvIcons;
 ChannelOrder g_setChannelIdUsingOrder;
 unsigned int g_remindMinsBeforeProg;
 bool g_timeshiftEnabled;
@@ -101,10 +97,6 @@ void ADDON_ReadSettings()
   UPDATE_INT(g_externalUpnpPort, "external_upnp_port", 55555);
   UPDATE_INT(g_internalConnectionTimeout, "connection_timeout", 3);
   UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);
-  UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
-  UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
-  UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
-  UPDATE_INT(g_useExternalXmltvIcons, "use_external_xmltv_icons", false);
   UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", CH_ORDER_BY_LCN);
   UPDATE_INT(g_remindMinsBeforeProg, "reminder_mins_before_prog", 0);
   UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
@@ -157,10 +149,6 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
     g_externalConnectionTimeout
   };
 
-  settings.m_useExternalXmltv = g_useExternalXmltv;
-  settings.m_externalXmltvPath = g_externalXmltvPath;
-  settings.m_preferExternalXmltv = g_preferExternalXmltv;
-  settings.m_useExternalXmltvIcons = g_useExternalXmltvIcons;
   settings.m_setChannelIdUsingOrder = g_setChannelIdUsingOrder;
   settings.m_remindMinsBeforeProg = g_remindMinsBeforeProg;
   settings.m_timeshiftEnabled = g_timeshiftEnabled;
@@ -273,10 +261,6 @@ ADDON_STATUS ADDON_SetSetting(const char *settingName, const void *settingValue)
   UPDATE_INT("external_https_port", int, settings.m_externalConnectionParams.httpsPort);
   UPDATE_INT("external_upnp_port", int, settings.m_externalConnectionParams.upnpPort);
   UPDATE_INT("external_connection_timeout", int, settings.m_externalConnectionParams.timeout);
-  UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);
-  UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
-  UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
-  UPDATE_INT("use_external_xmltv_icons", bool, settings.m_useExternalXmltvIcons);
   UPDATE_INT("set_channelid_using_order", ChannelOrder, settings.m_setChannelIdUsingOrder);
   UPDATE_INT("reminder_mins_before_prog", unsigned int, settings.m_remindMinsBeforeProg)
   UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
