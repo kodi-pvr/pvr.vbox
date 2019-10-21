@@ -1136,13 +1136,6 @@ bool SetProgramReminder(unsigned int epgUid)
   return true;
 }
 
-static time_t GetOffsetTime(time_t time)
-{
-  std::string xmltvTime = g_vbox->CreateTimestamp(time);
-  std::string tzString = ::xmltv::Utilities::GetTimezoneOffset(xmltvTime);
-  return ::xmltv::Utilities::GetTimezoneAdjustment(tzString);
-}
-
 static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
 {
   time_t currTime = time(nullptr), reminderTime;
@@ -1157,10 +1150,7 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
 
   try {
     // create the current time's formatted timestamp (for user input)
-    time_t tzOs = GetOffsetTime(currTime);
-    // add timezone offset
-    currTime += tzOs;
-    std::tm tm = *std::gmtime(&currTime);
+    std::tm tm = *std::localtime(&currTime);
 
     // get program time & name (from user dialogs)
     if (!GUI->Dialog_Numeric_ShowAndGetDate(tm, "Program starts at"))
@@ -1171,8 +1161,8 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
       return false;
 
     std::string progTitle(buffer);
-    // remove timezone offset
-    reminderTime = compat::timegm(&tm) - tzOs;
+
+    reminderTime = std::mktime(&tm);
     // add reminder using manual time & title
     g_vbox->AddReminder(selectedChannel, reminderTime, progTitle);
   }
