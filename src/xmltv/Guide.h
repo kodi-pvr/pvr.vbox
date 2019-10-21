@@ -63,7 +63,7 @@ namespace xmltv {
 
       // Merge the display name mappings
       m_displayNameMappings.insert(
-        other.m_displayNameMappings.begin(), 
+        other.m_displayNameMappings.begin(),
         other.m_displayNameMappings.end());
 
       return *this;

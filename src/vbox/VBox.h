@@ -70,7 +70,7 @@ namespace vbox {
   };
 
   /**
-   * Represents a schedule. It contains an actual schedule and an indicator 
+   * Represents a schedule. It contains an actual schedule and an indicator
    * which tells if the schedule is from the internal or external guide
    */
   struct Schedule
@@ -150,7 +150,7 @@ namespace vbox {
     std::string GetApiBaseUrl() const;
 
     /**
-     * Converts a UTC UNIX timestamp to an XMLTV timestamp localized for the 
+     * Converts a UTC UNIX timestamp to an XMLTV timestamp localized for the
      * backends timezone offset
      * @param unixTimestamp a UTC UNIX timestamp
      * @return XMLTV timestamp localized for the current backend
@@ -163,7 +163,7 @@ namespace vbox {
     std::string GetBackendHostname() const;
     std::string GetBackendVersion() const;
     std::string GetConnectionString() const;
-    
+
     // Channel methods
     int GetChannelsAmount() const;
     const std::vector<ChannelPtr>& GetChannels() const;
@@ -207,6 +207,7 @@ namespace vbox {
     bool AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName);
     bool DeleteChannelReminders(const ChannelPtr &channel);
     bool DeleteProgramReminders(unsigned int epgUid);
+    const ChannelPtr FindChannelForEPGReminder(int epgUid);
 
     // Helpers
     static void Log(const ADDON::addon_log level, const char *format, ...);
@@ -219,7 +220,7 @@ namespace vbox {
     std::function<void()> OnGuideUpdated;
 
   private:
-    
+
     void BackgroundUpdater();
     unsigned int GetDBVersion(std::string &versionName) const;
     void RetrieveChannels(bool triggerEvent = true);
@@ -273,7 +274,7 @@ namespace vbox {
     std::vector<SeriesRecordingPtr> m_series;
 
     /**
-     * The guide data. The XMLTV channel name is the key, the value is the 
+     * The guide data. The XMLTV channel name is the key, the value is the
      * schedule for the channel
      */
     ::xmltv::Guide m_guide;
@@ -307,7 +308,7 @@ namespace vbox {
      * The background update thread
      */
     std::thread m_backgroundThread;
-  
+
     /**
     * The state of EPG scanning - if set to EPGSCAN_SHOULD_SCAN --> EPG scanning starts
     */
@@ -339,7 +340,7 @@ namespace vbox {
     std::atomic<bool> m_shouldSyncEpg;
 
     /**
-     * The currently active channel, or the last active channel when no 
+     * The currently active channel, or the last active channel when no
      * channel is playing
      */
     ChannelPtr m_currentChannel;

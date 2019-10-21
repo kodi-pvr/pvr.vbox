@@ -30,13 +30,13 @@ namespace vbox {
   class ReminderManager;
 
   /**
-  * Represents a single-program reminder. 
+  * Represents a single-program reminder.
   * Contains a message reminding the user of the program
   */
   class Reminder
   {
   public:
-    
+
     /**
     * Creates a reminder from a channel and a specific program
     * @param channel the channel containing the program to remind
@@ -44,7 +44,7 @@ namespace vbox {
     * @param minsInAdvance minutes before the program's start time to pop the reminder
     */
     Reminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsInAdvance);
-    
+
     /**
     * Creates a reminder according to a manually given program name and its' start time
     * @param channel the channel containing the program to remind
@@ -52,7 +52,7 @@ namespace vbox {
     * @param minsInAdvance minutes before the program's start time to pop the reminder
     */
     Reminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsInAdvance);
-    
+
     /**
     * For comparing reminders' pop times
     */
@@ -62,7 +62,7 @@ namespace vbox {
     }
 
     /**
-    * Composes & returns a message for a certain moment in time, showing details 
+    * Composes & returns a message for a certain moment in time, showing details
     * of the program and the time left for it to start
     * @param currTime the current time of showing the reminder pop-up
     * @return the reminder's pop-up message

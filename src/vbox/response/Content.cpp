@@ -35,7 +35,7 @@ using namespace vbox::response;
 std::string Content::GetString(const std::string &parameter) const
 {
   const XMLElement *element = GetParameterElement(parameter);
-  
+
   if (element)
     return xmltv::Utilities::GetStdString(element->GetText());
 
@@ -167,7 +167,7 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
 {
   // Extract mandatory properties
   std::string channelId = xmltv::Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
-  
+
   const XMLElement *element = xml->FirstChildElement("channel-name");
   if (!element)
     return nullptr;
@@ -199,6 +199,14 @@ RecordingPtr RecordingResponseContent::CreateRecording(const tinyxml2::XMLElemen
     recording->m_endTime = xmltv::Utilities::GetStdString(xml->Attribute("stop"));
   else
     recording->m_endTime = xmltv::Utilities::UnixTimeToXmltv(time(nullptr) + 86400);
+
+  std::time_t now = std::time(nullptr);
+  std::time_t startTime = xmltv::Utilities::XmltvToUnixTime(recording->m_startTime);
+  std::time_t endTime = xmltv::Utilities::XmltvToUnixTime(recording->m_endTime);
+  if (startTime > now && now < endTime)
+    recording->m_duration = static_cast<int>(now - startTime);
+  else
+    recording->m_duration = static_cast<int>(endTime - startTime);
 
   element = xml->FirstChildElement("programme-title");
   if (element)

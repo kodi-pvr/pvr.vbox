@@ -32,7 +32,7 @@ namespace tinyxml2
 }
 
 namespace xmltv {
-    
+
   class Programme;
   typedef std::shared_ptr<Programme> ProgrammePtr;
   typedef std::map<std::string, std::string> SeriesIDMap;

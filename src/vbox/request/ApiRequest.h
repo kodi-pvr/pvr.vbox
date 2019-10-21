@@ -66,7 +66,7 @@ namespace vbox {
       std::map<std::string, std::vector<std::string>> m_parameters;
 
       /**
-       * The timeout to use for the request. Defaults to zero which means the 
+       * The timeout to use for the request. Defaults to zero which means the
        * default underlying systems timeout is used.
        */
       int m_timeout;

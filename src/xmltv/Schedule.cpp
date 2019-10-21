@@ -29,7 +29,7 @@ using namespace xmltv;
 Schedule::Schedule(ChannelPtr& channel)
   : m_channel(channel)
 {
-  
+
 }
 
 void Schedule::AddProgramme(ProgrammePtr programme)

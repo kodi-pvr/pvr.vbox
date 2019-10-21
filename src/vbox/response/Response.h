@@ -31,7 +31,7 @@ namespace vbox {
     typedef std::unique_ptr<Response> ResponsePtr;
 
     /**
-     * The various response types (indicates what kind of content the response 
+     * The various response types (indicates what kind of content the response
      * will contain)
      */
     enum ResponseType {

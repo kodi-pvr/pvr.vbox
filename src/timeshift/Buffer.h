@@ -128,7 +128,7 @@ namespace timeshift {
     void *m_inputHandle;
 
     /**
-     * The time (in seconds) to wait when opening a read handle and when 
+     * The time (in seconds) to wait when opening a read handle and when
      * waiting for the buffer to have enough data
      */
     int m_readTimeout;

@@ -20,6 +20,7 @@
 *
 */
 
+#include <ctime>
 #include <string>
 #include <memory>
 
@@ -45,7 +46,7 @@ namespace vbox {
   class Recording
   {
   public:
-    Recording(const std::string &channelId, 
+    Recording(const std::string &channelId,
       const std::string &channelName, RecordingState state);
     ~Recording();
 
@@ -60,6 +61,7 @@ namespace vbox {
         m_description == other.m_description &&
         m_startTime == other.m_startTime &&
         m_endTime == other.m_endTime &&
+        m_duration == other.m_duration &&
         m_state == other.m_state;
     }
 
@@ -68,13 +70,15 @@ namespace vbox {
       return !(*this == other);
     }
 
+    bool IsRunning(const std::time_t now, const std::string& channelName, std::time_t startTime) const;
+
     /**
      * Whether this object represents a timer
      * @return true if timer
      */
     bool IsTimer() const
     {
-      return m_state == RecordingState::SCHEDULED || 
+      return m_state == RecordingState::SCHEDULED ||
         m_state == RecordingState::RECORDING;
     }
 
@@ -84,7 +88,7 @@ namespace vbox {
      */
     bool IsRecording() const
     {
-      return m_state == RecordingState::RECORDED || 
+      return m_state == RecordingState::RECORDED ||
         m_state == RecordingState::RECORDING ||
         m_state == RecordingState::RECORDING_ERROR ||
         m_state == RecordingState::EXTERNAL;
@@ -109,6 +113,7 @@ namespace vbox {
     std::string m_description;
     std::string m_startTime;
     std::string m_endTime;
+    int m_duration;
 
   private:
     RecordingState m_state;
