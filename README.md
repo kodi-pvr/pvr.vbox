@@ -59,11 +59,39 @@ These instructions may be outdated. I'm assuming here that you'll check out all 
 
 ## Settings
 
-This list contains some explanation for the non-obvious settings:
+There are two tabs in the settings dialog with identical settings, which means you can configure your addon to contact the VBox TV Gateway using both its internal and external address/port. This is useful for e.g. a laptop which is not permanently inside your internal network. When the addon starts it first attempts to make a connection using the internal settings. If that fails, it will try the external settings instead. The addon restarts itself if the connection is lost so it will automatically switch back without having to restart Kodi.
 
-* `Connection`: There are two tabs in the settings dialog with identical settings, which means you can configure your addon to contact the VBox TV Gateway using both its internal and external address/port. This is useful for e.g. a laptop which is not permanently inside your internal network. When the addon starts it first attempts to make a connection using the internal settings. If that fails, it will try the external settings instead. The addon restarts itself if the connection is lost so it will automatically switch back without having to restart Kodi.
-  * `HTTP and UPnP port`: You'll only need to change these from their respective defaults if you wish to use a VBox TV Gateway over the Internet (i.e. the external connection settings tab) and you're using asymmetric port forwarding (e.g. port 8080 -> 80 and 12345 -> 55555). The HTTP port is used to communicate with the device while the UPnP port is used when streaming media.
-* `Timeshift buffer path`: The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels!
+### Connection - Internal
+Connection settings to use when connecting from your local network. For a local network connection the port values should not need to be modified.
+
+* **Hostname or IP address**: The IP address or hostname of your VBox when accessed from the local network.
+* **HTTP port**: The port used to connect to your VBox when accessed from the local network. Default value is `80`.
+* **HTTPS port**: The port used to connect to your VBox if using HTTPS when accessed from the local network. The default `0` means this is disabled and HTTP will be used instead.
+* **UPnP port**: The port used to connect to your VBox via UPnP when accessed from the local network. Default value is `55555`.
+* **Connection timeout (seconds)**: The value used (in seconds) to denote when a connection attempt has failed when accessed from the local network. Default value is `3`.
+
+### Connection - External
+Connection settings to use when connecting from the internet. The ports should only need to change if you're using asymmetric port forwarding (e.g. port 8080 -> 80 and 12345 -> 55555). The HTTP port is used to communicate with the device while the UPnP port is used when streaming media.
+
+* **Hostname or IP address**: The IP address or hostname of your VBox when accessed from the internet.
+* **HTTP port**: The port used to connect to your VBox when accessed from the internet.
+* **HTTPS port**: The port used to connect to your VBox if using HTTPS when accessed from the internet. The default `0` means this is disabled and HTTP will be used instead.
+* **UPnP port**: The port used to connect to your VBox via UPnP when accessed from the internet. Default value is `55555`.
+* **Connection timeout (seconds)**: The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`.
+
+### EPG
+Settings related to the EPG.
+
+* **Channel numbers set by**: Channel numbers be set via either of the following two options:
+    - `LCN (Logical Channel Number) from backend` - The channel numbers as set on the backend.
+    - `Channel index in backend` - Starting from 1 number the channels as per the order they appear on the backend.
+* **Reminder time (minutes before programme start)**: The amount of time in minutes prior to a programme start that a reminder should pop up.
+
+### Timeshift
+Settings related to the timeshift.
+
+* **Enable timeshifting**: If enabled allows pause, rewind and fast-forward of live TV.
+* **Timeshift buffer path**: The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels.
 
 ### Architecture
 
