@@ -25,7 +25,6 @@
 #include "../Channel.h"
 #include "../../xmltv/Utilities.h"
 #include "../../xmltv/Guide.h"
-#include "../../compat.h"
 #include "../../vbox/VBox.h"
 
 using namespace tinyxml2;
@@ -120,7 +119,7 @@ ChannelPtr XMLTVResponseContent::CreateChannel(const tinyxml2::XMLElement *xml) 
     if (lcnValue.find("lcn_") != std::string::npos)
       lcnValue = lcnValue.substr(4);
 
-    channel->m_number = compat::stoui(lcnValue);
+    channel->m_number = static_cast<unsigned int>(std::stoi(lcnValue));
   }
 
   // Set icon URL if it exists

@@ -20,15 +20,14 @@
  */
 
 #include "SoftwareVersion.h"
-#include "../compat.h"
 
 using namespace vbox;
 
 std::string SoftwareVersion::GetString() const
 {
-  return compat::to_string(m_major) + "." +
-    compat::to_string(m_minor) + "." +
-    compat::to_string(m_revision);
+  return std::to_string(m_major) + "." +
+    std::to_string(m_minor) + "." +
+    std::to_string(m_revision);
 }
 
 SoftwareVersion SoftwareVersion::ParseString(const std::string &string)

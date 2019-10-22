@@ -20,7 +20,6 @@
 */
 
 #include "ChannelStreamingStatus.h"
-#include "../compat.h"
 #include <sstream>
 #include <stdexcept>
 
@@ -71,7 +70,7 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
 
   try {
     // Convert the RF level to an integer
-    rfLevel = compat::stoui(m_rfLevel);
+    rfLevel = static_cast<unsigned int>(std::stoi(m_rfLevel));
 
     // If the level is above the maximum we consider it to be perfect
     if (rfLevel > RFLEVEL_MAX)
@@ -99,7 +98,7 @@ long ChannelStreamingStatus::GetBer() const
 
   try {
     // Make sure it's not detected as hexadecimal
-    return compat::stol(m_ber);
+    return std::stol(m_ber);
   }
   catch (std::invalid_argument)
   {

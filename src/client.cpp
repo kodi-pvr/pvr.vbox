@@ -23,7 +23,6 @@
 #include "p8-platform/util/util.h"
 #include "kodi/xbmc_pvr_dll.h"
 #include "client.h"
-#include "compat.h"
 #include "vbox/Exceptions.h"
 #include "vbox/VBox.h"
 #include "vbox/ContentIdentifier.h"
@@ -57,10 +56,6 @@ int g_externalUpnpPort;
 int g_internalConnectionTimeout;
 int g_externalConnectionTimeout;
 
-bool g_useExternalXmltv;
-std::string g_externalXmltvPath;
-bool g_preferExternalXmltv;
-bool g_useExternalXmltvIcons;
 ChannelOrder g_setChannelIdUsingOrder;
 unsigned int g_remindMinsBeforeProg;
 bool g_timeshiftEnabled;
@@ -102,10 +97,6 @@ void ADDON_ReadSettings()
   UPDATE_INT(g_externalUpnpPort, "external_upnp_port", 55555);
   UPDATE_INT(g_internalConnectionTimeout, "connection_timeout", 3);
   UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);
-  UPDATE_INT(g_useExternalXmltv, "use_external_xmltv", false);
-  UPDATE_STR(g_externalXmltvPath, "external_xmltv_path", buffer, "");
-  UPDATE_INT(g_preferExternalXmltv, "prefer_external_xmltv", false);
-  UPDATE_INT(g_useExternalXmltvIcons, "use_external_xmltv_icons", false);
   UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", CH_ORDER_BY_LCN);
   UPDATE_INT(g_remindMinsBeforeProg, "reminder_mins_before_prog", 0);
   UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
@@ -158,10 +149,6 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
     g_externalConnectionTimeout
   };
 
-  settings.m_useExternalXmltv = g_useExternalXmltv;
-  settings.m_externalXmltvPath = g_externalXmltvPath;
-  settings.m_preferExternalXmltv = g_preferExternalXmltv;
-  settings.m_useExternalXmltvIcons = g_useExternalXmltvIcons;
   settings.m_setChannelIdUsingOrder = g_setChannelIdUsingOrder;
   settings.m_remindMinsBeforeProg = g_remindMinsBeforeProg;
   settings.m_timeshiftEnabled = g_timeshiftEnabled;
@@ -274,10 +261,6 @@ ADDON_STATUS ADDON_SetSetting(const char *settingName, const void *settingValue)
   UPDATE_INT("external_https_port", int, settings.m_externalConnectionParams.httpsPort);
   UPDATE_INT("external_upnp_port", int, settings.m_externalConnectionParams.upnpPort);
   UPDATE_INT("external_connection_timeout", int, settings.m_externalConnectionParams.timeout);
-  UPDATE_INT("use_external_xmltv", bool, settings.m_useExternalXmltv);
-  UPDATE_STR("external_xmltv_path", settings.m_externalXmltvPath);
-  UPDATE_INT("prefer_external_xmltv", bool, settings.m_preferExternalXmltv);
-  UPDATE_INT("use_external_xmltv_icons", bool, settings.m_useExternalXmltvIcons);
   UPDATE_INT("set_channelid_using_order", ChannelOrder, settings.m_setChannelIdUsingOrder);
   UPDATE_INT("reminder_mins_before_prog", unsigned int, settings.m_remindMinsBeforeProg)
   UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
@@ -467,7 +450,7 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
     strncpy(recording.strChannelName, item->m_channelName.c_str(),
       sizeof(recording.strChannelName));
 
-    strncpy(recording.strRecordingId, compat::to_string(id).c_str(),
+    strncpy(recording.strRecordingId, std::to_string(id).c_str(),
       sizeof(recording.strRecordingId));
 
     strncpy(recording.strTitle, item->m_title.c_str(),
@@ -506,7 +489,7 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
 PVR_ERROR DeleteRecording(const PVR_RECORDING &recording)
 {
   try {
-    unsigned int id = compat::stoui(recording.strRecordingId);
+    unsigned int id = static_cast<unsigned int>(std::stoi(recording.strRecordingId));
 
     if (g_vbox->DeleteRecordingOrTimer(id))
       return PVR_ERROR_NO_ERROR;
@@ -526,7 +509,7 @@ bool OpenRecordedStream(const PVR_RECORDING& recording)
     SAFE_DELETE(recordingReader);
   recordingReader = nullptr;
 
-  unsigned int id = compat::stoui(recording.strRecordingId);
+  unsigned int id = static_cast<unsigned int>(std::stoi(recording.strRecordingId));
   auto &recordings = g_vbox->GetRecordingsAndTimers();
   auto recIt = std::find_if(recordings.begin(), recordings.end(),
     [id](const RecordingPtr &item)
@@ -1136,13 +1119,6 @@ bool SetProgramReminder(unsigned int epgUid)
   return true;
 }
 
-static time_t GetOffsetTime(time_t time)
-{
-  std::string xmltvTime = g_vbox->CreateTimestamp(time);
-  std::string tzString = ::xmltv::Utilities::GetTimezoneOffset(xmltvTime);
-  return ::xmltv::Utilities::GetTimezoneAdjustment(tzString);
-}
-
 static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
 {
   time_t currTime = time(nullptr), reminderTime;
@@ -1157,10 +1133,7 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
 
   try {
     // create the current time's formatted timestamp (for user input)
-    time_t tzOs = GetOffsetTime(currTime);
-    // add timezone offset
-    currTime += tzOs;
-    std::tm tm = *std::gmtime(&currTime);
+    std::tm tm = *std::localtime(&currTime);
 
     // get program time & name (from user dialogs)
     if (!GUI->Dialog_Numeric_ShowAndGetDate(tm, "Program starts at"))
@@ -1171,8 +1144,8 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
       return false;
 
     std::string progTitle(buffer);
-    // remove timezone offset
-    reminderTime = compat::timegm(&tm) - tzOs;
+
+    reminderTime = std::mktime(&tm);
     // add reminder using manual time & title
     g_vbox->AddReminder(selectedChannel, reminderTime, progTitle);
   }

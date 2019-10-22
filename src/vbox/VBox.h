@@ -226,11 +226,9 @@ namespace vbox {
     void RetrieveChannels(bool triggerEvent = true);
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
-    void RetrieveExternalGuide(bool triggerEvent = true);
     ReminderPtr GetActiveReminder();
     void DisplayReminder(const ReminderPtr &reminder);
     void RetrieveReminders();
-    void InitializeChannelMapper();
     void InitializeGenreMapper();
     void SwapChannelIcons(std::vector<ChannelPtr> &channels);
     void SendScanEPG(std::string &rEpgDetectionCheckMethod) const;

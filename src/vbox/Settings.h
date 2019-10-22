@@ -87,10 +87,6 @@ namespace vbox {
   public:
     ConnectionParameters m_internalConnectionParams;
     ConnectionParameters m_externalConnectionParams;
-    bool m_useExternalXmltv;
-    std::string m_externalXmltvPath;
-    bool m_preferExternalXmltv;
-    bool m_useExternalXmltvIcons;
     ChannelOrder m_setChannelIdUsingOrder;
     unsigned int m_remindMinsBeforeProg;
     bool m_timeshiftEnabled;
