@@ -19,6 +19,7 @@
   <category label="30100">
     <setting id="set_channelid_using_order" type="enum" label="30105" lvalues="30108|30109" default="0"/>
     <setting id="reminder_mins_before_prog" type="number" option="int" label="30114" default="0"/>
+    <setting id="skip_initial_epg_load" type="bool" label="30115" default="true" />
   </category>
 
   <category label="30200">
