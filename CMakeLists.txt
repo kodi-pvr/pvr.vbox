@@ -13,10 +13,9 @@ include_directories(${kodiplatform_INCLUDE_DIRS}
                     ${PROJECT_SOURCE_DIR})
 
 # Sources and headers
-set(VBOX_SOURCES 
+set(VBOX_SOURCES
                 src/client.h
-                src/client.cpp
-                src/compat.h)
+                src/client.cpp)
 
 set(VBOX_SOURCES_VBOX
                 src/vbox/CategoryGenreMapper.h
@@ -46,13 +45,13 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/Utilities.h
                 src/vbox/VBox.h
                 src/vbox/VBox.cpp)
-                      
-set(VBOX_SOURCES_VBOX_REQUEST 
+
+set(VBOX_SOURCES_VBOX_REQUEST
                 src/vbox/request/ApiRequest.h
                 src/vbox/request/ApiRequest.cpp
                 src/vbox/request/FileRequest.h
                 src/vbox/request/Request.h)
-                 
+
 set(VBOX_SOURCES_VBOX_RESPONSE
                 src/vbox/response/Content.h
                 src/vbox/response/Content.cpp
@@ -60,14 +59,14 @@ set(VBOX_SOURCES_VBOX_RESPONSE
                 src/vbox/response/Response.h
                 src/vbox/response/Response.cpp)
 
-set(VBOX_SOURCES_TIMESHIFT 
+set(VBOX_SOURCES_TIMESHIFT
                 src/timeshift/Buffer.h
                 src/timeshift/Buffer.cpp
                 src/timeshift/DummyBuffer.h
                 src/timeshift/FilesystemBuffer.h
                 src/timeshift/FilesystemBuffer.cpp)
-                
-set(VBOX_SOURCES_XMLTV 
+
+set(VBOX_SOURCES_XMLTV
                 src/xmltv/Channel.h
                 src/xmltv/Channel.cpp
                 src/xmltv/Guide.h
@@ -92,9 +91,9 @@ set(VBOX_LIBRARIES_TINYXML2
                 lib/tinyxml2/tinyxml2.cpp)
 
 source_group("Library Files\\tinyxml2" FILES ${VBOX_LIBRARIES_TINYXML2})
-                 
+
 # Resource files
-set(VBOX_RESOURCES 
+set(VBOX_RESOURCES
                 README.md
                 pvr.vbox/addon.xml.in
                 pvr.vbox/changelog.txt
@@ -106,8 +105,8 @@ set(VBOX_RESOURCES
 source_group("Resource Files" FILES ${VBOX_RESOURCES})
 
 # Append our custom file definitions
-list(APPEND VBOX_SOURCES 
-                ${VBOX_SOURCES_VBOX} 
+list(APPEND VBOX_SOURCES
+                ${VBOX_SOURCES_VBOX}
                 ${VBOX_SOURCES_VBOX_REQUEST}
                 ${VBOX_SOURCES_VBOX_RESPONSE}
                 ${VBOX_SOURCES_TIMESHIFT}

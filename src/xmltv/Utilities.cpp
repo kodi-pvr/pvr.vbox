@@ -20,7 +20,6 @@
 */
 
 #include "Utilities.h"
-#include "../compat.h"
 #include "lib/tinyxml2/tinyxml2.h"
 #include <algorithm>
 #include <iterator>
@@ -32,6 +31,56 @@ using namespace xmltv;
 
 const char* Utilities::XMLTV_DATETIME_FORMAT = "%Y%m%d%H%M%S";
 const char* Utilities::XMLTV_TIMEZONE_OFFSET_FORMAT = "%03d%02d";
+
+namespace
+{
+
+// Adapted from https://stackoverflow.com/a/31533119
+
+// Conversion from UTC date to second, signed 64-bit adjustable epoch version.
+// Written by François Grieu, 2015-07-21; public domain.
+
+long long MakeTime(int year, int month, int day)
+{
+  return static_cast<long long>(year) * 365 + year / 4 - year / 100 * 3 / 4 + (month + 2) * 153 / 5 + day;
+}
+
+long long GetUTCTime(int year, int mon, int mday, int hour, int min, int sec)
+{
+  int m = mon - 1;
+  int y = year + 100;
+
+  if (m < 2)
+  {
+    m += 12;
+    --y;
+  }
+
+  return (((MakeTime(y, m, mday) - MakeTime(1970 + 99, 12, 1)) * 24 + hour) * 60 + min) * 60 + sec;
+}
+
+long long ParseDateTime(const std::string& strDate)
+{
+  int year = 2000;
+  int mon = 1;
+  int mday = 1;
+  int hour = 0;
+  int min = 0;
+  int sec = 0;
+  char offset_sign = '+';
+  int offset_hours = 0;
+  int offset_minutes = 0;
+
+  std::sscanf(strDate.c_str(), "%04d%02d%02d%02d%02d%02d %c%02d%02d", &year, &mon, &mday, &hour, &min, &sec, &offset_sign, &offset_hours, &offset_minutes);
+
+  long offset_of_date = (offset_hours * 60 + offset_minutes) * 60;
+  if (offset_sign == '-')
+    offset_of_date = -offset_of_date;
+
+  return GetUTCTime(year, mon, mday, hour, min, sec) - offset_of_date;
+}
+
+} // unnamed namespace
 
 std::string Utilities::GetTimezoneOffset(const std::string timestamp)
 {
@@ -67,26 +116,7 @@ int Utilities::GetTimezoneAdjustment(const std::string tzOffset)
 
 time_t Utilities::XmltvToUnixTime(const std::string &time)
 {
-  std::tm timeinfo;
-
-  // Convert the timestamp, disregarding the timezone offset
-  sscanf(time.c_str(), "%04d%02d%02d%02d%02d%02d",
-    &timeinfo.tm_year, &timeinfo.tm_mon, &timeinfo.tm_mday,
-    &timeinfo.tm_hour, &timeinfo.tm_min, &timeinfo.tm_sec);
-
-  timeinfo.tm_year -= 1900;
-  timeinfo.tm_mon -= 1;
-  timeinfo.tm_isdst = -1;
-
-  time_t unixTime = compat::timegm(&timeinfo);
-
-  // Adjust for eventual timezone offset
-  std::string tzOffset = GetTimezoneOffset(time);
-
-  if (!tzOffset.empty())
-    unixTime -= GetTimezoneAdjustment(tzOffset);
-
-  return unixTime;
+  return static_cast<time_t>(ParseDateTime(time));
 }
 
 std::string Utilities::UnixTimeToXmltv(const time_t timestamp,
@@ -174,7 +204,7 @@ int Utilities::QueryIntText(const tinyxml2::XMLElement *element)
       if (!pText)
         throw std::invalid_argument("No text in element");
       std::string content = pText;
-      value = compat::stoi(content);
+      value = std::stoi(content);
     }
     catch (std::invalid_argument) {
 
@@ -195,7 +225,7 @@ unsigned int Utilities::QueryUnsignedText(const tinyxml2::XMLElement *element)
       if (!pText)
         throw std::invalid_argument("No text in element");
       std::string content = pText;
-      value = compat::stoui(content);
+      value = static_cast<unsigned int>(std::stoi(content));
     }
     catch (std::invalid_argument) {
 
