@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <mutex>
 #include <thread>
 #include <atomic>
@@ -201,6 +202,9 @@ namespace vbox {
     int GetCategoriesGenreType(std::vector<std::string> &categories) const;
     void StartEPGScan();
     void SyncEPGNow();
+    void TriggerEpgUpdatesForChannels();
+    bool IsInitialEpgSkippingCompleted();
+    void MarkChannelAsInitialEpgSkipped(unsigned int channelUid);
 
     // Reminder methods
     bool AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme);
@@ -220,6 +224,8 @@ namespace vbox {
     std::function<void()> OnGuideUpdated;
 
   private:
+    static const int INITIAL_EPG_WAIT_SECS = 60;
+    static const int INITIAL_EPG_STEP_SECS = 5;
 
     void BackgroundUpdater();
     unsigned int GetDBVersion(std::string &versionName) const;
@@ -342,6 +348,11 @@ namespace vbox {
      * channel is playing
      */
     ChannelPtr m_currentChannel;
+
+    /**
+     * Map of channels to be skipped on inital EPG load
+     */
+    std::map<std::string, std::string> m_unskippedInitialEpgChannelsMap;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings
