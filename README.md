@@ -58,7 +58,7 @@ These instructions may be outdated. I'm assuming here that you'll check out all 
 
 ## Settings
 
-There are two tabs in the settings dialog with identical settings, which means you can configure your addon to contact the VBox TV Gateway using both its internal and external address/port. This is useful for e.g. a laptop which is not permanently inside your internal network. When the addon starts it first attempts to make a connection using the internal settings. If that fails, it will try the external settings instead. The addon restarts itself if the connection is lost so it will automatically switch back without having to restart Kodi.
+It's possible to configure the addon to connect to the VBox TV Gateway using both the local netowrk and via the internet address/port. This is useful for e.g. a laptop which is not permanently inside your internal network. When the addon starts it first attempts to make a connection using the local network settings. If that fails, it will try the internet settings instead. The addon restarts itself if the connection is lost so it will automatically switch back without having to restart Kodi.
 
 ### Connection - Internal
 Connection settings to use when connecting from your local network. For a local network connection the port values should not need to be modified.
@@ -79,9 +79,9 @@ Connection settings to use when connecting from the internet. The ports should o
 * **Connection timeout (seconds)**: The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`.
 
 ### EPG
-Settings related to the EPG.
+Settings related to Channels & EPG.
 
-* **Channel numbers set by**: Channel numbers be set via either of the following two options:
+* **Channel numbers set by**: Channel numbers can be set via either of the following two options:
     - `LCN (Logical Channel Number) from backend` - The channel numbers as set on the backend.
     - `Channel index in backend` - Starting from 1 number the channels as per the order they appear on the backend.
 * **Reminder time (minutes before programme start)**: The amount of time in minutes prior to a programme start that a reminder should pop up.
