@@ -37,3 +37,4 @@ extern CHelper_libKODI_guilib       *GUI;
 // Globals
 extern ADDON_STATUS g_status;
 extern vbox::VBox *g_vbox;
+extern bool g_skippingInitialEpgLoad;

@@ -1,3 +1,7 @@
+5.5.0
+- Skip initial EPG load to avoid crash scenario on boot on LibreElec/CoreElec
+- New settings format and settings levels / help text
+
 5.4.0
 - Fix timezone offset changing kodi time
 - remove compat functions as no longer needed
