@@ -96,7 +96,11 @@ msgctxt "#30114"
 msgid "Reminder time (minutes before program starts)"
 msgstr ""
 
-#empty strings from id 30115 to 30199
+msgctxt "#30115"
+msgid "Skip initial EPG load"
+msgstr ""
+
+#empty strings from id 30116 to 30199
 
 msgctxt "#30200"
 msgid "Timeshift"

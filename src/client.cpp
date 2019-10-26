@@ -42,6 +42,7 @@ CHelper_libKODI_guilib  *GUI = NULL;
 // Initialize globals
 ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
 VBox *g_vbox = nullptr;
+bool g_skippingInitialEpgLoad;
 timeshift::Buffer *g_timeshiftBuffer = nullptr;
 RecordingReader* recordingReader = nullptr;
 
@@ -58,6 +59,7 @@ int g_externalConnectionTimeout;
 
 ChannelOrder g_setChannelIdUsingOrder;
 unsigned int g_remindMinsBeforeProg;
+bool g_skipInitialEpgLoad;
 bool g_timeshiftEnabled;
 std::string g_timeshiftBufferPath;
 
@@ -99,6 +101,7 @@ void ADDON_ReadSettings()
   UPDATE_INT(g_externalConnectionTimeout, "external_connection_timeout", 10);
   UPDATE_INT(g_setChannelIdUsingOrder, "set_channelid_using_order", CH_ORDER_BY_LCN);
   UPDATE_INT(g_remindMinsBeforeProg, "reminder_mins_before_prog", 0);
+  UPDATE_INT(g_skipInitialEpgLoad, "skip_initial_epg_load", true);
   UPDATE_INT(g_timeshiftEnabled, "timeshift_enabled", false);
   UPDATE_STR(g_timeshiftBufferPath, "timeshift_path", buffer, "");
 
@@ -151,6 +154,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
 
   settings.m_setChannelIdUsingOrder = g_setChannelIdUsingOrder;
   settings.m_remindMinsBeforeProg = g_remindMinsBeforeProg;
+  settings.m_skipInitialEpgLoad = g_skipInitialEpgLoad;
   settings.m_timeshiftEnabled = g_timeshiftEnabled;
   settings.m_timeshiftBufferPath = g_timeshiftBufferPath;
 
@@ -174,7 +178,9 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
       g_vbox->OnGuideUpdated = []()
       {
         for (const auto &channel : g_vbox->GetChannels())
+        {
           PVR->TriggerEpgUpdate(ContentIdentifier::GetUniqueId(channel));
+        }
       };
 
       // Create the timeshift buffer
@@ -263,6 +269,7 @@ ADDON_STATUS ADDON_SetSetting(const char *settingName, const void *settingValue)
   UPDATE_INT("external_connection_timeout", int, settings.m_externalConnectionParams.timeout);
   UPDATE_INT("set_channelid_using_order", ChannelOrder, settings.m_setChannelIdUsingOrder);
   UPDATE_INT("reminder_mins_before_prog", unsigned int, settings.m_remindMinsBeforeProg)
+  UPDATE_INT("skip_initial_epg_load", bool, settings.m_skipInitialEpgLoad);
   UPDATE_INT("timeshift_enabled", bool, settings.m_timeshiftEnabled);
   UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
 
@@ -881,6 +888,13 @@ PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &channel, time
 
   if (!channelPtr)
     return PVR_ERROR_INVALID_PARAMETERS;
+
+  if (g_skippingInitialEpgLoad)
+  {
+    VBox::Log(LOG_DEBUG, "%s Skipping Initial EPG for channel: %s", __FUNCTION__, channelPtr->m_name.c_str());
+    g_vbox->MarkChannelAsInitialEpgSkipped(channel.iUniqueId);
+    return PVR_ERROR_NO_ERROR;
+  }
 
   // Retrieve the schedule
   const auto schedule = g_vbox->GetSchedule(channelPtr);

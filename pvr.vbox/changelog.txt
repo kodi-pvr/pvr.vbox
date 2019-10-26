@@ -1,3 +1,6 @@
+4.7.0
+- Skip initial EPG load to avoid crash scenario on boot on LibreElec/CoreElec
+
 4.6.0
 - Fix timezone offset changing kodi time
 - remove compat functions as no longer needed

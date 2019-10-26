@@ -86,6 +86,7 @@ Settings related to the EPG.
     - `LCN (Logical Channel Number) from backend` - The channel numbers as set on the backend.
     - `Channel index in backend` - Starting from 1 number the channels as per the order they appear on the backend.
 * **Reminder time (minutes before programme start)**: The amount of time in minutes prior to a programme start that a reminder should pop up.
+* **Skip initial EPG load**: Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec.
 
 ### Timeshift
 Settings related to the timeshift.

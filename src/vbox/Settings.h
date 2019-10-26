@@ -89,6 +89,7 @@ namespace vbox {
     ConnectionParameters m_externalConnectionParams;
     ChannelOrder m_setChannelIdUsingOrder;
     unsigned int m_remindMinsBeforeProg;
+    bool m_skipInitialEpgLoad;
     bool m_timeshiftEnabled;
     std::string m_timeshiftBufferPath;
   };
