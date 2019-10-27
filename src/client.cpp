@@ -385,12 +385,12 @@ PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
 
     channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
 
-    strncpy(channel.strChannelName, item->m_name.c_str(), sizeof(channel.strChannelName));
-    strncpy(channel.strIconPath, item->m_iconUrl.c_str(), sizeof(channel.strIconPath));
+    strncpy(channel.strChannelName, item->m_name.c_str(), sizeof(channel.strChannelName) - 1);
+    strncpy(channel.strIconPath, item->m_iconUrl.c_str(), sizeof(channel.strIconPath) - 1);
 
     // Set stream format for TV channels
     if (!item->m_radio)
-      strncpy(channel.strInputFormat, "video/mp2t", sizeof(channel.strInputFormat));
+      strncpy(channel.strInputFormat, "video/mp2t", sizeof(channel.strInputFormat) - 1);
 
     VBox::Log(LOG_INFO, "Adding channel %d: %s. Icon: %s", channel.iChannelNumber, channel.strChannelName,
               channel.strIconPath);
@@ -439,10 +439,10 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
       recording.iDuration = static_cast<int>(now - startTime);
     recording.iEpgEventId = id;
 
-    strncpy(recording.strChannelName, item->m_channelName.c_str(), sizeof(recording.strChannelName));
-    strncpy(recording.strRecordingId, std::to_string(id).c_str(), sizeof(recording.strRecordingId));
-    strncpy(recording.strTitle, item->m_title.c_str(), sizeof(recording.strTitle));
-    strncpy(recording.strPlot, item->m_description.c_str(), sizeof(recording.strPlot));
+    strncpy(recording.strChannelName, item->m_channelName.c_str(), sizeof(recording.strChannelName) - 1);
+    strncpy(recording.strRecordingId, std::to_string(id).c_str(), sizeof(recording.strRecordingId) - 1);
+    strncpy(recording.strTitle, item->m_title.c_str(), sizeof(recording.strTitle) - 1);
+    strncpy(recording.strPlot, item->m_description.c_str(), sizeof(recording.strPlot) - 1);
 
     recording.iChannelUid = PVR_CHANNEL_INVALID_UID;
     recording.channelType = PVR_RECORDING_CHANNEL_TYPE_UNKNOWN;
@@ -685,8 +685,8 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
     else
       continue;
 
-    strncpy(timer.strTitle, item->m_title.c_str(), sizeof(timer.strTitle));
-    strncpy(timer.strSummary, item->m_description.c_str(), sizeof(timer.strSummary));
+    strncpy(timer.strTitle, item->m_title.c_str(), sizeof(timer.strTitle) - 1);
+    strncpy(timer.strSummary, item->m_description.c_str(), sizeof(timer.strSummary) - 1);
 
     g_vbox->Log(LOG_DEBUG, "GetTimers(): adding timer to show %s", item->m_title.c_str());
     // TODO: Set margins to whatever the API reports
@@ -739,9 +739,9 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
       timer.iWeekdays = item->m_weekdays;
       timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
     }
-    strncpy(timer.strTitle, item->m_title.c_str(), sizeof(timer.strTitle));
+    strncpy(timer.strTitle, item->m_title.c_str(), sizeof(timer.strTitle) - 1);
 
-    strncpy(timer.strSummary, item->m_description.c_str(), sizeof(timer.strSummary));
+    strncpy(timer.strSummary, item->m_description.c_str(), sizeof(timer.strSummary) - 1);
 
     // TODO: Set margins to whatever the API reports
     PVR->TransferTimerEntry(handle, &timer);
@@ -953,10 +953,10 @@ PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS& signalStatus)
     signalStatus.iSNR = static_cast<int>(status.m_signalQuality) * 655;
     signalStatus.iBER = status.GetBer();
 
-    strncpy(signalStatus.strAdapterName, status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName));
-    strncpy(signalStatus.strAdapterStatus, status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus));
-    strncpy(signalStatus.strServiceName, status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName));
-    strncpy(signalStatus.strMuxName, status.GetMuxName().c_str(), sizeof(signalStatus.strMuxName));
+    strncpy(signalStatus.strAdapterName, status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName) - 1);
+    strncpy(signalStatus.strAdapterStatus, status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus) - 1);
+    strncpy(signalStatus.strServiceName, status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName) - 1);
+    strncpy(signalStatus.strMuxName, status.GetMuxName().c_str(), sizeof(signalStatus.strMuxName) - 1);
   }
   catch (VBoxException& e)
   {
