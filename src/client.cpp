@@ -369,8 +369,7 @@ PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
     if (item->m_radio != bRadio)
       continue;
 
-    PVR_CHANNEL channel;
-    memset(&channel, 0, sizeof(PVR_CHANNEL));
+    PVR_CHANNEL channel = {0};
 
     channel.iUniqueId = ContentIdentifier::GetUniqueId(item);
     channel.bIsRadio = item->m_radio;
@@ -424,8 +423,7 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
     if (!item->IsRecording())
       continue;
 
-    PVR_RECORDING recording;
-    memset(&recording, 0, sizeof(PVR_RECORDING));
+    PVR_RECORDING recording = {0};
 
     time_t startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
     time_t endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
@@ -648,8 +646,7 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
     if (!item->IsTimer())
       continue;
 
-    PVR_TIMER timer;
-    memset(&timer, 0, sizeof(PVR_TIMER));
+    PVR_TIMER timer = {0};
     timer.iTimerType = (item->m_seriesId > 0) ? vbox::TIMER_VBOX_TYPE_EPISODE : vbox::TIMER_VBOX_TYPE_MANUAL_SINGLE;
     timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
     timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
@@ -696,8 +693,7 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
   auto& series = g_vbox->GetSeriesTimers();
   for (const auto& item : series)
   {
-    PVR_TIMER timer;
-    memset(&timer, 0, sizeof(PVR_TIMER));
+    PVR_TIMER timer = {0};
 
     timer.iTimerType = (item->m_fIsAuto) ? vbox::TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES : vbox::TIMER_VBOX_TYPE_MANUAL_SERIES;
     timer.iClientIndex = item->m_id;
@@ -883,8 +879,7 @@ PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, int iChannelUid, time_t iStart, 
   // Transfer the programmes between the start and end times
   for (const auto& programme : schedule.schedule->GetSegment(iStart, iEnd))
   {
-    EPG_TAG event;
-    memset(&event, 0, sizeof(EPG_TAG));
+    EPG_TAG event = {0};
 
     event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
     event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
@@ -1110,9 +1105,8 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA& item)
 {
   time_t currTime = time(nullptr), reminderTime;
   ChannelPtr selectedChannel = nullptr;
-  char buffer[256];
+  char buffer[256] = {0};
 
-  memset(buffer, 0, sizeof(buffer));
   // get channel in context
   selectedChannel = g_vbox->GetChannel(item.data.channel.iUniqueId);
   if (!selectedChannel)

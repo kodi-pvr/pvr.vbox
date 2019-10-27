@@ -78,9 +78,8 @@ Reminder::Reminder(const ChannelPtr& channel, time_t startTime, std::string& pro
 
 void Reminder::ComposeMessage(time_t currTime)
 {
-  char buf[32], minBuf[32];
-
-  memset(minBuf, 0, sizeof(buf));
+  char buf[32];
+  char minBuf[32] = {0};
 
   sprintf(buf, "[%u] ", m_channelNum);
 

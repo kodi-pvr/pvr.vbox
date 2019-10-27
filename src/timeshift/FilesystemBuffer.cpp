@@ -124,8 +124,6 @@ void FilesystemBuffer::ConsumeInput()
 
   while (m_active)
   {
-    memset(buffer, 0, INPUT_READ_LENGTH);
-
     // Read from m_inputHandle
     ssize_t read = XBMC->ReadFile(m_inputHandle, buffer, INPUT_READ_LENGTH);
 

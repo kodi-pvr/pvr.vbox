@@ -706,9 +706,8 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 
 const RecordingMargins VBox::GetRecordingMargins(bool fBackendSingleMargin) const
 {
-  RecordingMargins margins;
+  RecordingMargins margins = {0};
 
-  memset(&margins, 0, sizeof(margins));
   // get recording margins
   request::ApiRequest request("GetRecordingsTimeOffset");
   response::ResponsePtr response = PerformRequest(request);
