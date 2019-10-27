@@ -20,16 +20,16 @@
 */
 
 #include "Schedule.h"
+
+#include "../vbox/ContentIdentifier.h"
+
 #include <algorithm>
 #include <iterator>
-#include "../vbox/ContentIdentifier.h"
 
 using namespace xmltv;
 
-Schedule::Schedule(ChannelPtr& channel)
-  : m_channel(channel)
+Schedule::Schedule(ChannelPtr& channel) : m_channel(channel)
 {
-
 }
 
 void Schedule::AddProgramme(ProgrammePtr programme)
@@ -42,10 +42,10 @@ const ProgrammePtr Schedule::GetProgramme(int programmeUniqueId) const
   auto it = std::find_if(
     m_programmes.cbegin(),
     m_programmes.cend(),
-    [programmeUniqueId](const ProgrammePtr &programme)
-  {
-    return programmeUniqueId == vbox::ContentIdentifier::GetUniqueId(programme.get());
-  });
+    [programmeUniqueId](const ProgrammePtr& programme) {
+        return programmeUniqueId == vbox::ContentIdentifier::GetUniqueId(programme.get());
+    }
+  );
 
   if (it != m_programmes.cend())
     return *it;
@@ -62,13 +62,13 @@ const Segment Schedule::GetSegment(time_t startTime, time_t endTime) const
     m_programmes.cbegin(),
     m_programmes.cend(),
     std::back_inserter(segment),
-    [startTime, endTime](const ProgrammePtr &programme)
-  {
-    time_t programmeStartTime = Utilities::XmltvToUnixTime(programme->m_startTime);
-    time_t programmeEndTime = Utilities::XmltvToUnixTime(programme->m_endTime);
+    [startTime, endTime](const ProgrammePtr& programme) {
+      time_t programmeStartTime = Utilities::XmltvToUnixTime(programme->m_startTime);
+      time_t programmeEndTime = Utilities::XmltvToUnixTime(programme->m_endTime);
 
-    return programmeStartTime >= startTime && programmeEndTime <= endTime;
-  });
+      return programmeStartTime >= startTime && programmeEndTime <= endTime;
+    }
+  );
 
   return segment;
 }

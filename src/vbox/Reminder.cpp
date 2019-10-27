@@ -18,30 +18,33 @@
 *  http://www.gnu.org/copyleft/gpl.html
 *
 */
-#include "ContentIdentifier.h"
 #include "Reminder.h"
-#include <algorithm>
-#include "lib/tinyxml2/tinyxml2.h"
-#include "p8-platform/util/StringUtils.h"
-#include "Utilities.h"
-#include "Exceptions.h"
+
 #include "../client.h"
+#include "ContentIdentifier.h"
+#include "Exceptions.h"
+#include "Utilities.h"
+
+#include <algorithm>
+
+#include <p8-platform/util/StringUtils.h>
+#include <lib/tinyxml2/tinyxml2.h>
 
 using namespace vbox;
 using namespace tinyxml2;
 
-unsigned int Reminder::FindChannelNumber(const ChannelPtr &channel)
+unsigned int Reminder::FindChannelNumber(const ChannelPtr& channel)
 {
   if (g_vbox->GetSettings().m_setChannelIdUsingOrder == CH_ORDER_BY_LCN)
   {
-     return channel->m_number;
+    return channel->m_number;
   }
   else
   {
-    auto &channels = g_vbox->GetChannels();
+    auto& channels = g_vbox->GetChannels();
     unsigned int i = 0;
 
-    for (const auto &item : channels)
+    for (const auto& item : channels)
     {
       ++i;
       if (item == channel)
@@ -51,18 +54,24 @@ unsigned int Reminder::FindChannelNumber(const ChannelPtr &channel)
   }
 }
 
-Reminder::Reminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsInAdvance) :
-  m_minsInAdvance(minsInAdvance), m_startTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime)),
-  m_popTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) - (60 * m_minsInAdvance)), m_progName(programme->m_title),
-  m_channelName(channel->m_name), m_channelXmltvName(channel->m_xmltvName)
+Reminder::Reminder(const ChannelPtr& channel, const ::xmltv::ProgrammePtr& programme, unsigned int minsInAdvance)
+  : m_minsInAdvance(minsInAdvance),
+    m_startTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime)),
+    m_popTime(xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) - (60 * m_minsInAdvance)),
+    m_progName(programme->m_title),
+    m_channelName(channel->m_name),
+    m_channelXmltvName(channel->m_xmltvName)
 {
   m_channelNum = FindChannelNumber(channel);
 }
 
-Reminder::Reminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsInAdvance) :
-  m_minsInAdvance(minsInAdvance), m_startTime(startTime),
-  m_popTime(startTime - (60 * m_minsInAdvance)), m_progName(progName),
-  m_channelName(channel->m_name), m_channelXmltvName(channel->m_xmltvName)
+Reminder::Reminder(const ChannelPtr& channel, time_t startTime, std::string& progName, unsigned int minsInAdvance)
+  : m_minsInAdvance(minsInAdvance),
+    m_startTime(startTime),
+    m_popTime(startTime - (60 * m_minsInAdvance)),
+    m_progName(progName),
+    m_channelName(channel->m_name),
+    m_channelXmltvName(channel->m_xmltvName)
 {
   m_channelNum = FindChannelNumber(channel);
 }
@@ -77,7 +86,7 @@ void Reminder::ComposeMessage(time_t currTime)
 
   m_msgTitle = "Program reminder:";
   m_msgText = "Program: " + std::string("    ") + m_progName + '\n';
-  m_msgText += "Channel: " + std::string("    ") +  std::string(buf) + m_channelName + '\n';
+  m_msgText += "Channel: " + std::string("    ") + std::string(buf) + m_channelName + '\n';
   unsigned int minutes = (m_startTime - currTime) / 60;
 
   m_msgText += "Starts ";

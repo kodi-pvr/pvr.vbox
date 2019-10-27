@@ -20,19 +20,22 @@
 *
 */
 
-#include <memory>
 #include "../request/Request.h"
 #include "Response.h"
 
-namespace vbox {
-  namespace response {
+#include <memory>
+
+namespace vbox
+{
+  namespace response
+  {
 
     /**
      * Factor for response objects
      */
-    class Factory {
+    class Factory
+    {
     public:
-
       /**
       * Prevents construction
       */
@@ -43,19 +46,19 @@ namespace vbox {
        * @param request the request
        * @return the response
        */
-      static ResponsePtr CreateResponse(const request::Request &request)
+      static ResponsePtr CreateResponse(const request::Request& request)
       {
         switch (request.GetResponseType())
         {
-        case ResponseType::XMLTV:
-          return ResponsePtr(new XMLTVResponse);
-        case ResponseType::RECORDS:
-          return ResponsePtr(new RecordingResponse);
-        case ResponseType::GENERIC:
-        default:
-          return ResponsePtr(new Response);
+          case ResponseType::XMLTV:
+            return ResponsePtr(new XMLTVResponse);
+          case ResponseType::RECORDS:
+            return ResponsePtr(new RecordingResponse);
+          case ResponseType::GENERIC:
+          default:
+            return ResponsePtr(new Response);
         }
       }
     };
-  }
-}
+  } // namespace response
+} // namespace vbox

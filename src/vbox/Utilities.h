@@ -20,11 +20,13 @@
 *
 */
 
-#include <algorithm>
-#include <memory>
 #include "../client.h"
 
-namespace utilities {
+#include <algorithm>
+#include <memory>
+
+namespace utilities
+{
 
   /**
    * Compares two containers for equality based on the equality of their
@@ -32,16 +34,15 @@ namespace utilities {
    * pointers).
    */
   template<class Container>
-  bool deref_equals(const Container& left, const Container &right)
+  bool deref_equals(const Container& left, const Container& right)
   {
-    return !(left.size() != right.size() || !std::equal(
-      left.begin(),
-      left.end(),
-      right.begin(),
-      [](const typename Container::value_type &leftItem, const typename Container::value_type &rightItem)
-    {
-      return *leftItem == *rightItem;
-    }));
+    return !(left.size() != right.size() ||
+             !std::equal(left.begin(), left.end(), right.begin(),
+                         [](const typename Container::value_type& leftItem,
+                            const typename Container::value_type& rightItem)
+                          {
+                            return *leftItem == *rightItem;
+                          }));
   }
 
   /**
@@ -50,7 +51,7 @@ namespace utilities {
    * @param fileHandle the file handle
    * @return the contents (unique pointer)
    */
-  inline std::unique_ptr<std::string> ReadFileContents(void *fileHandle)
+  inline std::unique_ptr<std::string> ReadFileContents(void* fileHandle)
   {
     std::unique_ptr<std::string> content(new std::string());
 
@@ -63,4 +64,4 @@ namespace utilities {
 
     return content;
   }
-}
+} // namespace utilities

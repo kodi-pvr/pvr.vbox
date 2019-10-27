@@ -20,37 +20,37 @@
 */
 
 #include "ApiRequest.h"
+
 #include "../../client.h"
 #include "../../xmltv/Utilities.h"
+
 #include <algorithm>
 
 using namespace vbox::request;
 using vbox::response::ResponseType;
 
 const std::vector<std::string> ApiRequest::externalCapableMethods = {
-  "GetXmltvEntireFile",
-  "GetXmltvSection",
-  "GetXmltvChannelsList",
-  "GetXmltvProgramsList",
-  "GetRecordsList"
+    "GetXmltvEntireFile",
+    "GetXmltvSection",
+    "GetXmltvChannelsList",
+    "GetXmltvProgramsList",
+    "GetRecordsList"
 };
 
 const std::vector<std::string> ApiRequest::xmltvMethods = {
-  "GetXmltvEntireFile",
-  "GetXmltvSection",
-  "GetXmltvChannelsList",
-  "GetXmltvProgramsList",
+    "GetXmltvEntireFile",
+    "GetXmltvSection",
+    "GetXmltvChannelsList",
+    "GetXmltvProgramsList",
 };
 
-ApiRequest::ApiRequest(const std::string &method)
-  : m_method(method), m_timeout(0)
+ApiRequest::ApiRequest(const std::string& method) : m_method(method), m_timeout(0)
 {
   AddParameter("Method", method);
 
   // Add external IP and port options to the methods that support it
-  if (std::find(
-    externalCapableMethods.cbegin(),
-    externalCapableMethods.cend(), method) != externalCapableMethods.cend())
+  if (std::find(externalCapableMethods.cbegin(), externalCapableMethods.cend(), method) !=
+      externalCapableMethods.cend())
   {
     AddParameter("ExternalIP", g_vbox->GetConnectionParams().hostname);
     AddParameter("Port", g_vbox->GetConnectionParams().upnpPort);
@@ -75,14 +75,14 @@ std::string ApiRequest::GetLocation() const
   // Append parameters (including method)
   if (!m_parameters.empty())
   {
-    for (auto const &parameter : m_parameters)
+    for (auto const& parameter : m_parameters)
     {
-       // multiple values possible for each parameter
-       for (auto const &value : parameter.second)
-       {
-         url += "&" + parameter.first + "=";
-         url += ::xmltv::Utilities::UrlEncode(value);
-       }
+      // multiple values possible for each parameter
+      for (auto const& value : parameter.second)
+      {
+        url += "&" + parameter.first + "=";
+        url += ::xmltv::Utilities::UrlEncode(value);
+      }
     }
   }
 
@@ -98,17 +98,17 @@ std::string ApiRequest::GetIdentifier() const
   return m_method;
 }
 
-void ApiRequest::AddParameter(const std::string &name, const std::string &value)
+void ApiRequest::AddParameter(const std::string& name, const std::string& value)
 {
   m_parameters[name].push_back(value);
 }
 
-void ApiRequest::AddParameter(const std::string &name, int value)
+void ApiRequest::AddParameter(const std::string& name, int value)
 {
   m_parameters[name].push_back(std::to_string(value));
 }
 
-void ApiRequest::AddParameter(const std::string &name, unsigned int value)
+void ApiRequest::AddParameter(const std::string& name, unsigned int value)
 {
   m_parameters[name].push_back(std::to_string(value));
 }

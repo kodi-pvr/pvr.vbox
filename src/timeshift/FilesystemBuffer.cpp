@@ -20,6 +20,7 @@
 */
 
 #include "FilesystemBuffer.h"
+
 #include <cstring>
 
 using namespace timeshift;
@@ -31,9 +32,8 @@ const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
 #undef DeleteFile
 #endif // _WIN32
 
-FilesystemBuffer::FilesystemBuffer(const std::string &bufferPath)
-  : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr),
-  m_readPosition(0), m_writePosition(0)
+FilesystemBuffer::FilesystemBuffer(const std::string& bufferPath)
+  : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr), m_readPosition(0), m_writePosition(0)
 {
   m_bufferPath = bufferPath + "/buffer.ts";
 }
@@ -50,17 +50,14 @@ bool FilesystemBuffer::Open(const std::string inputUrl)
 {
   // Open the file handles
   m_outputWriteHandle = XBMC->OpenFileForWrite(m_bufferPath.c_str(), true);
-  m_outputReadHandle = XBMC->OpenFile(m_bufferPath.c_str(), 0x08/*READ_NO_CACHE*/);
+  m_outputReadHandle = XBMC->OpenFile(m_bufferPath.c_str(), 0x08 /*READ_NO_CACHE*/);
 
   if (!Buffer::Open(inputUrl) || !m_outputReadHandle || !m_outputWriteHandle)
     return false;
 
   // Start the input thread
   m_active = true;
-  m_inputThread = std::thread([this]()
-  {
-    ConsumeInput();
-  });
+  m_inputThread = std::thread([this]() { ConsumeInput(); });
 
   return true;
 }
@@ -93,17 +90,17 @@ void FilesystemBuffer::Reset()
   m_readPosition = m_writePosition = 0;
 }
 
-int FilesystemBuffer::Read(byte *buffer, size_t length)
+int FilesystemBuffer::Read(byte* buffer, size_t length)
 {
   // Wait until we have enough data
   int64_t requiredLength = Position() + length;
 
   std::unique_lock<std::mutex> lock(m_mutex);
   m_condition.wait_for(lock, std::chrono::seconds(m_readTimeout),
-    [this, requiredLength]()
-  {
-    return Length() >= requiredLength;
-  });
+                       [this, requiredLength]()
+                       {
+                         return Length() >= requiredLength;
+                       });
 
   // Now we can read
   int read = XBMC->ReadFile(m_outputReadHandle, buffer, length);
@@ -123,7 +120,7 @@ int64_t FilesystemBuffer::Seek(int64_t position, int whence)
 
 void FilesystemBuffer::ConsumeInput()
 {
-  byte *buffer = new byte[INPUT_READ_LENGTH];
+  byte* buffer = new byte[INPUT_READ_LENGTH];
 
   while (m_active)
   {

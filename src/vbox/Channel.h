@@ -20,10 +20,11 @@
 *
 */
 
-#include <string>
 #include <memory>
+#include <string>
 
-namespace vbox {
+namespace vbox
+{
 
   class Channel;
   typedef std::shared_ptr<Channel> ChannelPtr;
@@ -34,13 +35,20 @@ namespace vbox {
   class Channel
   {
   public:
-    Channel(const std::string &uniqueId, const std::string &xmltvName,
-      const std::string &name, const std::string &url)
-      : m_uniqueId(uniqueId), m_index(0), m_xmltvName(xmltvName), m_name(name), m_number(0),
-      m_radio(false), m_url(url), m_encrypted(false) {}
+    Channel(const std::string& uniqueId, const std::string& xmltvName, const std::string& name, const std::string& url)
+      : m_uniqueId(uniqueId),
+        m_index(0),
+        m_xmltvName(xmltvName),
+        m_name(name),
+        m_number(0),
+        m_radio(false),
+        m_url(url),
+        m_encrypted(false)
+    {
+    }
     ~Channel() {}
 
-    bool operator== (const Channel &other)
+    bool operator==(const Channel& other)
     {
       return m_index == other.m_index &&
         m_xmltvName == other.m_xmltvName &&
@@ -53,7 +61,7 @@ namespace vbox {
         m_uniqueId == other.m_uniqueId;
     }
 
-    bool operator!= (const Channel &other)
+    bool operator!=(const Channel& other)
     {
       return !(*this == other);
     }
@@ -81,4 +89,4 @@ namespace vbox {
     std::string m_url;
     bool m_encrypted;
   };
-}
+} // namespace vbox

@@ -20,25 +20,26 @@
  *
  */
 
-#include <functional>
+#include "../xmltv/Programme.h"
+#include "../xmltv/Utilities.h"
 #include "Channel.h"
 #include "Recording.h"
 #include "SeriesRecording.h"
-#include "../xmltv/Programme.h"
-#include "../xmltv/Utilities.h"
 
-namespace vbox {
+#include <functional>
+
+namespace vbox
+{
   /**
    * Static helper class for creating unique identifiers for arbitrary objects
    */
   class ContentIdentifier
   {
   public:
-
     /**
      * @return a unique ID for the channel
      */
-    static unsigned int GetUniqueId(const vbox::ChannelPtr &channel)
+    static unsigned int GetUniqueId(const vbox::ChannelPtr& channel)
     {
       std::hash<std::string> hasher;
       int uniqueId = hasher(channel->m_uniqueId);
@@ -49,7 +50,7 @@ namespace vbox {
      * @return a unique ID for the recording. This implementation must match
      * that of xmltv::Programme so that recordings can be linked to programmes.
      */
-    static unsigned int GetUniqueId(const vbox::Recording *recording)
+    static unsigned int GetUniqueId(const vbox::Recording* recording)
     {
       std::hash<std::string> hasher;
       std::string timestamp = std::to_string(::xmltv::Utilities::XmltvToUnixTime(recording->m_endTime));
@@ -61,7 +62,7 @@ namespace vbox {
     * @return a unique ID for the series. This implementation must match
     * that of xmltv::Programme so that series can be linked to programmes.
     */
-    static unsigned int GetUniqueId(const vbox::SeriesRecording *series)
+    static unsigned int GetUniqueId(const vbox::SeriesRecording* series)
     {
       std::hash<std::string> hasher;
       std::string timestamp = std::to_string(::xmltv::Utilities::XmltvToUnixTime(series->m_endTime));
@@ -72,7 +73,7 @@ namespace vbox {
     /**
      * @return a unique ID for the programme
      */
-    static unsigned int GetUniqueId(const xmltv::Programme *programme)
+    static unsigned int GetUniqueId(const xmltv::Programme* programme)
     {
       std::hash<std::string> hasher;
       std::string timestamp = std::to_string(::xmltv::Utilities::XmltvToUnixTime(programme->m_endTime));
@@ -80,4 +81,4 @@ namespace vbox {
       return std::abs(uniqueId);
     }
   };
-}
+} // namespace vbox

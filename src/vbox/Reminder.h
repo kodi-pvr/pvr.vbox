@@ -20,12 +20,15 @@
 *
 */
 
-#include <string>
-#include "Channel.h"
 #include "../xmltv/Programme.h"
-#include "kodi/xbmc_pvr_types.h"
+#include "Channel.h"
 
-namespace vbox {
+#include <string>
+
+#include <kodi/xbmc_pvr_types.h>
+
+namespace vbox
+{
 
   class ReminderManager;
 
@@ -36,14 +39,13 @@ namespace vbox {
   class Reminder
   {
   public:
-
     /**
     * Creates a reminder from a channel and a specific program
     * @param channel the channel containing the program to remind
     * @param programme the program to remind
     * @param minsInAdvance minutes before the program's start time to pop the reminder
     */
-    Reminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsInAdvance);
+    Reminder(const ChannelPtr& channel, const ::xmltv::ProgrammePtr& programme, unsigned int minsInAdvance);
 
     /**
     * Creates a reminder according to a manually given program name and its' start time
@@ -51,15 +53,12 @@ namespace vbox {
     * @param startTime the program's original start time
     * @param minsInAdvance minutes before the program's start time to pop the reminder
     */
-    Reminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsInAdvance);
+    Reminder(const ChannelPtr& channel, time_t startTime, std::string& progName, unsigned int minsInAdvance);
 
     /**
     * For comparing reminders' pop times
     */
-    bool operator< (const Reminder &other) const
-    {
-      return !(m_popTime < other.m_popTime);
-    }
+    bool operator<(const Reminder& other) const { return !(m_popTime < other.m_popTime); }
 
     /**
     * Composes & returns a message for a certain moment in time, showing details
@@ -87,7 +86,7 @@ namespace vbox {
     * @param channel the requested channel
     * @return the channel's number
     */
-    static unsigned int FindChannelNumber(const ChannelPtr &channel);
+    static unsigned int FindChannelNumber(const ChannelPtr& channel);
 
     /**
     * Composes the reminder's message
@@ -107,4 +106,4 @@ namespace vbox {
   };
 
   typedef std::shared_ptr<Reminder> ReminderPtr;
-}
+} // namespace vbox

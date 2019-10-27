@@ -20,21 +20,22 @@
  *
  */
 
-#include "kodi/libXBMC_addon.h"
-#include "kodi/libXBMC_pvr.h"
-#include <kodi/libKODI_guilib.h>
 #include "vbox/VBox.h"
+
+#include <kodi/libKODI_guilib.h>
+#include <kodi/libXBMC_addon.h>
+#include <kodi/libXBMC_pvr.h>
 
 #ifdef TARGET_WINDOWS
 #define snprintf _snprintf
 #endif
 
 // Helpers
-extern ADDON::CHelper_libXBMC_addon *XBMC;
-extern CHelper_libXBMC_pvr          *PVR;
-extern CHelper_libKODI_guilib       *GUI;
+extern ADDON::CHelper_libXBMC_addon* XBMC;
+extern CHelper_libXBMC_pvr* PVR;
+extern CHelper_libKODI_guilib* GUI;
 
 // Globals
 extern ADDON_STATUS g_status;
-extern vbox::VBox *g_vbox;
+extern vbox::VBox* g_vbox;
 extern bool g_skippingInitialEpgLoad;

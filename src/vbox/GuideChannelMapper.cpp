@@ -20,22 +20,22 @@
 */
 
 #include "GuideChannelMapper.h"
-#include <memory>
-#include "lib/tinyxml2/tinyxml2.h"
+
+#include "../client.h"
 #include "Exceptions.h"
 #include "Utilities.h"
-#include "../client.h"
+
+#include <memory>
+
+#include <lib/tinyxml2/tinyxml2.h>
 
 using namespace vbox;
 using namespace tinyxml2;
 
 const std::string GuideChannelMapper::MAPPING_FILE_PATH = "special://userdata/addon_data/pvr.vbox/channel_mappings.xml";
 
-GuideChannelMapper::GuideChannelMapper(
-  const ::xmltv::Guide &vboxGuide,
-  const ::xmltv::Guide &externalGuide) :
-  m_vboxGuide(vboxGuide),
-  m_externalGuide(externalGuide)
+GuideChannelMapper::GuideChannelMapper(const ::xmltv::Guide& vboxGuide, const ::xmltv::Guide& externalGuide)
+  : m_vboxGuide(vboxGuide), m_externalGuide(externalGuide)
 {
 }
 
@@ -66,7 +66,7 @@ ChannelMappings GuideChannelMapper::CreateDefaultMappings()
 
   // Add a mapping for every channel which display names matches, otherwise
   // leave it empty
-  for (const std::string &channelName : channelNames)
+  for (const std::string& channelName : channelNames)
   {
     if (!m_externalGuide.GetChannelId(channelName).empty())
       mappings[channelName] = channelName;
@@ -79,7 +79,7 @@ ChannelMappings GuideChannelMapper::CreateDefaultMappings()
 
 void GuideChannelMapper::Load()
 {
-  void *fileHandle = XBMC->OpenFile(MAPPING_FILE_PATH.c_str(), 0x08 /* READ_NO_CACHE */);
+  void* fileHandle = XBMC->OpenFile(MAPPING_FILE_PATH.c_str(), 0x08 /* READ_NO_CACHE */);
 
   if (fileHandle)
   {
@@ -92,8 +92,8 @@ void GuideChannelMapper::Load()
       throw vbox::InvalidXMLException("XML parsing failed: " + std::string(document.ErrorName()));
 
     // Create mappings
-    for (const XMLElement *element = document.RootElement()->FirstChildElement("mapping");
-      element != nullptr; element = element->NextSiblingElement("mapping"))
+    for (const XMLElement* element = document.RootElement()->FirstChildElement("mapping"); element != nullptr;
+         element = element->NextSiblingElement("mapping"))
     {
       const std::string vboxName = element->Attribute("vbox-name");
       const std::string xmltvName = element->Attribute("xmltv-name");
@@ -109,17 +109,17 @@ void GuideChannelMapper::Save()
 {
   // Create the document
   tinyxml2::XMLDocument document;
-  XMLDeclaration *declaration = document.NewDeclaration();
+  XMLDeclaration* declaration = document.NewDeclaration();
   document.InsertEndChild(declaration);
 
   // Create the root node (<xmltvmap>)
-  XMLElement *rootElement = document.NewElement("xmltvmap");
+  XMLElement* rootElement = document.NewElement("xmltvmap");
   document.InsertEndChild(rootElement);
 
   // Create one <mapping> for every channel
-  for (const auto &mapping : m_channelMappings)
+  for (const auto& mapping : m_channelMappings)
   {
-    XMLElement *mappingElement = document.NewElement("mapping");
+    XMLElement* mappingElement = document.NewElement("mapping");
     mappingElement->SetAttribute("vbox-name", mapping.first.c_str());
     mappingElement->SetAttribute("xmltv-name", mapping.second.c_str());
 
@@ -127,7 +127,7 @@ void GuideChannelMapper::Save()
   }
 
   // Save the file
-  void *fileHandle = XBMC->OpenFileForWrite(MAPPING_FILE_PATH.c_str(), false);
+  void* fileHandle = XBMC->OpenFileForWrite(MAPPING_FILE_PATH.c_str(), false);
 
   if (fileHandle)
   {
@@ -141,7 +141,7 @@ void GuideChannelMapper::Save()
   }
 }
 
-std::string GuideChannelMapper::GetExternalChannelName(const std::string &vboxName) const
+std::string GuideChannelMapper::GetExternalChannelName(const std::string& vboxName) const
 {
   auto it = m_channelMappings.find(vboxName);
 

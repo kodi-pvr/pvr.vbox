@@ -20,10 +20,11 @@
 *
 */
 
-#include <string>
 #include <sstream>
+#include <string>
 
-namespace vbox {
+namespace vbox
+{
 
   enum ChannelOrder
   {
@@ -74,16 +75,14 @@ namespace vbox {
     /**
      * @return whether HTTPS should be used or not
      */
-    bool UseHttps() const
-    {
-      return httpsPort > 0;
-    }
+    bool UseHttps() const { return httpsPort > 0; }
   };
 
   /**
    * Represents the settings for this addon
    */
-  class Settings {
+  class Settings
+  {
   public:
     ConnectionParameters m_internalConnectionParams;
     ConnectionParameters m_externalConnectionParams;
@@ -93,4 +92,4 @@ namespace vbox {
     bool m_timeshiftEnabled;
     std::string m_timeshiftBufferPath;
   };
-}
+} // namespace vbox

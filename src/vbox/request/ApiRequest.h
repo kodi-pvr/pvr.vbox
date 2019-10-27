@@ -20,13 +20,16 @@
 *
 */
 
-#include <string>
-#include <map>
-#include <vector>
 #include "Request.h"
 
-namespace vbox {
-  namespace request {
+#include <map>
+#include <string>
+#include <vector>
+
+namespace vbox
+{
+  namespace request
+  {
 
     /**
      * Represents an API request
@@ -34,8 +37,8 @@ namespace vbox {
     class ApiRequest : public Request
     {
     public:
-      ApiRequest(const std::string &method);
-      virtual ~ApiRequest() {};
+      ApiRequest(const std::string& method);
+      virtual ~ApiRequest(){};
 
       /**
        * Adds a request parameter with the specified value
@@ -43,9 +46,9 @@ namespace vbox {
        * @param name  The name.
        * @param value The value.
        */
-      void AddParameter(const std::string &name, const std::string &value);
-      void AddParameter(const std::string &name, int value);
-      void AddParameter(const std::string &name, unsigned int value);
+      void AddParameter(const std::string& name, const std::string& value);
+      void AddParameter(const std::string& name, int value);
+      void AddParameter(const std::string& name, unsigned int value);
 
       void SetTimeout(int timeout);
 
@@ -54,7 +57,6 @@ namespace vbox {
       virtual std::string GetIdentifier() const override;
 
     private:
-
       /**
        * The method name
        */
@@ -81,5 +83,5 @@ namespace vbox {
        */
       static const std::vector<std::string> xmltvMethods;
     };
-  }
-}
+  } // namespace request
+} // namespace vbox

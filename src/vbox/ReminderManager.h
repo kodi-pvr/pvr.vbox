@@ -20,17 +20,20 @@
 *
 */
 
+#include "../xmltv/Programme.h"
+#include "Reminder.h"
+
+#include <functional>
+#include <queue>
 #include <string>
 #include <vector>
-#include <queue>
-#include <functional>
-#include "Reminder.h"
-#include "../xmltv/Programme.h"
-#include "kodi/xbmc_pvr_types.h"
 
-namespace vbox {
+#include <kodi/xbmc_pvr_types.h>
 
-  typedef std::priority_queue<ReminderPtr, std::vector<ReminderPtr> > ReminderQueue;
+namespace vbox
+{
+
+  typedef std::priority_queue<ReminderPtr, std::vector<ReminderPtr>> ReminderQueue;
   typedef std::unique_ptr<ReminderQueue> ReminderQueuePtr;
 
   /**
@@ -56,7 +59,7 @@ namespace vbox {
     * @param minsInAdvance minutes before the program's start time to pop the reminder
     * @return the success of adding the newly created reminder
     */
-    bool AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsBeforePop);
+    bool AddReminder(const ChannelPtr& channel, const ::xmltv::ProgrammePtr& programme, unsigned int minsBeforePop);
 
     /**
     * Creates and stores a reminder with a given channel, and a manually given program name and its' start time
@@ -65,7 +68,7 @@ namespace vbox {
     * @param minsInAdvance minutes before the program's start time to pop the reminder
     * @return the success of adding the newly created reminder
     */
-    bool AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsBeforePop);
+    bool AddReminder(const ChannelPtr& channel, time_t startTime, std::string& progName, unsigned int minsBeforePop);
 
     /**
     * @param currTime the current time
@@ -81,7 +84,7 @@ namespace vbox {
     /**
     * Removes all reminder set for a channel (if exist)
     */
-    bool DeleteChannelReminders(const ChannelPtr &channel);
+    bool DeleteChannelReminders(const ChannelPtr& channel);
 
     /**
     * Removes a program's reminder (if exists)
@@ -99,7 +102,6 @@ namespace vbox {
     void Save();
 
   private:
-
     /**
     * The path to the reminders XML file
     */
@@ -112,4 +114,4 @@ namespace vbox {
   };
 
   typedef std::unique_ptr<ReminderManager> ReminderManagerPtr;
-}
+} // namespace vbox

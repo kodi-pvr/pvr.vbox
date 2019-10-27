@@ -20,12 +20,13 @@
 *
 */
 
-#include <string>
-#include <vector>
 #include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
-namespace vbox {
+namespace vbox
+{
 
   typedef std::map<std::string, int> GenreMap;
   typedef std::map<std::string, int> CategoryMap;
@@ -37,9 +38,9 @@ namespace vbox {
   public:
     CategoryGenreMapper();
     ~CategoryGenreMapper() = default;
-    void Initialize(const std::string &xmlFileName);
-    bool LoadCategoryToGenreXML(const std::string &xmlFileName);
-    int GetCategoriesGenreType(std::vector<std::string> &categories);
+    void Initialize(const std::string& xmlFileName);
+    bool LoadCategoryToGenreXML(const std::string& xmlFileName);
+    int GetCategoriesGenreType(std::vector<std::string>& categories);
 
   private:
     GenreMap m_genreMap;
@@ -47,4 +48,4 @@ namespace vbox {
   };
 
   typedef std::unique_ptr<CategoryGenreMapper> CategoryMapperPtr;
-}
+} // namespace vbox

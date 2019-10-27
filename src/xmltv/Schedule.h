@@ -20,10 +20,11 @@
 *
 */
 
-#include "Programme.h"
 #include "Channel.h"
-#include <vector>
+#include "Programme.h"
+
 #include <memory>
+#include <vector>
 
 // Visual Studio can't handle type names longer than 255 characters in debug
 // mode, disable that warning since it's not important
@@ -31,7 +32,8 @@
 #pragma warning(disable : 4503)
 #endif
 
-namespace xmltv {
+namespace xmltv
+{
 
   class Schedule;
   typedef std::shared_ptr<Schedule> SchedulePtr;
@@ -43,12 +45,11 @@ namespace xmltv {
   class Schedule
   {
   public:
-
     /**
      * Creates a new schedule
      * @param the channel this schedule is for
      */
-    Schedule(ChannelPtr &channel);
+    Schedule(ChannelPtr& channel);
 
     /**
      * Adds the specified programme to the specified channel's schedule
@@ -74,21 +75,15 @@ namespace xmltv {
     /**
      * @return the channel this schedule is for
      */
-    const ChannelPtr GetChannel() const
-    {
-      return m_channel;
-    }
+    const ChannelPtr GetChannel() const { return m_channel; }
 
     /**
      * @return the number of programmes in the schedule
      */
-    size_t GetLength() const
-    {
-      return m_programmes.size();
-    }
+    size_t GetLength() const { return m_programmes.size(); }
 
   private:
     Segment m_programmes;
     ChannelPtr m_channel;
   };
-}
+} // namespace xmltv

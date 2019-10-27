@@ -21,10 +21,10 @@
  *
  */
 
-#include "kodi/libXBMC_addon.h"
-
 #include <ctime>
 #include <string>
+
+#include <kodi/libXBMC_addon.h>
 
 namespace vbox
 {

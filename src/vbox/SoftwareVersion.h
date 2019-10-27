@@ -30,32 +30,31 @@ namespace vbox
   class SoftwareVersion
   {
   public:
-
-    bool operator== (const SoftwareVersion &other) const
+    bool operator==(const SoftwareVersion& other) const
     {
       return m_major == other.m_major &&
-        m_minor == other.m_minor &&
-        m_revision == other.m_revision;
+             m_minor == other.m_minor &&
+             m_revision == other.m_revision;
     }
 
-    bool operator> (const SoftwareVersion &other) const
+    bool operator>(const SoftwareVersion& other) const
     {
       return m_major > other.m_major ||
-        m_minor > other.m_minor ||
-        m_revision > other.m_revision;
+             m_minor > other.m_minor ||
+             m_revision > other.m_revision;
     }
 
-    bool operator< (const SoftwareVersion &other) const
+    bool operator<(const SoftwareVersion& other) const
     {
       return !(*this > other) && !(*this == other);
     }
 
-    bool operator>= (const SoftwareVersion &other) const
+    bool operator>=(const SoftwareVersion& other) const
     {
       return !(*this < other);
     }
 
-    bool operator<= (const SoftwareVersion &other) const
+    bool operator<=(const SoftwareVersion& other) const
     {
       return !(*this > other);
     }
@@ -69,11 +68,11 @@ namespace vbox
      * @return a SoftwareVersion object representing the specified version
      * string. The version string should either be e.g. "2.46.20" or "VB.2.46.20"
      */
-    static SoftwareVersion ParseString(const std::string &string);
+    static SoftwareVersion ParseString(const std::string& string);
 
   private:
     unsigned int m_major = 0;
     unsigned int m_minor = 0;
     unsigned int m_revision = 0;
   };
-}
+} // namespace vbox

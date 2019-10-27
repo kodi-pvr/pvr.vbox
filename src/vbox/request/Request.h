@@ -20,11 +20,14 @@
 *
 */
 
-#include <string>
 #include "../response/Response.h"
 
-namespace vbox {
-  namespace request {
+#include <string>
+
+namespace vbox
+{
+  namespace request
+  {
 
     /**
      * Interface for requests
@@ -49,5 +52,5 @@ namespace vbox {
        */
       virtual std::string GetIdentifier() const = 0;
     };
-  }
-}
+  } // namespace request
+} // namespace vbox

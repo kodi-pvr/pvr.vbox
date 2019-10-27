@@ -20,11 +20,14 @@
 *
 */
 
-#include <string>
 #include "Request.h"
 
-namespace vbox {
-  namespace request {
+#include <string>
+
+namespace vbox
+{
+  namespace request
+  {
 
     /**
      * Represents a local file request
@@ -32,8 +35,7 @@ namespace vbox {
     class FileRequest : public Request
     {
     public:
-      FileRequest(const std::string &path)
-        : m_path(path) {}
+      FileRequest(const std::string& path) : m_path(path) {}
       virtual ~FileRequest() {}
 
       virtual response::ResponseType GetResponseType() const override
@@ -42,18 +44,12 @@ namespace vbox {
         return response::ResponseType::XMLTV;
       }
 
-      virtual std::string GetLocation() const override
-      {
-        return m_path;
-      }
+      virtual std::string GetLocation() const override { return m_path; }
 
-      virtual std::string GetIdentifier() const override
-      {
-        return "FileRequest for \"" + m_path + "\"";
-      }
+      virtual std::string GetIdentifier() const override { return "FileRequest for \"" + m_path + "\""; }
 
     private:
       std::string m_path;
     };
-  }
-}
+  } // namespace request
+} // namespace vbox

@@ -19,12 +19,15 @@
 *
 */
 #include "CategoryGenreMapper.h"
-#include <algorithm>
-#include "lib/tinyxml2/tinyxml2.h"
-#include "p8-platform/util/StringUtils.h"
-#include "Utilities.h"
-#include "Exceptions.h"
+
 #include "../client.h"
+#include "Exceptions.h"
+#include "Utilities.h"
+
+#include <algorithm>
+
+#include <lib/tinyxml2/tinyxml2.h>
+#include <p8-platform/util/StringUtils.h>
 
 using namespace xmltv;
 using namespace vbox;
@@ -47,13 +50,13 @@ CategoryGenreMapper::CategoryGenreMapper()
   m_genreMap["user"] = EPG_EVENT_CONTENTMASK_USERDEFINED;
 }
 
-void CategoryGenreMapper::Initialize(const std::string &xmlFileName)
+void CategoryGenreMapper::Initialize(const std::string& xmlFileName)
 {
   g_vbox->Log(ADDON::LOG_INFO, "Initializing genre mapper");
   LoadCategoryToGenreXML(xmlFileName);
 }
 
-bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName)
+bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string& xmlFileName)
 {
   if (!XBMC->FileExists(xmlFileName.c_str(), false))
   {
@@ -63,7 +66,7 @@ bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName)
   else
   {
     g_vbox->Log(ADDON::LOG_INFO, "Found channel mapping file, attempting to load it");
-    void *fileHandle = XBMC->OpenFile(xmlFileName.c_str(), 0x08 /* READ_NO_CACHE */);
+    void* fileHandle = XBMC->OpenFile(xmlFileName.c_str(), 0x08 /* READ_NO_CACHE */);
 
     if (!fileHandle)
     {
@@ -79,14 +82,14 @@ bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName)
       throw vbox::InvalidXMLException("XML parsing failed: " + std::string(document.ErrorName()));
 
     // Create mappings
-    for (const XMLElement *element = document.RootElement()->FirstChildElement("category");
-      element != nullptr; element = element->NextSiblingElement("category"))
+    for (const XMLElement* element = document.RootElement()->FirstChildElement("category"); element != nullptr;
+         element = element->NextSiblingElement("category"))
     {
-      const char *pGenreAttr = element->Attribute("genre-type");
+      const char* pGenreAttr = element->Attribute("genre-type");
 
       if (!pGenreAttr)
         continue;
-      m_categoryMap.insert(std::pair<std::string,int>(element->GetText(), m_genreMap[pGenreAttr]) );
+      m_categoryMap.insert(std::pair<std::string, int>(element->GetText(), m_genreMap[pGenreAttr]));
     }
 
     XBMC->CloseFile(fileHandle);
@@ -94,8 +97,10 @@ bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string &xmlFileName)
   return true;
 }
 
-static bool UpdateFullCatMatch(std::map<int, int> &rMatchesMap, std::map<int, int>::iterator & rFinalMatch,
-                      CategoryMap::iterator &rCatItr, std::string &rCategoryStr)
+static bool UpdateFullCatMatch(std::map<int, int>& rMatchesMap,
+                               std::map<int, int>::iterator& rFinalMatch,
+                               CategoryMap::iterator& rCatItr,
+                               std::string& rCategoryStr)
 {
   // return match if category string matches fully (after ignoring case)
   if (!StringUtils::CompareNoCase(rCatItr->first, rCategoryStr))
@@ -114,8 +119,10 @@ static bool UpdateFullCatMatch(std::map<int, int> &rMatchesMap, std::map<int, in
 }
 
 // genre-type match counting algorithm taken from Stalker PVR add-on
-static void UpdatePartialCatMatch(std::map<int, int> &rMatchesMap, std::map<int, int>::iterator & rFinalMatch,
-                          CategoryMap::iterator &rCatItr, std::string &rCategoryStr)
+static void UpdatePartialCatMatch(std::map<int, int>& rMatchesMap,
+                                  std::map<int, int>::iterator& rFinalMatch,
+                                  CategoryMap::iterator& rCatItr,
+                                  std::string& rCategoryStr)
 {
   std::string lowerCategoryStr(rCategoryStr);
   std::string xmlCatStr(rCatItr->first);
@@ -135,7 +142,7 @@ static void UpdatePartialCatMatch(std::map<int, int> &rMatchesMap, std::map<int,
 }
 
 // genre-type match counting algorithm taken from Stalker PVR add-on
-static void UpdateFinalMatch(std::map<int, int> &rMatchesMap, std::map<int, int>::iterator & rFinalMatch)
+static void UpdateFinalMatch(std::map<int, int>& rMatchesMap, std::map<int, int>::iterator& rFinalMatch)
 {
   // update final match as the match with the maximum counter
   for (std::map<int, int>::iterator match = rMatchesMap.begin(); match != rMatchesMap.end(); ++match)
@@ -148,7 +155,7 @@ static void UpdateFinalMatch(std::map<int, int> &rMatchesMap, std::map<int, int>
   }
 }
 
-int CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string> &categories)
+int CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string>& categories)
 {
   std::map<int, int> matches;
   std::map<int, int>::iterator finalMatch = matches.end();

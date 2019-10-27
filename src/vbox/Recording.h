@@ -21,15 +21,17 @@
 */
 
 #include <ctime>
-#include <string>
 #include <memory>
+#include <string>
 
-namespace vbox {
+namespace vbox
+{
 
   /**
    * The possible states a recording can be in
    */
-  enum RecordingState {
+  enum RecordingState
+  {
     SCHEDULED,
     RECORDED,
     RECORDING,
@@ -46,11 +48,10 @@ namespace vbox {
   class Recording
   {
   public:
-    Recording(const std::string &channelId,
-      const std::string &channelName, RecordingState state);
+    Recording(const std::string& channelId, const std::string& channelName, RecordingState state);
     ~Recording();
 
-    bool operator== (const Recording &other)
+    bool operator==(const Recording& other)
     {
       return m_id == other.m_id &&
         m_seriesId == other.m_seriesId &&
@@ -65,7 +66,7 @@ namespace vbox {
         m_state == other.m_state;
     }
 
-    bool operator!= (const Recording &other)
+    bool operator!=(const Recording& other)
     {
       return !(*this == other);
     }
@@ -78,8 +79,7 @@ namespace vbox {
      */
     bool IsTimer() const
     {
-      return m_state == RecordingState::SCHEDULED ||
-        m_state == RecordingState::RECORDING;
+      return m_state == RecordingState::SCHEDULED || m_state == RecordingState::RECORDING;
     }
 
     /**
@@ -89,19 +89,16 @@ namespace vbox {
     bool IsRecording() const
     {
       return m_state == RecordingState::RECORDED ||
-        m_state == RecordingState::RECORDING ||
-        m_state == RecordingState::RECORDING_ERROR ||
-        m_state == RecordingState::EXTERNAL;
+             m_state == RecordingState::RECORDING ||
+             m_state == RecordingState::RECORDING_ERROR ||
+             m_state == RecordingState::EXTERNAL;
     }
 
     /**
      * Returns the state of the recording
      * @return the state
      */
-    RecordingState GetState() const
-    {
-      return m_state;
-    }
+    RecordingState GetState() const { return m_state; }
 
     unsigned int m_id;
     unsigned int m_seriesId;
@@ -118,4 +115,4 @@ namespace vbox {
   private:
     RecordingState m_state;
   };
-}
+} // namespace vbox

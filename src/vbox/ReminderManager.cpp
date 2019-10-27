@@ -18,14 +18,17 @@
 *  http://www.gnu.org/copyleft/gpl.html
 *
 */
-#include "ContentIdentifier.h"
 #include "ReminderManager.h"
-#include <algorithm>
-#include "lib/tinyxml2/tinyxml2.h"
-#include "p8-platform/util/StringUtils.h"
-#include "Utilities.h"
-#include "Exceptions.h"
+
 #include "../client.h"
+#include "ContentIdentifier.h"
+#include "Exceptions.h"
+#include "Utilities.h"
+
+#include <algorithm>
+
+#include <lib/tinyxml2/tinyxml2.h>
+#include <p8-platform/util/StringUtils.h>
 
 using namespace vbox;
 using namespace tinyxml2;
@@ -46,24 +49,31 @@ void ReminderManager::Initialize()
   }
 }
 
-bool ReminderManager::AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme, unsigned int minsBeforePop)
+bool ReminderManager::AddReminder(const ChannelPtr& channel,
+                                  const ::xmltv::ProgrammePtr& programme,
+                                  unsigned int minsBeforePop)
 {
   // Construct the object
   ReminderPtr reminder(new Reminder(channel, programme, minsBeforePop));
   // save in queue
-  g_vbox->Log(ADDON::LOG_DEBUG, "Added reminder (1) for channel %s, prog %s", programme->m_channelName.c_str(), programme->m_title.c_str());
+  g_vbox->Log(ADDON::LOG_DEBUG, "Added reminder (1) for channel %s, prog %s", programme->m_channelName.c_str(),
+              programme->m_title.c_str());
   m_reminders.push(reminder);
   Save();
   return true;
 }
 
-bool ReminderManager::AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName, unsigned int minsBeforePop)
+bool ReminderManager::AddReminder(const ChannelPtr& channel,
+                                  time_t startTime,
+                                  std::string& progName,
+                                  unsigned int minsBeforePop)
 {
   g_vbox->Log(ADDON::LOG_DEBUG, "Added reminder for %s", g_vbox->CreateTimestamp(startTime).c_str());
   // Construct the object
   ReminderPtr reminder(new Reminder(channel, startTime, progName, minsBeforePop));
   // save in queue
-  g_vbox->Log(ADDON::LOG_DEBUG, "Added reminder (2) for channel %s, prog %s", channel->m_name.c_str(), progName.c_str());
+  g_vbox->Log(ADDON::LOG_DEBUG, "Added reminder (2) for channel %s, prog %s", channel->m_name.c_str(),
+              progName.c_str());
   m_reminders.push(reminder);
   Save();
   return true;
@@ -105,7 +115,7 @@ void ReminderManager::DeleteNextReminder()
   Save();
 }
 
-bool ReminderManager::DeleteChannelReminders(const ChannelPtr &rChannel)
+bool ReminderManager::DeleteChannelReminders(const ChannelPtr& rChannel)
 {
   bool fSuccess = false;
   ReminderQueue queue;
@@ -116,17 +126,17 @@ bool ReminderManager::DeleteChannelReminders(const ChannelPtr &rChannel)
     m_reminders.pop();
     std::string channelId = reminder->m_channelXmltvName;
     // find matching channel
-    auto &channels = g_vbox->GetChannels();
+    auto& channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
-      [&channelId](const ChannelPtr &channel)
-    {
-      return channelId == channel->m_xmltvName;
-    });
+      [&channelId](const ChannelPtr& channel) {
+        return channelId == channel->m_xmltvName;
+      }
+    );
 
     // if channel does not match - keep reminder
     if (it != channels.end())
     {
-      const ChannelPtr &selectedChannel = *it;
+      const ChannelPtr& selectedChannel = *it;
       if (rChannel == selectedChannel)
       {
         g_vbox->Log(ADDON::LOG_INFO, "Removing reminder, matches channel %s", selectedChannel->m_xmltvName.c_str());
@@ -155,21 +165,22 @@ bool ReminderManager::DeleteProgramReminders(unsigned int epgUid)
     m_reminders.pop();
     std::string channelId = reminder->m_channelXmltvName;
 
-    auto &channels = g_vbox->GetChannels();
+    auto& channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
-      [&channelId](const ChannelPtr &channel)
-    {
-      return channelId == channel->m_xmltvName;
-    });
+      [&channelId](const ChannelPtr& channel) {
+        return channelId == channel->m_xmltvName;
+      }
+    );
 
     // if channel does not match - keep reminder & continue
     if (it != channels.end())
     {
-      const ChannelPtr &selectedChannel = *it;
+      const ChannelPtr& selectedChannel = *it;
       const Schedule schedule = g_vbox->GetSchedule(selectedChannel);
       const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
       // skip reminder if the EPG event is found
-      if (programme && programme->m_title == reminder->m_progName && xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) == reminder->m_startTime)
+      if (programme && programme->m_title == reminder->m_progName &&
+          xmltv::Utilities::XmltvToUnixTime(programme->m_startTime) == reminder->m_startTime)
       {
         fSuccess = true;
         continue;
@@ -187,12 +198,12 @@ bool ReminderManager::DeleteProgramReminders(unsigned int epgUid)
 void ReminderManager::Load()
 {
   g_vbox->Log(ADDON::LOG_INFO, "Found reminders XML file, attempting to load it");
-  void *fileHandle = XBMC->OpenFile(REMINDERS_XML.c_str(), 0x08 /* READ_NO_CACHE */);
+  void* fileHandle = XBMC->OpenFile(REMINDERS_XML.c_str(), 0x08 /* READ_NO_CACHE */);
 
   if (!fileHandle)
   {
     g_vbox->Log(ADDON::LOG_ERROR, "Could not open reminders XML, throwing exception");
-    throw vbox::InvalidXMLException("XML could not be opened" );
+    throw vbox::InvalidXMLException("XML could not be opened");
   }
 
   m_reminders = ReminderQueue();
@@ -208,17 +219,18 @@ void ReminderManager::Load()
 
   unsigned int minsBeforePop = g_vbox->GetSettings().m_remindMinsBeforeProg;
   // Create mappings
-  for (const XMLElement *element = document.RootElement()->FirstChildElement("reminder");
-    element != nullptr; element = element->NextSiblingElement("reminder"))
+  for (const XMLElement* element = document.RootElement()->FirstChildElement("reminder"); element != nullptr;
+       element = element->NextSiblingElement("reminder"))
   {
     g_vbox->Log(ADDON::LOG_INFO, "Found reminder");
     // get channel, program name and start time
-    const char *pXmltvId = element->Attribute("channel");
-    const char *pStartTime = element->Attribute("start-time");
-    const char *pProgName = element->GetText();
+    const char* pXmltvId = element->Attribute("channel");
+    const char* pStartTime = element->Attribute("start-time");
+    const char* pProgName = element->GetText();
     g_vbox->Log(ADDON::LOG_INFO, "Reminder  1 is for ch %s, startTime %s", pXmltvId, pStartTime);
-    std::string progTitle(pProgName? pProgName : "");
-    g_vbox->Log(ADDON::LOG_INFO, "Reminder 2 is for ch %s, startTime %s, progTitle=%s", pXmltvId, pStartTime, progTitle.c_str());
+    std::string progTitle(pProgName ? pProgName : "");
+    g_vbox->Log(ADDON::LOG_INFO, "Reminder 2 is for ch %s, startTime %s, progTitle=%s", pXmltvId, pStartTime,
+                progTitle.c_str());
     if (!pXmltvId || !pStartTime)
       continue;
 
@@ -228,13 +240,13 @@ void ReminderManager::Load()
     time_t startTime(xmltv::Utilities::XmltvToUnixTime(xmltvStartTime));
     g_vbox->Log(ADDON::LOG_INFO, "Reminder is for encodedChId %s, looking for it", encodedChId.c_str());
     // Find the channel the reminder is for
-    auto &channels = g_vbox->GetChannels();
+    auto& channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
-      [&encodedChId](const ChannelPtr &channel)
-    {
-      g_vbox->Log(ADDON::LOG_INFO, "Channel is %s when looking for %s", channel->m_xmltvName.c_str(), encodedChId.c_str());
-      return encodedChId == channel->m_xmltvName;
-    });
+      [&encodedChId](const ChannelPtr& channel) {
+        g_vbox->Log(ADDON::LOG_INFO, "Channel is %s when looking for %s", channel->m_xmltvName.c_str(), encodedChId.c_str());
+        return encodedChId == channel->m_xmltvName;
+      }
+    );
 
     if (it == channels.end())
     {
@@ -258,11 +270,11 @@ void ReminderManager::Save()
 
   // Create the document
   tinyxml2::XMLDocument document;
-  XMLDeclaration *declaration = document.NewDeclaration();
+  XMLDeclaration* declaration = document.NewDeclaration();
   document.InsertEndChild(declaration);
 
   // Create the root node (<reminders>)
-  XMLElement *rootElement = document.NewElement("reminders");
+  XMLElement* rootElement = document.NewElement("reminders");
   document.InsertEndChild(rootElement);
   g_vbox->Log(ADDON::LOG_INFO, "Save(1): %u reminders", m_reminders.size());
 
@@ -271,7 +283,7 @@ void ReminderManager::Save()
   {
     ReminderPtr reminder = m_reminders.top();
     g_vbox->Log(ADDON::LOG_INFO, "Save(2): got reminder", m_reminders.size());
-    XMLElement *reminderElement = document.NewElement("reminder");
+    XMLElement* reminderElement = document.NewElement("reminder");
     reminderElement->SetText(reminder->m_progName.c_str());
     reminderElement->SetAttribute("channel", reminder->m_channelXmltvName.c_str());
     reminderElement->SetAttribute("start-time", g_vbox->CreateTimestamp(reminder->m_startTime).c_str());
@@ -286,7 +298,7 @@ void ReminderManager::Save()
 
   XBMC->DeleteFile(REMINDERS_XML.c_str());
   // Save the file
-  void *fileHandle = XBMC->OpenFileForWrite(REMINDERS_XML.c_str(), false);
+  void* fileHandle = XBMC->OpenFileForWrite(REMINDERS_XML.c_str(), false);
 
   if (fileHandle)
   {

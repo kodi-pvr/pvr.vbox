@@ -43,8 +43,8 @@ RecordingReader::RecordingReader(const std::string& streamURL, std::time_t start
     m_duration = static_cast<int>(end - start);
   }
 
-  g_vbox->Log(ADDON::LOG_DEBUG, "%s RecordingReader: Started - url=%s, start=%u, end=%u, duration=%d", __FUNCTION__, m_streamURL.c_str(),
-              m_start, m_end, m_duration);
+  g_vbox->Log(ADDON::LOG_DEBUG, "%s RecordingReader: Started - url=%s, start=%u, end=%u, duration=%d", __FUNCTION__,
+              m_streamURL.c_str(), m_start, m_end, m_duration);
 }
 
 RecordingReader::~RecordingReader()

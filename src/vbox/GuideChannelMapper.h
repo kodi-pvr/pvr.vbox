@@ -20,12 +20,14 @@
 *
 */
 
-#include <string>
-#include <memory>
-#include <map>
 #include "../xmltv/Guide.h"
 
-namespace vbox {
+#include <map>
+#include <memory>
+#include <string>
+
+namespace vbox
+{
 
   class GuideChannelMapper;
   typedef std::unique_ptr<GuideChannelMapper> GuideChannelMapperPtr;
@@ -38,8 +40,7 @@ namespace vbox {
   class GuideChannelMapper
   {
   public:
-
-    GuideChannelMapper(const ::xmltv::Guide &vboxGuide, const ::xmltv::Guide &externalGuide);
+    GuideChannelMapper(const ::xmltv::Guide& vboxGuide, const ::xmltv::Guide& externalGuide);
     ~GuideChannelMapper() = default;
 
     /**
@@ -52,10 +53,9 @@ namespace vbox {
     * @param vboxName a VBox channel name
     * @return the corresponding channel name from the external guide
     */
-    std::string GetExternalChannelName(const std::string &vboxName) const;
+    std::string GetExternalChannelName(const std::string& vboxName) const;
 
   private:
-
     /**
      * Creates a default mapping between the two guides using exact name matching
      * @eturn the mappings
@@ -80,16 +80,16 @@ namespace vbox {
     /**
      * The internal guide data
      */
-    const ::xmltv::Guide &m_vboxGuide;
+    const ::xmltv::Guide& m_vboxGuide;
 
     /**
      * The external guide data
      */
-    const ::xmltv::Guide &m_externalGuide;
+    const ::xmltv::Guide& m_externalGuide;
 
     /**
      * The channel name mappings
      */
     ChannelMappings m_channelMappings;
   };
-}
+} // namespace vbox

@@ -20,34 +20,41 @@
 */
 
 #include "VBox.h"
-#include <string>
-#include <sstream>
-#include <chrono>
-#include <algorithm>
-#include "p8-platform/util/timeutils.h"
+
 #include "../client.h"
+#include "../xmltv/Utilities.h"
 #include "ContentIdentifier.h"
 #include "Exceptions.h"
 #include "Utilities.h"
-#include "response/Factory.h"
-#include "request/Request.h"
 #include "request/ApiRequest.h"
 #include "request/FileRequest.h"
+#include "request/Request.h"
 #include "response/Content.h"
-#include "../xmltv/Utilities.h"
+#include "response/Factory.h"
+
+#include <algorithm>
+#include <chrono>
+#include <sstream>
+#include <string>
+
+#include <p8-platform/util/timeutils.h>
 
 using namespace ADDON;
 using namespace vbox;
 
-const char * VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
+const char* VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
 const time_t STREAMING_STATUS_UPDATE_INTERVAL = 10;
 const int CHANNELS_PER_CHANNELBATCH = 100;
 const int CHANNELS_PER_EPGBATCH = 10;
 const size_t VBOX_LOG_BUFFER = 16384;
 
-VBox::VBox(const Settings &settings)
-  : m_settings(settings), m_currentChannel(nullptr), m_categoryGenreMapper(nullptr), m_shouldSyncEpg(false), m_reminderManager(nullptr),
-  m_lastStreamStatus({ChannelStreamingStatus(), time(nullptr)})
+VBox::VBox(const Settings& settings)
+  : m_settings(settings),
+    m_currentChannel(nullptr),
+    m_categoryGenreMapper(nullptr),
+    m_shouldSyncEpg(false),
+    m_reminderManager(nullptr),
+    m_lastStreamStatus({ChannelStreamingStatus(), time(nullptr)})
 {
 }
 
@@ -96,15 +103,15 @@ void VBox::Initialize()
   // Check that the backend uses a compatible software version
   if (m_backendInformation.version < SoftwareVersion::ParseString(MINIMUM_SOFTWARE_VERSION))
   {
-    std::string error = std::string("Firmware version ") +
-      MINIMUM_SOFTWARE_VERSION + " or higher is required";
+    std::string error = std::string("Firmware version ") + MINIMUM_SOFTWARE_VERSION + " or higher is required";
 
     throw FirmwareVersionException(error);
   }
 
   // Query external media status. The request will error if no external media
   // is attached
-  try {
+  try
+  {
     request::ApiRequest mediaRequest("QueryExternalMediaStatus");
     response::ResponsePtr mediaResponse = PerformRequest(mediaRequest);
     response::Content mediaStatus = response::Content(mediaResponse->GetReplyElement());
@@ -116,7 +123,7 @@ void VBox::Initialize()
 
     m_backendInformation.externalMediaStatus = externalMediaStatus;
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     LogException(e);
   }
@@ -155,7 +162,8 @@ void VBox::DetermineConnectionParams()
   // Attempt to perform a request using the internal connection parameters
   m_currentConnectionParameters = m_settings.m_internalConnectionParams;
 
-  try {
+  try
+  {
     request::ApiRequest request("QuerySwVersion");
     request.SetTimeout(m_currentConnectionParameters.timeout);
     PerformRequest(request);
@@ -174,7 +182,7 @@ void VBox::DetermineConnectionParams()
     }
   }
 
-  auto &params = m_currentConnectionParameters;
+  auto& params = m_currentConnectionParameters;
   Log(LOG_INFO, "Connection parameters used: ");
   Log(LOG_INFO, "    Hostname: %s", params.hostname.c_str());
 
@@ -186,7 +194,7 @@ void VBox::DetermineConnectionParams()
   Log(LOG_INFO, "    UPnP port: %d", params.upnpPort);
 }
 
-void VBox::InitScanningEPG(std::string &rScanMethod, std::string &rGetStatusMethod, std::string &rfIsScanningFlag)
+void VBox::InitScanningEPG(std::string& rScanMethod, std::string& rGetStatusMethod, std::string& rfIsScanningFlag)
 {
   // determine wether the device is in External XMLTV mode (internal, not through Kodi definitions)
   SendScanEPG(rScanMethod);
@@ -213,26 +221,26 @@ void VBox::UpdateEpgScan(bool fRetrieveGuide)
 
   switch (m_epgScanState)
   {
-  case EPGSCAN_SHOULD_SCAN:
-    // find the correct methods for the guide's External XMLTV / Live Signal mode
-    InitScanningEPG(scanEpgMethod, epgStatusCheckMethod, epgStatusCheckFlag);
-  case EPGSCAN_SCANNING:
-  case EPGSCAN_FINISHED:
-    if (fRetrieveGuide)
-    {
-      // check for EPG detection state
-      GetEpgDetectionState(epgStatusCheckMethod, epgStatusCheckFlag);
-      // retrieve guide periodically (or when finished)
-      RetrieveGuide();
-      // if done detecting EPG - change flag to false
-      if (m_epgScanState == EPGSCAN_FINISHED)
+    case EPGSCAN_SHOULD_SCAN:
+      // find the correct methods for the guide's External XMLTV / Live Signal mode
+      InitScanningEPG(scanEpgMethod, epgStatusCheckMethod, epgStatusCheckFlag);
+    case EPGSCAN_SCANNING:
+    case EPGSCAN_FINISHED:
+      if (fRetrieveGuide)
       {
-        XBMC->QueueNotification(ADDON::QUEUE_INFO, "EPG scanned and synced with guide");
-        m_epgScanState = EPGSCAN_NO_SCAN;
+        // check for EPG detection state
+        GetEpgDetectionState(epgStatusCheckMethod, epgStatusCheckFlag);
+        // retrieve guide periodically (or when finished)
+        RetrieveGuide();
+        // if done detecting EPG - change flag to false
+        if (m_epgScanState == EPGSCAN_FINISHED)
+        {
+          XBMC->QueueNotification(ADDON::QUEUE_INFO, "EPG scanned and synced with guide");
+          m_epgScanState = EPGSCAN_NO_SCAN;
+        }
       }
-    }
-  case EPGSCAN_NO_SCAN:
-    break;
+    case EPGSCAN_NO_SCAN:
+      break;
   }
 }
 
@@ -245,10 +253,11 @@ void VBox::RetrieveReminders()
 
     m_reminderManager = ReminderManagerPtr(new ReminderManager());
 
-    try {
+    try
+    {
       m_reminderManager->Initialize();
     }
-    catch (VBoxException &e)
+    catch (VBoxException& e)
     {
       LogException(e);
       Log(LOG_INFO, "Failed to load the reminders XML");
@@ -264,7 +273,7 @@ ReminderPtr VBox::GetActiveReminder()
   return m_reminderManager->GetReminderToPop(time(nullptr));
 }
 
-void VBox::DisplayReminder(const ReminderPtr &reminder)
+void VBox::DisplayReminder(const ReminderPtr& reminder)
 {
   GUI->Dialog_OK_ShowAndGetInput("Program reminder", std::string(reminder->GetReminderText()).c_str());
 }
@@ -318,7 +327,7 @@ void VBox::BackgroundUpdater()
     if (lapCounter % 6 == 0)
       RetrieveChannels();
 
-   // if supposed to scan EPG - send scan API and get guide every 5 minutes, until done scanning
+    // if supposed to scan EPG - send scan API and get guide every 5 minutes, until done scanning
     if (m_epgScanState != EPGSCAN_NO_SCAN)
       UpdateEpgScan(lapCounter % (12 * 5) == 0);
     // one-time guide retrieval (from PVR manager settings)
@@ -338,7 +347,8 @@ void VBox::BackgroundUpdater()
 
 bool VBox::IsInitialEpgSkippingCompleted()
 {
-  Log(LOG_DEBUG, "%s Waiting to Get Initial EPG for %d remaining channels", __FUNCTION__, m_unskippedInitialEpgChannelsMap.size());
+  Log(LOG_DEBUG, "%s Waiting to Get Initial EPG for %d remaining channels", __FUNCTION__,
+      m_unskippedInitialEpgChannelsMap.size());
 
   return m_unskippedInitialEpgChannelsMap.size() == 0;
 }
@@ -352,7 +362,8 @@ void VBox::TriggerEpgUpdatesForChannels()
       //We want to trigger full updates only so let's make sure it's not an initialEpg
       m_unskippedInitialEpgChannelsMap.erase(channel->m_uniqueId);
 
-      Log(LOG_DEBUG, "%s - Trigger EPG update for channel: %s (%s)", __FUNCTION__, channel->m_name.c_str(), channel->m_uniqueId.c_str());
+      Log(LOG_DEBUG, "%s - Trigger EPG update for channel: %s (%s)", __FUNCTION__, channel->m_name.c_str(),
+          channel->m_uniqueId.c_str());
     }
   }
 
@@ -444,9 +455,11 @@ const ChannelPtr VBox::GetChannel(unsigned int uniqueId) const
   m_stateHandler.WaitForState(StartupState::CHANNELS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  auto it = std::find_if(m_channels.cbegin(), m_channels.cend(), [uniqueId](const ChannelPtr &channel) {
-    return uniqueId == ContentIdentifier::GetUniqueId(channel);
-  });
+  auto it = std::find_if(m_channels.cbegin(), m_channels.cend(),
+    [uniqueId](const ChannelPtr& channel) {
+      return uniqueId == ContentIdentifier::GetUniqueId(channel);
+    }
+  );
 
   if (it == m_channels.cend())
     return nullptr;
@@ -459,22 +472,22 @@ const ChannelPtr VBox::GetCurrentChannel() const
   return m_currentChannel;
 }
 
-void VBox::SetCurrentChannel(const ChannelPtr &channel)
+void VBox::SetCurrentChannel(const ChannelPtr& channel)
 {
   m_currentChannel = channel;
 }
 
-bool VBox::AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme)
+bool VBox::AddReminder(const ChannelPtr& channel, const ::xmltv::ProgrammePtr& programme)
 {
   return m_reminderManager->AddReminder(channel, programme, m_settings.m_remindMinsBeforeProg);
 }
 
-bool VBox::AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName)
+bool VBox::AddReminder(const ChannelPtr& channel, time_t startTime, std::string& progName)
 {
   return m_reminderManager->AddReminder(channel, startTime, progName, m_settings.m_remindMinsBeforeProg);
 }
 
-bool VBox::DeleteChannelReminders(const ChannelPtr &channel)
+bool VBox::DeleteChannelReminders(const ChannelPtr& channel)
 {
   return m_reminderManager->DeleteChannelReminders(channel);
 }
@@ -487,16 +500,16 @@ bool VBox::DeleteProgramReminders(unsigned int epgUid)
 const ChannelPtr VBox::FindChannelForEPGReminder(int epgUid)
 {
   const xmltv::ProgrammePtr programme = nullptr;
-  const std::vector<ChannelPtr> &channels = g_vbox->GetChannels();
+  const std::vector<ChannelPtr>& channels = g_vbox->GetChannels();
 
   // Find channel that contains this programme
   const std::vector<ChannelPtr>::const_iterator it = std::find_if(channels.cbegin(), channels.cend(),
-    [&epgUid](const ChannelPtr &channel)
-  {
-    const Schedule schedule = g_vbox->GetSchedule(channel);
-    const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
-    return (programme);
-  });
+    [&epgUid](const ChannelPtr& channel) {
+      const Schedule schedule = g_vbox->GetSchedule(channel);
+      const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
+      return (programme);
+    }
+  );
   // Find the channel's schedule
   if (it == channels.cend())
     XBMC->QueueNotification(QUEUE_WARNING, "Reminder could not find the requested channel");
@@ -513,7 +526,7 @@ void VBox::SyncEPGNow()
   m_shouldSyncEpg = true;
 }
 
-void VBox::SendScanEPG(std::string &rEpgDetectionCheckMethod) const
+void VBox::SendScanEPG(std::string& rEpgDetectionCheckMethod) const
 {
   // call method to send EPG detection command
   request::ApiRequest request(rEpgDetectionCheckMethod);
@@ -522,7 +535,7 @@ void VBox::SendScanEPG(std::string &rEpgDetectionCheckMethod) const
   response::Content content(response->GetReplyElement());
 }
 
-void VBox::GetEpgDetectionState(std::string &methodName, std::string &flagName)
+void VBox::GetEpgDetectionState(std::string& methodName, std::string& flagName)
 {
   // call method to check EPG detection status
   request::ApiRequest request(methodName);
@@ -531,10 +544,10 @@ void VBox::GetEpgDetectionState(std::string &methodName, std::string &flagName)
 
   // set flag using a YES/NO flag
   std::string isInlDetection = content.GetString(flagName);
-  m_epgScanState = (isInlDetection == "YES")? EPGSCAN_SCANNING : EPGSCAN_FINISHED;
+  m_epgScanState = (isInlDetection == "YES") ? EPGSCAN_SCANNING : EPGSCAN_FINISHED;
 }
 
-void VBox::SetChannelStreamingStatus(const ChannelPtr &channel)
+void VBox::SetChannelStreamingStatus(const ChannelPtr& channel)
 {
   ChannelStreamingStatus status;
 
@@ -565,7 +578,7 @@ void VBox::SetChannelStreamingStatus(const ChannelPtr &channel)
   m_lastStreamStatus.m_timestamp = time(nullptr);
 }
 
-ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr &channel)
+ChannelStreamingStatus VBox::GetChannelStreamingStatus(const ChannelPtr& channel)
 {
   time_t lastUpdateTime = m_lastStreamStatus.m_timestamp;
   time_t currTime(time(nullptr));
@@ -596,15 +609,14 @@ int VBox::GetRecordingsAmount() const
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  return std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
-    return recording->IsRecording();
-  });
+  return std::count_if(m_recordings.begin(), m_recordings.end(),
+                       [](const RecordingPtr& recording) { return recording->IsRecording(); });
 }
 
-request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recording) const
+request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr& recording) const
 {
   RecordingState state = recording->GetState();
-  unsigned int idToDelete = (recording->m_seriesId > 0)? recording->m_seriesId : recording->m_id;
+  unsigned int idToDelete = (recording->m_seriesId > 0) ? recording->m_seriesId : recording->m_id;
 
   // Determine the request method to use. If a recording is active we want to
   // cancel it instead of deleting it
@@ -624,7 +636,7 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr &recor
   return request;
 }
 
-request::ApiRequest VBox::CreateDeleteSeriesRequest(const SeriesRecordingPtr &series) const
+request::ApiRequest VBox::CreateDeleteSeriesRequest(const SeriesRecordingPtr& series) const
 {
   Log(LOG_DEBUG, "Removing series with ID %d", series->m_id);
   // For a series, CancelRecord cancels next episodes, and if there's a current
@@ -646,13 +658,10 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
   std::unique_lock<std::mutex> lock(m_mutex);
 
   // The request fails if the item doesn't exist
-  try {
+  try
+  {
     // Find the recording/timer - look for a single recording
-    auto it = std::find_if(m_recordings.begin(), m_recordings.end(),
-      [id](const RecordingPtr &recording)
-    {
-      return id == recording->m_id;
-    });
+    auto it = std::find_if(m_recordings.begin(), m_recordings.end(), [id](const RecordingPtr& recording) { return id == recording->m_id; });
 
     // if it matches a single recording - create and send delete request for recording
     if (it != m_recordings.cend())
@@ -666,11 +675,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
     else
     {
       // look for a series with that ID and throw exception if not found
-      auto seriesItr = std::find_if(m_series.begin(), m_series.end(),
-        [id](const SeriesRecordingPtr &series)
-      {
-        return id == series->m_id;
-      });
+      auto seriesItr = std::find_if(m_series.begin(), m_series.end(), [id](const SeriesRecordingPtr& series) { return id == series->m_id; });
       if (seriesItr != m_series.end())
       {
         // create and send cancel request for that series recording
@@ -691,7 +696,7 @@ bool VBox::DeleteRecordingOrTimer(unsigned int id)
 
     return true;
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     LogException(e);
   }
@@ -722,7 +727,8 @@ const RecordingMargins VBox::GetRecordingMargins(bool fBackendSingleMargin) cons
     margins.m_beforeMargin = content.GetUnsignedInteger("MinutesPaddingBefore");
     margins.m_afterMargin = content.GetUnsignedInteger("MinutesPaddingAfter");
   }
-  Log(LOG_DEBUG, "GetRecordingMargins(): Current recording margins: %u and %u", margins.m_beforeMargin, margins.m_afterMargin);
+  Log(LOG_DEBUG, "GetRecordingMargins(): Current recording margins: %u and %u", margins.m_beforeMargin,
+      margins.m_afterMargin);
   return margins;
 }
 
@@ -748,7 +754,7 @@ void VBox::SetRecordingMargins(RecordingMargins margins, bool fBackendSingleMarg
 void VBox::UpdateRecordingMargins(RecordingMargins defaultMargins)
 {
   // get  version from backend
-  SoftwareVersion version(SoftwareVersion::ParseString(m_backendInformation.version.GetString()) );
+  SoftwareVersion version(SoftwareVersion::ParseString(m_backendInformation.version.GetString()));
   RecordingMargins updatedMargins;
   bool fBackendSingleMargin = true;
 
@@ -774,7 +780,7 @@ void VBox::UpdateRecordingMargins(RecordingMargins defaultMargins)
     g_vbox->SetRecordingMargins(updatedMargins, fBackendSingleMargin);
 }
 
-void VBox::AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme)
+void VBox::AddTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr programme)
 {
   // Add the timer
   request::ApiRequest request("ScheduleProgramRecord");
@@ -788,7 +794,7 @@ void VBox::AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr progr
 }
 
 
-static void AddWeekdays(request::ApiRequest &rRequest, const unsigned int weekdays)
+static void AddWeekdays(request::ApiRequest& rRequest, const unsigned int weekdays)
 {
   if (weekdays & PVR_WEEKDAY_SUNDAY)
   {
@@ -820,7 +826,7 @@ static void AddWeekdays(request::ApiRequest &rRequest, const unsigned int weekda
   }
 }
 
-void VBox::AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme)
+void VBox::AddSeriesTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr programme)
 {
   Log(LOG_DEBUG, "Series timer for channel %s, program %s", channel->m_name.c_str(), programme->m_title.c_str());
 
@@ -836,8 +842,8 @@ void VBox::AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr
   RetrieveRecordings();
 }
 
-void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-  const std::string title, const std::string description)
+void VBox::AddTimer(const ChannelPtr& channel, time_t startTime, time_t endTime,
+                    const std::string title, const std::string description)
 {
   Log(LOG_DEBUG, "Adding Manual timer for channel %s", channel->m_name.c_str());
   // Add the timer
@@ -856,8 +862,12 @@ void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
 }
 
 // implement timer with rule for manually defined series
-void VBox::AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-  const std::string title, const std::string description, const unsigned int weekdays)
+void VBox::AddTimer(const ChannelPtr& channel,
+                    time_t startTime,
+                    time_t endTime,
+                    const std::string title,
+                    const std::string description,
+                    const unsigned int weekdays)
 {
   Log(LOG_DEBUG, "Manual series timer for channel %s, weekdays = 0x%x", channel->m_name.c_str(), weekdays);
   // Add the timer
@@ -882,9 +892,8 @@ int VBox::GetTimersAmount() const
   m_stateHandler.WaitForState(StartupState::RECORDINGS_LOADED);
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  int count = std::count_if(m_recordings.begin(), m_recordings.end(), [](const RecordingPtr &recording) {
-    return recording->IsTimer();
-  });
+  int count = std::count_if(m_recordings.begin(), m_recordings.end(),
+                            [](const RecordingPtr& recording) { return recording->IsTimer(); });
   count += m_series.size();
   return count;
 }
@@ -906,7 +915,7 @@ const std::vector<SeriesRecordingPtr>& VBox::GetSeriesTimers() const
   return m_series;
 }
 
-const Schedule VBox::GetSchedule(const ChannelPtr &channel) const
+const Schedule VBox::GetSchedule(const ChannelPtr& channel) const
 {
   // Load the schedule from the internal guide
   m_stateHandler.WaitForState(StartupState::GUIDE_LOADED);
@@ -942,7 +951,7 @@ std::string VBox::CreateDailyTime(const time_t unixTimestamp) const
   return ::xmltv::Utilities::UnixTimeToDailyTime(unixTimestamp, tzOffset);
 }
 
-unsigned int VBox::GetDBVersion(std::string &versionName) const
+unsigned int VBox::GetDBVersion(std::string& versionName) const
 {
   // get the backend's database version
   request::ApiRequest request("QueryDataBaseVersion");
@@ -951,9 +960,10 @@ unsigned int VBox::GetDBVersion(std::string &versionName) const
   return content.GetUnsignedInteger(versionName);
 }
 
-void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
+void VBox::RetrieveChannels(bool triggerEvent /* = true*/)
 {
-  try {
+  try
+  {
     std::string channelsDBVerName("ChannelsDataBaseVersion");
     unsigned int newDBversion = GetDBVersion(channelsDBVerName);
     // if same as last fetched channels, no need for fetching again
@@ -981,7 +991,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
       if (!m_active)
         return;
 
-      int toIndex = std::min(fromIndex + (CHANNELS_PER_CHANNELBATCH - 1) , lastChannelIndex);
+      int toIndex = std::min(fromIndex + (CHANNELS_PER_CHANNELBATCH - 1), lastChannelIndex);
       // Swallow exceptions, we don't want channel loading to fail just because
       // one request failed
       try
@@ -996,7 +1006,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
         // Add the batch to all channels
         allChannels.insert(allChannels.end(), channels.begin(), channels.end());
       }
-      catch (VBoxException &e)
+      catch (VBoxException& e)
       {
         LogException(e);
       }
@@ -1014,7 +1024,7 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
         OnChannelsUpdated();
     }
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     LogException(e);
     return;
@@ -1024,12 +1034,13 @@ void VBox::RetrieveChannels(bool triggerEvent/* = true*/)
     m_stateHandler.EnterState(StartupState::CHANNELS_LOADED);
 }
 
-void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
+void VBox::RetrieveRecordings(bool triggerEvent /* = true*/)
 {
   // Only attempt to retrieve recordings when external media is present
   if (m_backendInformation.externalMediaStatus.present)
   {
-    try {
+    try
+    {
       request::ApiRequest request("GetRecordsList");
       request.AddParameter("Externals", "YES");
       response::ResponsePtr response = PerformRequest(request);
@@ -1052,7 +1063,7 @@ void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
         }
       }
     }
-    catch (VBoxException &e)
+    catch (VBoxException& e)
     {
       // Intentionally don't return, the request fails if there are no
       // recordings (which is technically not an error)
@@ -1064,11 +1075,12 @@ void VBox::RetrieveRecordings(bool triggerEvent/* = true*/)
     m_stateHandler.EnterState(StartupState::RECORDINGS_LOADED);
 }
 
-void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
+void VBox::RetrieveGuide(bool triggerEvent /* = true*/)
 {
   Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
 
-  try {
+  try
+  {
     std::string progsDBVerName("ProgramsDataBaseVersion");
     unsigned int newDBversion = GetDBVersion(progsDBVerName);
 
@@ -1108,7 +1120,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
         auto partialGuide = content.GetGuide();
         guide += partialGuide;
       }
-      catch (VBoxException &e)
+      catch (VBoxException& e)
       {
         LogException(e);
       }
@@ -1127,7 +1139,7 @@ void VBox::RetrieveGuide(bool triggerEvent/* = true*/)
     if (triggerEvent)
       OnGuideUpdated();
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     LogException(e);
     return;
@@ -1147,24 +1159,25 @@ void VBox::InitializeGenreMapper()
 
   m_categoryGenreMapper = CategoryMapperPtr(new CategoryGenreMapper());
 
-  try {
+  try
+  {
     m_categoryGenreMapper->Initialize(CATEGORY_TO_GENRE_XML_PATH);
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     LogException(e);
     Log(LOG_INFO, "Failed to load the genre mapper");
   }
 }
 
-int VBox::GetCategoriesGenreType(std::vector<std::string> &categories) const
+int VBox::GetCategoriesGenreType(std::vector<std::string>& categories) const
 {
   return m_categoryGenreMapper->GetCategoriesGenreType(categories);
 }
 
-void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
+void VBox::SwapChannelIcons(std::vector<ChannelPtr>& channels)
 {
-  for (auto &channel : channels)
+  for (auto& channel : channels)
   {
     // Consult the channel mapper to find the corresponding external channel
     std::string displayName = m_guideChannelMapper->GetExternalChannelName(channel->m_name);
@@ -1182,19 +1195,18 @@ void VBox::SwapChannelIcons(std::vector<ChannelPtr> &channels)
   }
 }
 
-void VBox::LogGuideStatistics(const xmltv::Guide &guide) const
+void VBox::LogGuideStatistics(const xmltv::Guide& guide) const
 {
-  for (const auto &schedule : guide.GetSchedules())
+  for (const auto& schedule : guide.GetSchedules())
   {
-    Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->GetLength(),
-      schedule.first.c_str());
+    Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->GetLength(), schedule.first.c_str());
   }
 }
 
-response::ResponsePtr VBox::PerformRequest(const request::Request &request) const
+response::ResponsePtr VBox::PerformRequest(const request::Request& request) const
 {
   // Attempt to open a HTTP file handle
-  void *fileHandle = XBMC->OpenFile(request.GetLocation().c_str(), 0x08 /* READ_NO_CACHE */);
+  void* fileHandle = XBMC->OpenFile(request.GetLocation().c_str(), 0x08 /* READ_NO_CACHE */);
 
   if (fileHandle)
   {
@@ -1220,13 +1232,12 @@ response::ResponsePtr VBox::PerformRequest(const request::Request &request) cons
   }
 
   // The request failed completely
-  throw RequestFailedException("Unable to perform request (" +
-    request.GetIdentifier() + ")");
+  throw RequestFailedException("Unable to perform request (" + request.GetIdentifier() + ")");
 }
 
-void VBox::Log(const ADDON::addon_log level, const char *format, ...)
+void VBox::Log(const ADDON::addon_log level, const char* format, ...)
 {
-  char *buf = new char[VBOX_LOG_BUFFER];
+  char* buf = new char[VBOX_LOG_BUFFER];
   size_t c = sprintf(buf, "pvr.vbox - ");
   va_list va;
   va_start(va, format);
@@ -1236,7 +1247,7 @@ void VBox::Log(const ADDON::addon_log level, const char *format, ...)
   delete[] buf;
 }
 
-void VBox::LogException(VBoxException &e)
+void VBox::LogException(VBoxException& e)
 {
   std::string message = "Request failed: " + std::string(e.what());
   Log(LOG_ERROR, message.c_str());
