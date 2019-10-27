@@ -19,31 +19,34 @@
  *
  */
 
-#include <algorithm>
-#include "p8-platform/util/util.h"
-#include "kodi/xbmc_pvr_dll.h"
 #include "client.h"
-#include "vbox/Exceptions.h"
-#include "vbox/VBox.h"
-#include "vbox/ContentIdentifier.h"
-#include "vbox/RecordingReader.h"
+
 #include "timeshift/DummyBuffer.h"
 #include "timeshift/FilesystemBuffer.h"
+#include "vbox/ContentIdentifier.h"
+#include "vbox/Exceptions.h"
+#include "vbox/RecordingReader.h"
+#include "vbox/VBox.h"
 #include "xmltv/Utilities.h"
+
+#include <algorithm>
+
+#include <kodi/xbmc_pvr_dll.h>
+#include <p8-platform/util/util.h>
 
 using namespace ADDON;
 using namespace vbox;
 
 // Initialize helpers
-CHelper_libXBMC_addon *XBMC = NULL;
-CHelper_libXBMC_pvr   *PVR = NULL;
-CHelper_libKODI_guilib  *GUI = NULL;
+CHelper_libXBMC_addon* XBMC = NULL;
+CHelper_libXBMC_pvr* PVR = NULL;
+CHelper_libKODI_guilib* GUI = NULL;
 
 // Initialize globals
-ADDON_STATUS   g_status = ADDON_STATUS_UNKNOWN;
-VBox *g_vbox = nullptr;
+ADDON_STATUS g_status = ADDON_STATUS_UNKNOWN;
+VBox* g_vbox = nullptr;
 bool g_skippingInitialEpgLoad;
-timeshift::Buffer *g_timeshiftBuffer = nullptr;
+timeshift::Buffer* g_timeshiftBuffer = nullptr;
 RecordingReader* recordingReader = nullptr;
 
 std::string g_internalHostname;
@@ -77,14 +80,14 @@ extern "C" {
 
 void ADDON_ReadSettings()
 {
-#define UPDATE_INT(var, key, def)\
-  if (!XBMC->GetSetting(key, &var))\
+#define UPDATE_INT(var, key, def) \
+  if (!XBMC->GetSetting(key, &var)) \
     var = def;
 
-#define UPDATE_STR(var, key, tmp, def)\
-  if (XBMC->GetSetting(key, tmp))\
-    var = tmp;\
-    else\
+#define UPDATE_STR(var, key, tmp, def) \
+  if (XBMC->GetSetting(key, tmp)) \
+    var = tmp; \
+  else \
     var = def;
 
   char buffer[1024];
@@ -119,9 +122,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   PVR = new CHelper_libXBMC_pvr;
   GUI = new CHelper_libKODI_guilib;
 
-  if (!XBMC->RegisterMe(hdl) ||
-    !PVR->RegisterMe(hdl) ||
-    !GUI->RegisterMe(hdl) )
+  if (!XBMC->RegisterMe(hdl) || !PVR->RegisterMe(hdl) || !GUI->RegisterMe(hdl))
   {
     SAFE_DELETE(XBMC);
     SAFE_DELETE(PVR);
@@ -134,23 +135,11 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   ADDON_ReadSettings();
   Settings settings;
 
-  settings.m_internalConnectionParams =
-  {
-    g_internalHostname,
-    g_internalHttpPort,
-    g_internalHttpsPort,
-    g_internalUpnpPort,
-    g_internalConnectionTimeout
-  };
+  settings.m_internalConnectionParams = {g_internalHostname, g_internalHttpPort, g_internalHttpsPort,
+                                         g_internalUpnpPort, g_internalConnectionTimeout};
 
-  settings.m_externalConnectionParams =
-  {
-    g_externalHostname,
-    g_externalHttpPort,
-    g_externalHttpsPort,
-    g_externalUpnpPort,
-    g_externalConnectionTimeout
-  };
+  settings.m_externalConnectionParams = {g_externalHostname, g_externalHttpPort, g_externalHttpsPort,
+                                         g_externalUpnpPort, g_externalConnectionTimeout};
 
   settings.m_setChannelIdUsingOrder = g_setChannelIdUsingOrder;
   settings.m_remindMinsBeforeProg = g_remindMinsBeforeProg;
@@ -167,7 +156,8 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   if (g_vbox->ValidateSettings())
   {
     // Start the addon
-    try {
+    try
+    {
       g_vbox->Initialize();
       g_status = ADDON_STATUS_OK;
 
@@ -177,7 +167,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
       g_vbox->OnTimersUpdated = []() { PVR->TriggerTimerUpdate(); };
       g_vbox->OnGuideUpdated = []()
       {
-        for (const auto &channel : g_vbox->GetChannels())
+        for (const auto& channel : g_vbox->GetChannels())
         {
           PVR->TriggerEpgUpdate(ContentIdentifier::GetUniqueId(channel));
         }
@@ -192,21 +182,23 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
       g_timeshiftBuffer->SetReadTimeout(g_vbox->GetConnectionParams().timeout);
 
       // initializing TV Settings Client Specific menu hooks
-      PVR_MENUHOOK hooks[] = { { MENUHOOK_ID_RESCAN_EPG, 30106, PVR_MENUHOOK_SETTING },
-                                { MENUHOOK_ID_SYNC_EPG, 30107, PVR_MENUHOOK_SETTING },
-                                { MENUHOOK_ID_EPG_REMINDER, 30110, PVR_MENUHOOK_EPG },
-                                { MENUHOOK_ID_CANCEL_EPG_REMINDER, 30112, PVR_MENUHOOK_EPG },
-                                { MENUHOOK_ID_MANUAL_REMINDER, 30111, PVR_MENUHOOK_CHANNEL },
-                                { MENUHOOK_ID_CANCEL_CHANNEL_REMINDER, 30113, PVR_MENUHOOK_CHANNEL } };
+      PVR_MENUHOOK hooks[] = {{MENUHOOK_ID_RESCAN_EPG, 30106, PVR_MENUHOOK_SETTING},
+                              {MENUHOOK_ID_SYNC_EPG, 30107, PVR_MENUHOOK_SETTING},
+                              {MENUHOOK_ID_EPG_REMINDER, 30110, PVR_MENUHOOK_EPG},
+                              {MENUHOOK_ID_CANCEL_EPG_REMINDER, 30112, PVR_MENUHOOK_EPG},
+                              {MENUHOOK_ID_MANUAL_REMINDER, 30111, PVR_MENUHOOK_CHANNEL},
+                              {MENUHOOK_ID_CANCEL_CHANNEL_REMINDER, 30113, PVR_MENUHOOK_CHANNEL}};
 
       for (int i = 0; i < sizeof(hooks) / sizeof(PVR_MENUHOOK); ++i)
         PVR->AddMenuHook(&hooks[i]);
     }
-    catch (FirmwareVersionException &e) {
+    catch (FirmwareVersionException& e)
+    {
       XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
       g_status = ADDON_STATUS_PERMANENT_FAILURE;
     }
-    catch (VBoxException &e) {
+    catch (VBoxException& e)
+    {
       VBox::LogException(e);
       g_status = ADDON_STATUS_LOST_CONNECTION;
     }
@@ -229,33 +221,31 @@ void ADDON_Destroy()
   g_status = ADDON_STATUS_UNKNOWN;
 }
 
-ADDON_STATUS ADDON_SetSetting(const char *settingName, const void *settingValue)
+ADDON_STATUS ADDON_SetSetting(const char* settingName, const void* settingValue)
 {
-#define UPDATE_STR(key, var)\
-  if (!strcmp(settingName, key))\
-  {\
-    if (strcmp(var.c_str(), (const char*)settingValue) != 0)\
-    {\
-      VBox::Log(LOG_INFO, "updated setting %s from '%s' to '%s'",\
-        settingName, var.c_str(), settingValue);\
-      return ADDON_STATUS_NEED_RESTART;\
-    }\
-    return ADDON_STATUS_OK;\
+#define UPDATE_STR(key, var) \
+  if (!strcmp(settingName, key)) \
+  { \
+    if (strcmp(var.c_str(), (const char*)settingValue) != 0) \
+    { \
+      VBox::Log(LOG_INFO, "updated setting %s from '%s' to '%s'", settingName, var.c_str(), settingValue); \
+      return ADDON_STATUS_NEED_RESTART; \
+    } \
+    return ADDON_STATUS_OK; \
   }
 
-#define UPDATE_INT(key, type, var)\
-  if (!strcmp(settingName, key))\
-  {\
-    if (var != *(type*)settingValue)\
-    {\
-      VBox::Log(LOG_INFO, "updated setting %s from '%d' to '%d'",\
-        settingName, var, (int)*(type*)settingValue);\
-      return ADDON_STATUS_NEED_RESTART;\
-    }\
-    return ADDON_STATUS_OK;\
+#define UPDATE_INT(key, type, var) \
+  if (!strcmp(settingName, key)) \
+  { \
+    if (var != *(type*)settingValue) \
+    { \
+      VBox::Log(LOG_INFO, "updated setting %s from '%d' to '%d'", settingName, var, (int)*(type*)settingValue); \
+      return ADDON_STATUS_NEED_RESTART; \
+    } \
+    return ADDON_STATUS_OK; \
   }
 
-  const vbox::Settings &settings = g_vbox->GetSettings();
+  const vbox::Settings& settings = g_vbox->GetSettings();
 
   UPDATE_STR("hostname", settings.m_internalConnectionParams.hostname);
   UPDATE_INT("http_port", int, settings.m_internalConnectionParams.httpPort);
@@ -318,8 +308,7 @@ PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
 
   // Wait for initialization until we decide if we support recordings or not.
   // Recording is only possible when external media is present
-  if (g_vbox->GetStateHandler().WaitForState(StartupState::INITIALIZED)
-    && g_vbox->SupportsRecordings())
+  if (g_vbox->GetStateHandler().WaitForState(StartupState::INITIALIZED) && g_vbox->SupportsRecordings())
   {
     pCapabilities->bSupportsRecordings = true;
     pCapabilities->bSupportsTimers = true;
@@ -332,25 +321,25 @@ PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
   return PVR_ERROR_NO_ERROR;
 }
 
-const char *GetBackendName()
+const char* GetBackendName()
 {
   static std::string backendName = g_vbox->GetBackendName();
   return backendName.c_str();
 }
 
-const char *GetBackendVersion()
+const char* GetBackendVersion()
 {
   static std::string backendVersion = g_vbox->GetBackendVersion();
   return backendVersion.c_str();
 }
 
-const char *GetConnectionString()
+const char* GetConnectionString()
 {
   static std::string connectionString = g_vbox->GetConnectionString();
   return connectionString.c_str();
 }
 
-const char *GetBackendHostname()
+const char* GetBackendHostname()
 {
   static std::string backendHostname = g_vbox->GetBackendHostname();
   return backendHostname.c_str();
@@ -358,10 +347,11 @@ const char *GetBackendHostname()
 
 int GetChannelsAmount()
 {
-  try {
+  try
+  {
     return g_vbox->GetChannelsAmount();
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     g_vbox->LogException(e);
     return PVR_ERROR_SERVER_ERROR;
@@ -370,17 +360,16 @@ int GetChannelsAmount()
 
 PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
 {
-  auto &channels = g_vbox->GetChannels();
+  auto& channels = g_vbox->GetChannels();
   unsigned int i = 0;
 
-  for (const auto &item : channels)
+  for (const auto& item : channels)
   {
     // Skip those that are not of the correct type
     if (item->m_radio != bRadio)
       continue;
 
-    PVR_CHANNEL channel;
-    memset(&channel, 0, sizeof(PVR_CHANNEL));
+    PVR_CHANNEL channel = {0};
 
     channel.iUniqueId = ContentIdentifier::GetUniqueId(item);
     channel.bIsRadio = item->m_radio;
@@ -395,20 +384,15 @@ PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
 
     channel.iEncryptionSystem = item->m_encrypted ? 0xFFFF : 0x0000;
 
-    strncpy(channel.strChannelName, item->m_name.c_str(),
-      sizeof(channel.strChannelName));
-    strncpy(channel.strIconPath, item->m_iconUrl.c_str(),
-      sizeof(channel.strIconPath));
+    strncpy(channel.strChannelName, item->m_name.c_str(), sizeof(channel.strChannelName) - 1);
+    strncpy(channel.strIconPath, item->m_iconUrl.c_str(), sizeof(channel.strIconPath) - 1);
 
     // Set stream format for TV channels
     if (!item->m_radio)
-    {
-      strncpy(channel.strInputFormat, "video/mp2t",
-        sizeof(channel.strInputFormat));
-    }
+      strncpy(channel.strInputFormat, "video/mp2t", sizeof(channel.strInputFormat) - 1);
 
-    VBox::Log(LOG_INFO, "Adding channel %d: %s. Icon: %s",
-              channel.iChannelNumber, channel.strChannelName, channel.strIconPath);
+    VBox::Log(LOG_INFO, "Adding channel %d: %s. Icon: %s", channel.iChannelNumber, channel.strChannelName,
+              channel.strIconPath);
 
     PVR->TransferChannelEntry(handle, &channel);
   }
@@ -416,7 +400,7 @@ PVR_ERROR GetChannels(ADDON_HANDLE handle, bool bRadio)
   return PVR_ERROR_NO_ERROR;
 }
 
-PVR_ERROR GetDriveSpace(long long *iTotal, long long *iUsed)
+PVR_ERROR GetDriveSpace(long long* iTotal, long long* iUsed)
 {
   *iTotal = g_vbox->GetRecordingTotalSpace() / 1024;
   *iUsed = g_vbox->GetRecordingUsedSpace() / 1024;
@@ -431,16 +415,15 @@ int GetRecordingsAmount(bool deleted)
 
 PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
 {
-  auto &recordings = g_vbox->GetRecordingsAndTimers();
+  auto& recordings = g_vbox->GetRecordingsAndTimers();
 
-  for (const auto &item : recordings)
+  for (const auto& item : recordings)
   {
     // Skip timers
     if (!item->IsRecording())
       continue;
 
-    PVR_RECORDING recording;
-    memset(&recording, 0, sizeof(PVR_RECORDING));
+    PVR_RECORDING recording = {0};
 
     time_t startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
     time_t endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
@@ -454,28 +437,23 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
       recording.iDuration = static_cast<int>(now - startTime);
     recording.iEpgEventId = id;
 
-    strncpy(recording.strChannelName, item->m_channelName.c_str(),
-      sizeof(recording.strChannelName));
-
-    strncpy(recording.strRecordingId, std::to_string(id).c_str(),
-      sizeof(recording.strRecordingId));
-
-    strncpy(recording.strTitle, item->m_title.c_str(),
-      sizeof(recording.strTitle));
-
-    strncpy(recording.strPlot, item->m_description.c_str(),
-      sizeof(recording.strPlot));
+    strncpy(recording.strChannelName, item->m_channelName.c_str(), sizeof(recording.strChannelName) - 1);
+    strncpy(recording.strRecordingId, std::to_string(id).c_str(), sizeof(recording.strRecordingId) - 1);
+    strncpy(recording.strTitle, item->m_title.c_str(), sizeof(recording.strTitle) - 1);
+    strncpy(recording.strPlot, item->m_description.c_str(), sizeof(recording.strPlot) - 1);
 
     recording.iChannelUid = PVR_CHANNEL_INVALID_UID;
     recording.channelType = PVR_RECORDING_CHANNEL_TYPE_UNKNOWN;
 
     // Find the recordings channel and use its unique ID if we find one
-    auto &channels = g_vbox->GetChannels();
-    auto it = std::find_if(channels.cbegin(), channels.cend(),
-      [&item](const ChannelPtr &channel)
-    {
-      return channel->m_xmltvName == item->m_channelId;
-    });
+    auto& channels = g_vbox->GetChannels();
+    auto it = std::find_if(
+      channels.cbegin(),
+      channels.cend(),
+      [&item](const ChannelPtr& channel) {
+        return channel->m_xmltvName == item->m_channelId;
+      }
+    );
 
     if (it != channels.cend())
     {
@@ -493,9 +471,10 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
   return PVR_ERROR_NO_ERROR;
 }
 
-PVR_ERROR DeleteRecording(const PVR_RECORDING &recording)
+PVR_ERROR DeleteRecording(const PVR_RECORDING& recording)
 {
-  try {
+  try
+  {
     unsigned int id = static_cast<unsigned int>(std::stoi(recording.strRecordingId));
 
     if (g_vbox->DeleteRecordingOrTimer(id))
@@ -517,12 +496,12 @@ bool OpenRecordedStream(const PVR_RECORDING& recording)
   recordingReader = nullptr;
 
   unsigned int id = static_cast<unsigned int>(std::stoi(recording.strRecordingId));
-  auto &recordings = g_vbox->GetRecordingsAndTimers();
+  auto& recordings = g_vbox->GetRecordingsAndTimers();
   auto recIt = std::find_if(recordings.begin(), recordings.end(),
-    [id](const RecordingPtr &item)
-  {
-    return item->IsRecording() && id == item->m_id;
-  });
+    [id](const RecordingPtr& item) {
+      return item->IsRecording() && id == item->m_id;
+    }
+  );
 
   if (recIt == recordings.end())
     return PVR_ERROR_SERVER_ERROR;
@@ -531,10 +510,10 @@ bool OpenRecordedStream(const PVR_RECORDING& recording)
   std::string channelName = recording.strChannelName;
   time_t recordingTime = recording.recordingTime;
   auto timerIt = std::find_if(recordings.begin(), recordings.end(),
-    [now, channelName, recordingTime](const RecordingPtr &item)
-  {
-    return item->IsTimer() && item->IsRunning(now, channelName, recordingTime);
-  });
+    [now, channelName, recordingTime](const RecordingPtr& item) {
+      return item->IsTimer() && item->IsRunning(now, channelName, recordingTime);
+    }
+  );
   if (timerIt != recordings.end())
   {
     auto& timer = *timerIt;
@@ -578,7 +557,7 @@ long long LengthRecordedStream()
   return recordingReader->Length();
 }
 
-PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size)
+PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int* size)
 {
   int numOfTimerTypes = 0;
 
@@ -587,37 +566,37 @@ PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size)
   types[numOfTimerTypes].iId = vbox::TIMER_VBOX_TYPE_EPG_BASED_SINGLE;
   strcpy(types[numOfTimerTypes].strDescription, "EPG-based one time recording");
   types[numOfTimerTypes].iAttributes =
-    PVR_TIMER_TYPE_REQUIRES_EPG_TAG_ON_CREATE |
-    PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_END_TIME;
+      PVR_TIMER_TYPE_REQUIRES_EPG_TAG_ON_CREATE |
+      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_END_TIME;
   ++numOfTimerTypes;
   // episode recording
   memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
   types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_EPISODE;
   strcpy(types[numOfTimerTypes].strDescription, "Episode recording");
   types[numOfTimerTypes].iAttributes =
-    PVR_TIMER_TYPE_IS_READONLY |
-    PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_END_TIME;
+      PVR_TIMER_TYPE_IS_READONLY |
+      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_END_TIME;
   ++numOfTimerTypes;
   // manual recording
   memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
   types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_MANUAL_SINGLE;
   strcpy(types[numOfTimerTypes].strDescription, "Manual one time recording");
   types[numOfTimerTypes].iAttributes =
-    PVR_TIMER_TYPE_IS_MANUAL |
-    PVR_TIMER_TYPE_FORBIDS_EPG_TAG_ON_CREATE |
-    PVR_TIMER_TYPE_SUPPORTS_CHANNELS |
-    PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_END_TIME;
+      PVR_TIMER_TYPE_IS_MANUAL |
+      PVR_TIMER_TYPE_FORBIDS_EPG_TAG_ON_CREATE |
+      PVR_TIMER_TYPE_SUPPORTS_CHANNELS |
+      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_END_TIME;
   ++numOfTimerTypes;
 
   //Automatic series recording
   memset(&types[numOfTimerTypes], 0, sizeof(types[numOfTimerTypes]));
   types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES;
   strcpy(types[numOfTimerTypes].strDescription, "EPG-based automatic series recording");
-types[numOfTimerTypes].iAttributes =
-  PVR_TIMER_TYPE_REQUIRES_EPG_SERIES_ON_CREATE;
+  types[numOfTimerTypes].iAttributes =
+      PVR_TIMER_TYPE_REQUIRES_EPG_SERIES_ON_CREATE;
   ++numOfTimerTypes;
 
   // EPG based series recording
@@ -625,11 +604,11 @@ types[numOfTimerTypes].iAttributes =
   types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES;
   strcpy(types[numOfTimerTypes].strDescription, "EPG-based manual series recording");
   types[numOfTimerTypes].iAttributes =
-    PVR_TIMER_TYPE_IS_REPEATING |
-    PVR_TIMER_TYPE_REQUIRES_EPG_TAG_ON_CREATE |
-    PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_END_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_WEEKDAYS;
+      PVR_TIMER_TYPE_IS_REPEATING |
+      PVR_TIMER_TYPE_REQUIRES_EPG_TAG_ON_CREATE |
+      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_END_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_WEEKDAYS;
   ++numOfTimerTypes;
 
   //Manual series recording
@@ -637,13 +616,13 @@ types[numOfTimerTypes].iAttributes =
   types[numOfTimerTypes].iId = TIMER_VBOX_TYPE_MANUAL_SERIES;
   strcpy(types[numOfTimerTypes].strDescription, "Manual series recording");
   types[numOfTimerTypes].iAttributes =
-    PVR_TIMER_TYPE_IS_MANUAL |
-    PVR_TIMER_TYPE_IS_REPEATING |
-    PVR_TIMER_TYPE_FORBIDS_EPG_TAG_ON_CREATE |
-    PVR_TIMER_TYPE_SUPPORTS_CHANNELS |
-    PVR_TIMER_TYPE_SUPPORTS_START_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_END_TIME |
-    PVR_TIMER_TYPE_SUPPORTS_WEEKDAYS;
+      PVR_TIMER_TYPE_IS_MANUAL |
+      PVR_TIMER_TYPE_IS_REPEATING |
+      PVR_TIMER_TYPE_FORBIDS_EPG_TAG_ON_CREATE |
+      PVR_TIMER_TYPE_SUPPORTS_CHANNELS |
+      PVR_TIMER_TYPE_SUPPORTS_START_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_END_TIME |
+      PVR_TIMER_TYPE_SUPPORTS_WEEKDAYS;
   ++numOfTimerTypes;
 
   *size = numOfTimerTypes;
@@ -658,18 +637,17 @@ int GetTimersAmount()
 PVR_ERROR GetTimers(ADDON_HANDLE handle)
 {
   /* TODO: Change implementation to get support for the timer features introduced with PVR API 1.9.7 */
-  auto &recordings = g_vbox->GetRecordingsAndTimers();
+  auto& recordings = g_vbox->GetRecordingsAndTimers();
 
   // first get timers from single recordings (scheduled)
-  for (const auto &item : recordings)
+  for (const auto& item : recordings)
   {
     // Skip recordings
     if (!item->IsTimer())
       continue;
 
-    PVR_TIMER timer;
-    memset(&timer, 0, sizeof(PVR_TIMER));
-    timer.iTimerType = (item->m_seriesId > 0)? vbox::TIMER_VBOX_TYPE_EPISODE : vbox::TIMER_VBOX_TYPE_MANUAL_SINGLE;
+    PVR_TIMER timer = {0};
+    timer.iTimerType = (item->m_seriesId > 0) ? vbox::TIMER_VBOX_TYPE_EPISODE : vbox::TIMER_VBOX_TYPE_MANUAL_SINGLE;
     timer.startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
     timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
     timer.iClientIndex = item->m_id;
@@ -677,61 +655,57 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
     // Convert the internal timer state to PVR_TIMER_STATE
     switch (item->GetState())
     {
-    case RecordingState::SCHEDULED:
-      timer.state = PVR_TIMER_STATE_SCHEDULED;
-      break;
-    case RecordingState::RECORDED:
-    case RecordingState::EXTERNAL:
-      timer.state = PVR_TIMER_STATE_COMPLETED;
-      break;
-    case RecordingState::RECORDING:
-      timer.state = PVR_TIMER_STATE_RECORDING;
-      break;
-    case RecordingState::RECORDING_ERROR:
-      break;
+      case RecordingState::SCHEDULED:
+        timer.state = PVR_TIMER_STATE_SCHEDULED;
+        break;
+      case RecordingState::RECORDED:
+      case RecordingState::EXTERNAL:
+        timer.state = PVR_TIMER_STATE_COMPLETED;
+        break;
+      case RecordingState::RECORDING:
+        timer.state = PVR_TIMER_STATE_RECORDING;
+        break;
+      case RecordingState::RECORDING_ERROR:
+        break;
     }
 
     // Find the timer's channel and use its unique ID
-    auto &channels = g_vbox->GetChannels();
+    auto& channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
-      [&item](const ChannelPtr &channel)
-    {
-      return channel->m_xmltvName == item->m_channelId;
-    });
+      [&item](const ChannelPtr& channel) {
+        return channel->m_xmltvName == item->m_channelId;
+      }
+    );
 
     if (it != channels.cend())
       timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
     else
       continue;
 
-    strncpy(timer.strTitle, item->m_title.c_str(),
-      sizeof(timer.strTitle));
-
-    strncpy(timer.strSummary, item->m_description.c_str(),
-      sizeof(timer.strSummary));
+    strncpy(timer.strTitle, item->m_title.c_str(), sizeof(timer.strTitle) - 1);
+    strncpy(timer.strSummary, item->m_description.c_str(), sizeof(timer.strSummary) - 1);
 
     g_vbox->Log(LOG_DEBUG, "GetTimers(): adding timer to show %s", item->m_title.c_str());
     // TODO: Set margins to whatever the API reports
     PVR->TransferTimerEntry(handle, &timer);
   }
   // second: get timer rules for series
-  auto &series = g_vbox->GetSeriesTimers();
-  for (const auto &item : series)
+  auto& series = g_vbox->GetSeriesTimers();
+  for (const auto& item : series)
   {
-    PVR_TIMER timer;
-    memset(&timer, 0, sizeof(PVR_TIMER));
+    PVR_TIMER timer = {0};
 
-    timer.iTimerType = (item->m_fIsAuto)? vbox::TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES : vbox::TIMER_VBOX_TYPE_MANUAL_SERIES;
+    timer.iTimerType = (item->m_fIsAuto) ? vbox::TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES : vbox::TIMER_VBOX_TYPE_MANUAL_SERIES;
     timer.iClientIndex = item->m_id;
     timer.state = PVR_TIMER_STATE_SCHEDULED;
 
     // Find the timer's channel and use its unique ID
-    auto &channels = g_vbox->GetChannels();
+    auto& channels = g_vbox->GetChannels();
     auto it = std::find_if(channels.cbegin(), channels.cend(),
-      [&item](const ChannelPtr &channel)
-    {
-      return channel->m_xmltvName == item->m_channelId;
-    });
+      [&item](const ChannelPtr& channel) {
+        return channel->m_xmltvName == item->m_channelId;
+      }
+    );
 
     if (it != channels.cend())
       timer.iClientChannelUid = ContentIdentifier::GetUniqueId(*it);
@@ -739,10 +713,10 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
     unsigned int nextScheduledId = item->m_scheduledId;
     // Find next recording of the series
     auto recIt = std::find_if(recordings.begin(), recordings.end(),
-      [nextScheduledId](const RecordingPtr &recording)
-    {
-      return nextScheduledId == recording->m_id;
-    });
+      [nextScheduledId](const RecordingPtr& recording) {
+        return nextScheduledId == recording->m_id;
+      }
+    );
     // if it doesn't exist (canceled) - don't add series
     if (recIt == recordings.end())
       continue;
@@ -761,11 +735,9 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
       timer.iWeekdays = item->m_weekdays;
       timer.endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
     }
-    strncpy(timer.strTitle, item->m_title.c_str(),
-      sizeof(timer.strTitle));
+    strncpy(timer.strTitle, item->m_title.c_str(), sizeof(timer.strTitle) - 1);
 
-    strncpy(timer.strSummary, item->m_description.c_str(),
-      sizeof(timer.strSummary));
+    strncpy(timer.strSummary, item->m_description.c_str(), sizeof(timer.strSummary) - 1);
 
     // TODO: Set margins to whatever the API reports
     PVR->TransferTimerEntry(handle, &timer);
@@ -773,16 +745,16 @@ PVR_ERROR GetTimers(ADDON_HANDLE handle)
   return PVR_ERROR_NO_ERROR;
 }
 
-PVR_ERROR AddTimer(const PVR_TIMER &timer)
+PVR_ERROR AddTimer(const PVR_TIMER& timer)
 {
-    VBox::Log(LOG_DEBUG, "AddTimer() : entering with timer type 0x%x", timer.iTimerType);
+  VBox::Log(LOG_DEBUG, "AddTimer() : entering with timer type 0x%x", timer.iTimerType);
   // Find the channel the timer is for
-  auto &channels = g_vbox->GetChannels();
+  auto& channels = g_vbox->GetChannels();
   auto it = std::find_if(channels.cbegin(), channels.cend(),
-    [&timer](const ChannelPtr &channel)
-  {
-    return timer.iClientChannelUid == ContentIdentifier::GetUniqueId(channel);
-  });
+    [&timer](const ChannelPtr& channel) {
+      return timer.iClientChannelUid == ContentIdentifier::GetUniqueId(channel);
+    }
+  );
 
   if (it == channels.end())
     return PVR_ERROR_INVALID_PARAMETERS;
@@ -792,9 +764,10 @@ PVR_ERROR AddTimer(const PVR_TIMER &timer)
   // Find the channel's schedule
   const Schedule schedule = g_vbox->GetSchedule(channel);
 
-  try {
+  try
+  {
     // update the recording margins in the backend
-    g_vbox->UpdateRecordingMargins( {timer.iMarginStart, timer.iMarginEnd} );
+    g_vbox->UpdateRecordingMargins({timer.iMarginStart, timer.iMarginEnd});
     // Set start time to now if it's missing
     time_t startTime = timer.startTime;
     time_t endTime = timer.endTime;
@@ -805,67 +778,68 @@ PVR_ERROR AddTimer(const PVR_TIMER &timer)
       startTime = time(nullptr);
 
     // Add a programme-based timer if the programme exists in the schedule
-    const xmltv::ProgrammePtr programme = (schedule.schedule)? schedule.schedule->GetProgramme(timer.iEpgUid) : nullptr;
+    const xmltv::ProgrammePtr programme =
+        (schedule.schedule) ? schedule.schedule->GetProgramme(timer.iEpgUid) : nullptr;
 
     switch (timer.iTimerType)
     {
-    case TIMER_VBOX_TYPE_EPG_BASED_SINGLE:
-    case TIMER_VBOX_TYPE_EPISODE:
-      if (programme)
-      {
-        switch (schedule.origin)
+      case TIMER_VBOX_TYPE_EPG_BASED_SINGLE:
+      case TIMER_VBOX_TYPE_EPISODE:
+        if (programme)
         {
-        case Schedule::Origin::INTERNAL_GUIDE:
-          g_vbox->AddTimer(channel, programme);
-          break;
-        case Schedule::Origin::EXTERNAL_GUIDE:
-          title = programme->m_title;
-          desc = programme->m_description;
-          g_vbox->AddTimer(channel, startTime, endTime, title, desc);
-          break;
+          switch (schedule.origin)
+          {
+            case Schedule::Origin::INTERNAL_GUIDE:
+              g_vbox->AddTimer(channel, programme);
+              break;
+            case Schedule::Origin::EXTERNAL_GUIDE:
+              title = programme->m_title;
+              desc = programme->m_description;
+              g_vbox->AddTimer(channel, startTime, endTime, title, desc);
+              break;
+          }
+          return PVR_ERROR_NO_ERROR;
         }
-        return PVR_ERROR_NO_ERROR;
-      }
-      else
-      {
+        else
+        {
+          g_vbox->AddTimer(channel, startTime, endTime, title, desc);
+          return PVR_ERROR_NO_ERROR;
+        }
+      case TIMER_VBOX_TYPE_MANUAL_SINGLE:
         g_vbox->AddTimer(channel, startTime, endTime, title, desc);
         return PVR_ERROR_NO_ERROR;
-      }
-    case TIMER_VBOX_TYPE_MANUAL_SINGLE:
-      g_vbox->AddTimer(channel, startTime, endTime, title, desc);
-      return PVR_ERROR_NO_ERROR;
-    case TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES:
-    {
-      if (!programme)
-        return PVR_ERROR_INVALID_PARAMETERS;
-      g_vbox->AddSeriesTimer(channel, programme);
-      return PVR_ERROR_NO_ERROR;
-    }
-    case TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES:
-    {
-      if (!programme)
+      case TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES:
+      {
+        if (!programme)
           return PVR_ERROR_INVALID_PARAMETERS;
-      g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
-      return PVR_ERROR_NO_ERROR;
-    }
-    case TIMER_VBOX_TYPE_MANUAL_SERIES:
-    {
-      g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
-      return PVR_ERROR_NO_ERROR;
-    }
-    default:
-      // any other timer type is wrong
-      return PVR_ERROR_INVALID_PARAMETERS;
+        g_vbox->AddSeriesTimer(channel, programme);
+        return PVR_ERROR_NO_ERROR;
+      }
+      case TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES:
+      {
+        if (!programme)
+          return PVR_ERROR_INVALID_PARAMETERS;
+        g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
+        return PVR_ERROR_NO_ERROR;
+      }
+      case TIMER_VBOX_TYPE_MANUAL_SERIES:
+      {
+        g_vbox->AddTimer(channel, startTime, endTime, title, desc, timer.iWeekdays);
+        return PVR_ERROR_NO_ERROR;
+      }
+      default:
+        // any other timer type is wrong
+        return PVR_ERROR_INVALID_PARAMETERS;
     }
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     g_vbox->LogException(e);
     return PVR_ERROR_FAILED;
   }
 }
 
-PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)
+PVR_ERROR DeleteTimer(const PVR_TIMER& timer, bool bForceDelete)
 {
   if (g_vbox->DeleteRecordingOrTimer(timer.iClientIndex))
     return PVR_ERROR_NO_ERROR;
@@ -873,7 +847,7 @@ PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)
   return PVR_ERROR_FAILED;
 }
 
-PVR_ERROR UpdateTimer(const PVR_TIMER &timer)
+PVR_ERROR UpdateTimer(const PVR_TIMER& timer)
 {
   PVR_ERROR err = DeleteTimer(timer, true);
 
@@ -903,10 +877,9 @@ PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, int iChannelUid, time_t iStart, 
     return PVR_ERROR_NO_ERROR;
 
   // Transfer the programmes between the start and end times
-  for (const auto &programme : schedule.schedule->GetSegment(iStart, iEnd))
+  for (const auto& programme : schedule.schedule->GetSegment(iStart, iEnd))
   {
-    EPG_TAG event;
-    memset(&event, 0, sizeof(EPG_TAG));
+    EPG_TAG event = {0};
 
     event.startTime = xmltv::Utilities::XmltvToUnixTime(programme->m_startTime);
     event.endTime = xmltv::Utilities::XmltvToUnixTime(programme->m_endTime);
@@ -932,7 +905,7 @@ PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, int iChannelUid, time_t iStart, 
 
     // Extract up to five cast members only
     std::vector<std::string> actorNames;
-    const auto &actors = programme->GetActors();
+    const auto& actors = programme->GetActors();
     int numActors = std::min(static_cast<int>(actors.size()), 5);
 
     for (unsigned int i = 0; i < numActors; i++)
@@ -959,14 +932,15 @@ PVR_ERROR SetEPGTimeFrame(int)
   return PVR_ERROR_NOT_IMPLEMENTED;
 }
 
-PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
+PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS& signalStatus)
 {
   const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
 
   if (!currentChannel)
     return PVR_ERROR_NO_ERROR;
 
-  try {
+  try
+  {
     ChannelStreamingStatus status = g_vbox->GetChannelStreamingStatus(currentChannel);
 
     // Adjust for Kodi's weird handling of the signal strength
@@ -974,19 +948,12 @@ PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
     signalStatus.iSNR = static_cast<int>(status.m_signalQuality) * 655;
     signalStatus.iBER = status.GetBer();
 
-    strncpy(signalStatus.strAdapterName,
-      status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName));
-
-    strncpy(signalStatus.strAdapterStatus,
-      status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus));
-
-    strncpy(signalStatus.strServiceName,
-      status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName));
-
-    strncpy(signalStatus.strMuxName,
-      status.GetMuxName().c_str(), sizeof(signalStatus.strMuxName));
+    strncpy(signalStatus.strAdapterName, status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName) - 1);
+    strncpy(signalStatus.strAdapterStatus, status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus) - 1);
+    strncpy(signalStatus.strServiceName, status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName) - 1);
+    strncpy(signalStatus.strMuxName, status.GetMuxName().c_str(), sizeof(signalStatus.strMuxName) - 1);
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     g_vbox->LogException(e);
   }
@@ -999,7 +966,7 @@ PVR_ERROR GetDescrambleInfo(PVR_DESCRAMBLE_INFO*)
   return PVR_ERROR_NOT_IMPLEMENTED;
 }
 
-bool OpenLiveStream(const PVR_CHANNEL &channel)
+bool OpenLiveStream(const PVR_CHANNEL& channel)
 {
   // Find the channel
   const ChannelPtr channelPtr = g_vbox->GetChannel(channel.iUniqueId);
@@ -1025,7 +992,7 @@ void CloseLiveStream()
   g_vbox->SetCurrentChannel(nullptr);
 }
 
-int ReadLiveStream(unsigned char *pBuffer, unsigned int iBufferSize)
+int ReadLiveStream(unsigned char* pBuffer, unsigned int iBufferSize)
 {
   return g_timeshiftBuffer->Read(pBuffer, iBufferSize);
 }
@@ -1070,7 +1037,7 @@ PVR_ERROR GetStreamTimes(PVR_STREAM_TIMES* times)
     times->ptsStart = 0;
     times->ptsBegin = 0;
     times->ptsEnd = (!g_timeshiftBuffer->CanSeekStream()) ? 0
-      : (g_timeshiftBuffer->GetEndTime() - g_timeshiftBuffer->GetStartTime()) * DVD_TIME_BASE;
+        : (g_timeshiftBuffer->GetEndTime() - g_timeshiftBuffer->GetStartTime()) * DVD_TIME_BASE;
 
     return PVR_ERROR_NO_ERROR;
   }
@@ -1097,14 +1064,14 @@ bool SetProgramReminder(unsigned int epgUid)
   ChannelPtr selectedChannel = nullptr;
 
   // find channel with the program in context
-  auto &channels = g_vbox->GetChannels();
+  auto& channels = g_vbox->GetChannels();
   auto it = std::find_if(channels.cbegin(), channels.cend(),
-    [&epgUid](const ChannelPtr &channel)
-  {
-    const Schedule schedule = g_vbox->GetSchedule(channel);
-    const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
-    return (programme != nullptr);
-  });
+    [&epgUid](const ChannelPtr& channel) {
+      const Schedule schedule = g_vbox->GetSchedule(channel);
+      const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
+      return (programme != nullptr);
+    }
+  );
   // if channel doesn't exist - return error
   if (it == channels.cend())
   {
@@ -1119,10 +1086,11 @@ bool SetProgramReminder(unsigned int epgUid)
     const xmltv::ProgrammePtr programme = (schedule.schedule) ? schedule.schedule->GetProgramme(epgUid) : nullptr;
     if (programme)
     {
-      try {
+      try
+      {
         g_vbox->AddReminder(selectedChannel, programme);
       }
-      catch (VBoxException &e)
+      catch (VBoxException& e)
       {
         g_vbox->LogException(e);
         return false;
@@ -1133,19 +1101,19 @@ bool SetProgramReminder(unsigned int epgUid)
   return true;
 }
 
-static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
+static bool SetManualReminder(const PVR_MENUHOOK_DATA& item)
 {
   time_t currTime = time(nullptr), reminderTime;
   ChannelPtr selectedChannel = nullptr;
-  char buffer[256];
+  char buffer[256] = {0};
 
-  memset(buffer, 0, sizeof(buffer));
   // get channel in context
   selectedChannel = g_vbox->GetChannel(item.data.channel.iUniqueId);
   if (!selectedChannel)
     return false;
 
-  try {
+  try
+  {
     // create the current time's formatted timestamp (for user input)
     std::tm tm = *std::localtime(&currTime);
 
@@ -1163,7 +1131,7 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
     // add reminder using manual time & title
     g_vbox->AddReminder(selectedChannel, reminderTime, progTitle);
   }
-  catch (VBoxException &e)
+  catch (VBoxException& e)
   {
     g_vbox->LogException(e);
     return false;
@@ -1172,7 +1140,7 @@ static bool SetManualReminder(const PVR_MENUHOOK_DATA &item)
   return true;
 }
 
-PVR_ERROR CallMenuHook(const PVR_MENUHOOK &menuhook, const PVR_MENUHOOK_DATA &item)
+PVR_ERROR CallMenuHook(const PVR_MENUHOOK& menuhook, const PVR_MENUHOOK_DATA& item)
 {
   if (menuhook.category == PVR_MENUHOOK_SETTING)
   {

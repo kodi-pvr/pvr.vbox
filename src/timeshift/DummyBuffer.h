@@ -22,7 +22,8 @@
 
 #include "Buffer.h"
 
-namespace timeshift {
+namespace timeshift
+{
 
   /**
    * Dummy buffer that just passes all calls through to the input file
@@ -34,7 +35,7 @@ namespace timeshift {
     DummyBuffer() : Buffer() {}
     virtual ~DummyBuffer() {}
 
-    virtual int Read(byte *buffer, size_t length) override
+    virtual int Read(byte* buffer, size_t length) override
     {
       return XBMC->ReadFile(m_inputHandle, buffer, length);
     }
@@ -64,4 +65,4 @@ namespace timeshift {
       return XBMC->GetFileLength(m_inputHandle);
     }
   };
-}
+} // namespace timeshift

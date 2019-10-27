@@ -20,6 +20,7 @@
 */
 
 #include "ChannelStreamingStatus.h"
+
 #include <sstream>
 #include <stdexcept>
 
@@ -68,7 +69,8 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
 
   unsigned int rfLevel = 0;
 
-  try {
+  try
+  {
     // Convert the RF level to an integer
     rfLevel = static_cast<unsigned int>(std::stoi(m_rfLevel));
 
@@ -85,7 +87,6 @@ unsigned int ChannelStreamingStatus::GetSignalStrength() const
   }
   catch (std::invalid_argument)
   {
-
   }
 
   return rfLevel;
@@ -96,7 +97,8 @@ long ChannelStreamingStatus::GetBer() const
   if (!m_active)
     return 0;
 
-  try {
+  try
+  {
     // Make sure it's not detected as hexadecimal
     return std::stol(m_ber);
   }

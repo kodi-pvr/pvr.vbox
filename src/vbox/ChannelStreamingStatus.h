@@ -22,7 +22,8 @@
 
 #include <string>
 
-namespace vbox {
+namespace vbox
+{
 
   /**
    * Represents the streaming status of a channel. Only the fields required by
@@ -31,10 +32,9 @@ namespace vbox {
   class ChannelStreamingStatus
   {
   public:
-    ChannelStreamingStatus()
-      : m_active(false), m_signalQuality(0), m_sid(0) {};
+    ChannelStreamingStatus() : m_active(false), m_signalQuality(0), m_sid(0){};
 
-    ~ChannelStreamingStatus() {};
+    ~ChannelStreamingStatus(){};
 
     /**
      * @return the service name (SID XXX)
@@ -61,30 +61,11 @@ namespace vbox {
      */
     long GetBer() const;
 
-    void SetServiceId(unsigned int sid)
-    {
-      m_sid = sid;
-    }
-
-    void SetTunerId(const std::string &tunerId)
-    {
-      m_tunerId = tunerId;
-    }
-
-    void SetTunerType(const std::string &tunerType)
-    {
-      m_tunerType = tunerType;
-    }
-
-    void SetRfLevel(const std::string &rfLevel)
-    {
-      m_rfLevel = rfLevel;
-    }
-
-    void SetBer(const std::string &ber)
-    {
-      m_ber = ber;
-    }
+    void SetServiceId(unsigned int sid) { m_sid = sid; }
+    void SetTunerId(const std::string& tunerId) { m_tunerId = tunerId; }
+    void SetTunerType(const std::string& tunerType) { m_tunerType = tunerType; }
+    void SetRfLevel(const std::string& rfLevel) { m_rfLevel = rfLevel; }
+    void SetBer(const std::string& ber) { m_ber = ber; }
 
   public:
     bool m_active;
@@ -104,4 +85,4 @@ namespace vbox {
     std::string m_rfLevel;
     std::string m_ber;
   };
-}
+} // namespace vbox

@@ -21,12 +21,14 @@
 */
 
 #include "Buffer.h"
-#include <thread>
+
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
-#include <atomic>
+#include <thread>
 
-namespace timeshift {
+namespace timeshift
+{
 
   /**
    * Timeshift buffer which buffers into a file
@@ -34,40 +36,26 @@ namespace timeshift {
   class FilesystemBuffer : public Buffer
   {
   public:
-
     /**
      * @param bufferPath the directory to store the buffer files in
      */
-    FilesystemBuffer(const std::string &bufferPath);
+    FilesystemBuffer(const std::string& bufferPath);
     virtual ~FilesystemBuffer();
 
     virtual bool Open(const std::string inputUrl) override;
     virtual void Close() override;
-    virtual int Read(byte *buffer, size_t length) override;
+    virtual int Read(byte* buffer, size_t length) override;
     virtual int64_t Seek(int64_t position, int whence) override;
 
-    virtual bool CanPauseStream() const override
-    {
-      return true;
-    }
+    virtual bool CanPauseStream() const override { return true; }
 
-    virtual bool CanSeekStream() const override
-    {
-      return true;
-    }
+    virtual bool CanSeekStream() const override { return true; }
 
-    virtual int64_t Position() const override
-    {
-      return m_readPosition.load();
-    }
+    virtual int64_t Position() const override { return m_readPosition.load(); }
 
-    virtual int64_t Length() const override
-    {
-      return m_writePosition.load();
-    }
+    virtual int64_t Length() const override { return m_writePosition.load(); }
 
   private:
-
     const static int INPUT_READ_LENGTH;
 
     /**
@@ -90,12 +78,12 @@ namespace timeshift {
     /**
      * Read-only handle to the buffer file
      */
-    void *m_outputReadHandle;
+    void* m_outputReadHandle;
 
     /**
      * Write-only handle to the buffer file
      */
-    void *m_outputWriteHandle;
+    void* m_outputWriteHandle;
 
     /**
      * The thread that reads from m_inputHandle and writes to the output
@@ -128,4 +116,4 @@ namespace timeshift {
      */
     std::atomic<int64_t> m_writePosition;
   };
-}
+} // namespace timeshift

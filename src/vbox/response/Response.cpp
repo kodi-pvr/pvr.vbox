@@ -20,8 +20,9 @@
 */
 
 #include "Response.h"
-#include "../Exceptions.h"
+
 #include "../../xmltv/Utilities.h"
+#include "../Exceptions.h"
 
 using namespace tinyxml2;
 using namespace vbox::response;
@@ -29,8 +30,8 @@ using namespace vbox::response;
 Response::Response()
 {
   // Some XMLTV files have weird line endings, try to account for that
-  m_document = std::unique_ptr<XMLDocument>(
-    new XMLDocument(/*processEntities = */true, tinyxml2::PRESERVE_WHITESPACE));
+  m_document =
+      std::unique_ptr<XMLDocument>(new XMLDocument(/*processEntities = */ true, tinyxml2::PRESERVE_WHITESPACE));
 
   m_error.code = ErrorCode::SUCCESS;
   m_error.description = "";
@@ -40,7 +41,7 @@ Response::~Response()
 {
 }
 
-void Response::ParseRawResponse(const std::string &rawResponse)
+void Response::ParseRawResponse(const std::string& rawResponse)
 {
   // Try to parse the response as XML
   if (m_document->Parse(rawResponse.c_str(), rawResponse.size()) != XML_NO_ERROR)
@@ -55,14 +56,14 @@ void Response::ParseStatus()
   int errorCode;
   std::string errorDescription;
 
-  XMLNode *rootElement = m_document->RootElement();
-  XMLElement *statusElement = rootElement->FirstChildElement(GetStatusElementName().c_str());
+  XMLNode* rootElement = m_document->RootElement();
+  XMLElement* statusElement = rootElement->FirstChildElement(GetStatusElementName().c_str());
 
   // Not all response types always return the status element
   if (statusElement)
   {
-    XMLElement *errCodeEl = statusElement->FirstChildElement("ErrorCode");
-    XMLElement *errDescEl = statusElement->FirstChildElement("ErrorDescription");
+    XMLElement* errCodeEl = statusElement->FirstChildElement("ErrorCode");
+    XMLElement* errDescEl = statusElement->FirstChildElement("ErrorDescription");
 
     if (errCodeEl)
     {
@@ -80,7 +81,7 @@ void Response::ParseStatus()
 
 XMLElement* Response::GetReplyElement() const
 {
-  XMLNode *rootElement = m_document->RootElement();
+  XMLNode* rootElement = m_document->RootElement();
   return rootElement->FirstChildElement("Reply");
 }
 

@@ -26,5 +26,4 @@ using namespace xmltv;
 Channel::Channel(const std::string& id, const std::string& displayName)
   : m_id(id), m_displayName(displayName), m_icon("")
 {
-
 }

@@ -20,8 +20,8 @@
 *
 */
 
-#include <string>
 #include <memory>
+#include <string>
 
 namespace xmltv
 {
@@ -35,12 +35,11 @@ namespace xmltv
   class Channel
   {
   public:
-
-    Channel(const std::string &id, const std::string &displayName);
+    Channel(const std::string& id, const std::string& displayName);
     ~Channel() = default;
 
     std::string m_id;
     std::string m_displayName;
     std::string m_icon;
   };
-}
+} // namespace xmltv

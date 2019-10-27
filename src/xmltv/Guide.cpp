@@ -20,29 +20,32 @@
 */
 
 #include "Guide.h"
-#include <algorithm>
+
+#include "../vbox/ContentIdentifier.h"
 #include "Channel.h"
 #include "Utilities.h"
-#include "lib/tinyxml2/tinyxml2.h"
-#include "p8-platform/util/StringUtils.h"
-#include "../vbox/ContentIdentifier.h"
+
+#include <algorithm>
+
+#include <lib/tinyxml2/tinyxml2.h>
+#include <p8-platform/util/StringUtils.h>
 
 using namespace xmltv;
 using namespace tinyxml2;
 
-Guide::Guide(const XMLElement *m_content)
+Guide::Guide(const XMLElement* m_content)
 {
-  for (const XMLElement *element = m_content->FirstChildElement("channel");
-    element != NULL; element = element->NextSiblingElement("channel"))
+  for (const XMLElement* element = m_content->FirstChildElement("channel"); element != NULL;
+       element = element->NextSiblingElement("channel"))
   {
     // Create the channel
     std::string channelId = Utilities::UrlDecode(element->Attribute("id"));
-    const char *pChannelName = element->FirstChildElement("display-name")->GetText();
+    const char* pChannelName = element->FirstChildElement("display-name")->GetText();
     std::string displayName = pChannelName ? pChannelName : "";
     ChannelPtr channel = ChannelPtr(new Channel(channelId, displayName));
 
     // Add channel icon if it exists
-    auto *iconElement = element->FirstChildElement("icon");
+    auto* iconElement = element->FirstChildElement("icon");
     if (iconElement)
       channel->m_icon = iconElement->Attribute("src");
 
@@ -53,8 +56,8 @@ Guide::Guide(const XMLElement *m_content)
     m_schedules[channelId] = SchedulePtr(new Schedule(channel));
   }
 
-  for (const XMLElement *element = m_content->FirstChildElement("programme");
-    element != NULL; element = element->NextSiblingElement("programme"))
+  for (const XMLElement* element = m_content->FirstChildElement("programme"); element != NULL;
+       element = element->NextSiblingElement("programme"))
   {
     // Extract the channel name and the programme
     std::string channelId = Utilities::UrlDecode(element->Attribute("channel"));
@@ -70,20 +73,20 @@ Guide::Guide(const XMLElement *m_content)
   }
 }
 
-std::string Guide::GetChannelId(const std::string &displayName) const
+std::string Guide::GetChannelId(const std::string& displayName) const
 {
   auto it = std::find_if(
     m_displayNameMappings.cbegin(),
     m_displayNameMappings.cend(),
-    [displayName](const std::pair<std::string, std::string> &mapping)
-  {
-    return StringUtils::CompareNoCase(mapping.first, displayName) == 0;
-  });
+    [displayName](const std::pair<std::string, std::string>& mapping) {
+      return StringUtils::CompareNoCase(mapping.first, displayName) == 0;
+    }
+  );
 
   return it != m_displayNameMappings.cend() ? it->second : "";
 }
 
-const SchedulePtr Guide::GetSchedule(const std::string &channelId) const
+const SchedulePtr Guide::GetSchedule(const std::string& channelId) const
 {
   auto it = m_schedules.find(channelId);
 

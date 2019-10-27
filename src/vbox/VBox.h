@@ -20,34 +20,37 @@
 *
 */
 
-#include <string>
-#include <vector>
-#include <map>
-#include <mutex>
-#include <thread>
-#include <atomic>
-#include <functional>
-#include <kodi/libXBMC_addon.h>
-#include "Channel.h"
-#include "ChannelStreamingStatus.h"
-#include "GuideChannelMapper.h"
-#include "CategoryGenreMapper.h"
-#include "Recording.h"
-#include "SeriesRecording.h"
-#include "Reminder.h"
-#include "ReminderManager.h"
-#include "Exceptions.h"
-#include "Settings.h"
-#include "SoftwareVersion.h"
-#include "request/Request.h"
-#include "request/ApiRequest.h"
-#include "response/Response.h"
-#include "StartupStateHandler.h"
+#include "../xmltv/Guide.h"
 #include "../xmltv/Programme.h"
 #include "../xmltv/Schedule.h"
-#include "../xmltv/Guide.h"
+#include "CategoryGenreMapper.h"
+#include "Channel.h"
+#include "ChannelStreamingStatus.h"
+#include "Exceptions.h"
+#include "GuideChannelMapper.h"
+#include "Recording.h"
+#include "Reminder.h"
+#include "ReminderManager.h"
+#include "SeriesRecording.h"
+#include "Settings.h"
+#include "SoftwareVersion.h"
+#include "StartupStateHandler.h"
+#include "request/ApiRequest.h"
+#include "request/Request.h"
+#include "response/Response.h"
 
-namespace vbox {
+#include <atomic>
+#include <functional>
+#include <map>
+#include <mutex>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include <kodi/libXBMC_addon.h>
+
+namespace vbox
+{
 
   /**
    * Represents the status of any external media attached to the gateway
@@ -118,7 +121,7 @@ namespace vbox {
   {
     unsigned int m_beforeMargin;
     unsigned int m_afterMargin;
-    bool operator!=(const RecordingMargins &other)
+    bool operator!=(const RecordingMargins& other)
     {
       return (!(m_beforeMargin == other.m_beforeMargin && m_afterMargin == other.m_afterMargin));
     }
@@ -130,13 +133,12 @@ namespace vbox {
   class VBox
   {
   public:
-
     /**
      * The minimum backend software version required to use the addon
      */
-    static const char * MINIMUM_SOFTWARE_VERSION;
+    static const char* MINIMUM_SOFTWARE_VERSION;
 
-    VBox(const Settings &settings);
+    VBox(const Settings& settings);
     ~VBox();
 
     /**
@@ -170,9 +172,9 @@ namespace vbox {
     const std::vector<ChannelPtr>& GetChannels() const;
     const ChannelPtr GetChannel(unsigned int uniqueId) const;
     const ChannelPtr GetCurrentChannel() const;
-    void SetCurrentChannel(const ChannelPtr &channel);
-    ChannelStreamingStatus GetChannelStreamingStatus(const ChannelPtr &channel);
-    void SetChannelStreamingStatus(const ChannelPtr &channel);
+    void SetCurrentChannel(const ChannelPtr& channel);
+    ChannelStreamingStatus GetChannelStreamingStatus(const ChannelPtr& channel);
+    void SetChannelStreamingStatus(const ChannelPtr& channel);
 
     // Recording methods
     bool SupportsRecordings() const;
@@ -180,26 +182,26 @@ namespace vbox {
     int64_t GetRecordingUsedSpace() const;
     int GetRecordingsAmount() const;
     int GetTimersAmount() const;
-    request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr &recording) const;
-    request::ApiRequest CreateDeleteSeriesRequest(const SeriesRecordingPtr &series) const;
+    request::ApiRequest CreateDeleteRecordingRequest(const RecordingPtr& recording) const;
+    request::ApiRequest CreateDeleteSeriesRequest(const SeriesRecordingPtr& series) const;
     bool DeleteRecordingOrTimer(unsigned int id);
     // for TIMER_VBOX_TYPE_EPG_BASED_SINGLE timer
-      void AddTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
+    void AddTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr programme);
     // for TIMER_VBOX_TYPE_MANUAL_SINGLE timer
-      void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-        const std::string title, const std::string description);
+    void AddTimer(const ChannelPtr& channel, time_t startTime, time_t endTime,
+                  const std::string title, const std::string description);
     // for TIMER_VBOX_TYPE_EPG_BASED_MANUAL_SERIES timer
-    void AddTimer(const ChannelPtr &channel, time_t startTime, time_t endTime,
-      const std::string title, const std::string description, const unsigned int weekdays);
+    void AddTimer(const ChannelPtr& channel, time_t startTime, time_t endTime,
+                  const std::string title, const std::string description, const unsigned int weekdays);
     // for TIMER_VBOX_TYPE_EPG_BASED_AUTO_SERIES timer
-    void AddSeriesTimer(const ChannelPtr &channel, const ::xmltv::ProgrammePtr programme);
-      const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
+    void AddSeriesTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr programme);
+    const std::vector<RecordingPtr>& GetRecordingsAndTimers() const;
     const std::vector<SeriesRecordingPtr>& GetSeriesTimers() const;
     void UpdateRecordingMargins(RecordingMargins defaultMargins);
 
     // EPG methods
-    const Schedule GetSchedule(const ChannelPtr &channel) const;
-    int GetCategoriesGenreType(std::vector<std::string> &categories) const;
+    const Schedule GetSchedule(const ChannelPtr& channel) const;
+    int GetCategoriesGenreType(std::vector<std::string>& categories) const;
     void StartEPGScan();
     void SyncEPGNow();
     void TriggerEpgUpdatesForChannels();
@@ -207,15 +209,15 @@ namespace vbox {
     void MarkChannelAsInitialEpgSkipped(unsigned int channelUid);
 
     // Reminder methods
-    bool AddReminder(const ChannelPtr &channel, const ::xmltv::ProgrammePtr &programme);
-    bool AddReminder(const ChannelPtr &channel, time_t startTime, std::string &progName);
-    bool DeleteChannelReminders(const ChannelPtr &channel);
+    bool AddReminder(const ChannelPtr& channel, const ::xmltv::ProgrammePtr& programme);
+    bool AddReminder(const ChannelPtr& channel, time_t startTime, std::string& progName);
+    bool DeleteChannelReminders(const ChannelPtr& channel);
     bool DeleteProgramReminders(unsigned int epgUid);
     const ChannelPtr FindChannelForEPGReminder(int epgUid);
 
     // Helpers
-    static void Log(const ADDON::addon_log level, const char *format, ...);
-    static void LogException(VBoxException &e);
+    static void Log(const ADDON::addon_log level, const char* format, ...);
+    static void LogException(VBoxException& e);
 
     // Event handlers
     std::function<void()> OnChannelsUpdated;
@@ -228,24 +230,24 @@ namespace vbox {
     static const int INITIAL_EPG_STEP_SECS = 5;
 
     void BackgroundUpdater();
-    unsigned int GetDBVersion(std::string &versionName) const;
+    unsigned int GetDBVersion(std::string& versionName) const;
     void RetrieveChannels(bool triggerEvent = true);
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
     ReminderPtr GetActiveReminder();
-    void DisplayReminder(const ReminderPtr &reminder);
+    void DisplayReminder(const ReminderPtr& reminder);
     void RetrieveReminders();
     void InitializeGenreMapper();
-    void SwapChannelIcons(std::vector<ChannelPtr> &channels);
-    void SendScanEPG(std::string &rEpgDetectionCheckMethod) const;
-    void GetEpgDetectionState(std::string &methodName, std::string &flagName);
-    void InitScanningEPG(std::string &rScanMethod, std::string &rGetStatusMethod, std::string &rfIsScanningFlag);
+    void SwapChannelIcons(std::vector<ChannelPtr>& channels);
+    void SendScanEPG(std::string& rEpgDetectionCheckMethod) const;
+    void GetEpgDetectionState(std::string& methodName, std::string& flagName);
+    void InitScanningEPG(std::string& rScanMethod, std::string& rGetStatusMethod, std::string& rfIsScanningFlag);
     void UpdateEpgScan(bool fRetrieveGuide);
     const RecordingMargins GetRecordingMargins(bool fBackendSingleMargin) const;
     void SetRecordingMargins(RecordingMargins margin, bool fBackendSingleMargin);
 
-    void LogGuideStatistics(const ::xmltv::Guide &guide) const;
-    response::ResponsePtr PerformRequest(const request::Request &request) const;
+    void LogGuideStatistics(const ::xmltv::Guide& guide) const;
+    response::ResponsePtr PerformRequest(const request::Request& request) const;
 
     /**
      * The addons settings
@@ -301,7 +303,7 @@ namespace vbox {
     /**
     * The reminder manager
     */
-    ReminderManagerPtr  m_reminderManager;
+    ReminderManagerPtr m_reminderManager;
 
     /**
      * Handler for the startup state
@@ -359,4 +361,4 @@ namespace vbox {
      */
     mutable std::mutex m_mutex;
   };
-}
+} // namespace vbox

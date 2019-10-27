@@ -23,7 +23,7 @@
 
 using namespace vbox::timeshift;
 
-int DummyBuffer::Read(byte *buffer, size_t length)
+int DummyBuffer::Read(byte* buffer, size_t length)
 {
   return XBMC->ReadFile(m_inputHandle, buffer, length);
 }

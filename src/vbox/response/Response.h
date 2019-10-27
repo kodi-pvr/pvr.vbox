@@ -22,10 +22,13 @@
 
 #include <memory>
 #include <string>
-#include "lib/tinyxml2/tinyxml2.h"
 
-namespace vbox {
-  namespace response {
+#include <lib/tinyxml2/tinyxml2.h>
+
+namespace vbox
+{
+  namespace response
+  {
 
     class Response;
     typedef std::unique_ptr<Response> ResponsePtr;
@@ -34,7 +37,8 @@ namespace vbox {
      * The various response types (indicates what kind of content the response
      * will contain)
      */
-    enum ResponseType {
+    enum ResponseType
+    {
       GENERIC = 0,
       XMLTV,
       RECORDS
@@ -43,7 +47,8 @@ namespace vbox {
     /**
      * The possible error codes a response can have
      */
-    enum ErrorCode {
+    enum ErrorCode
+    {
       SUCCESS = 0,
       UNKNOWN_METHOD,
       GENERAL_ERROR,
@@ -58,7 +63,8 @@ namespace vbox {
     /**
      * Represents an error
      */
-    struct Error {
+    struct Error
+    {
       ErrorCode code;
       std::string description;
     };
@@ -77,7 +83,7 @@ namespace vbox {
        * Move constructor. It transfers the ownership of
        * the underlying XML document.
        */
-      Response(Response &&other)
+      Response(Response&& other)
       {
         if (this != &other)
           m_document = std::move(other.m_document);
@@ -87,31 +93,22 @@ namespace vbox {
        * Parses the raw XML response
        * @param rawResponse The raw response.
        */
-      void ParseRawResponse(const std::string &rawResponse);
+      void ParseRawResponse(const std::string& rawResponse);
 
       /**
        * @return whether the response was successful
        */
-      bool IsSuccessful() const
-      {
-        return GetErrorCode() == ErrorCode::SUCCESS;
-      }
+      bool IsSuccessful() const { return GetErrorCode() == ErrorCode::SUCCESS; }
 
       /**
        * @return the error code
        */
-      ErrorCode GetErrorCode() const
-      {
-        return m_error.code;
-      }
+      ErrorCode GetErrorCode() const { return m_error.code; }
 
       /**
        * @return the error description
        */
-      std::string GetErrorDescription() const
-      {
-        return m_error.description;
-      }
+      std::string GetErrorDescription() const { return m_error.description; }
 
       /**
        * Returns the portion of the XML response that represents the actual
@@ -121,17 +118,13 @@ namespace vbox {
       virtual tinyxml2::XMLElement* GetReplyElement() const;
 
     protected:
-
       /**
        * Returns the name of the element that represents the request status. The
        * element name varies slightly between different response types so it
        * may be overriden
        * @return the element name
        */
-      virtual std::string GetStatusElementName() const
-      {
-        return "Status";
-      }
+      virtual std::string GetStatusElementName() const { return "Status"; }
 
       /**
       * The underlying XML response document
@@ -139,7 +132,6 @@ namespace vbox {
       std::unique_ptr<tinyxml2::XMLDocument> m_document;
 
     private:
-
       /**
        * Parses the response status for possible errors
        */
@@ -160,10 +152,7 @@ namespace vbox {
       virtual tinyxml2::XMLElement* GetReplyElement() const override;
 
     protected:
-      virtual std::string GetStatusElementName() const override
-      {
-        return "Error";
-      }
+      virtual std::string GetStatusElementName() const override { return "Error"; }
     };
 
     /**
@@ -175,10 +164,7 @@ namespace vbox {
       virtual tinyxml2::XMLElement* GetReplyElement() const override;
 
     protected:
-      virtual std::string GetStatusElementName() const override
-      {
-        return "Error";
-      }
+      virtual std::string GetStatusElementName() const override { return "Error"; }
     };
-  }
-}
+  } // namespace response
+} // namespace vbox

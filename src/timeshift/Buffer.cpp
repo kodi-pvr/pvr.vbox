@@ -20,6 +20,7 @@
 */
 
 #include "Buffer.h"
+
 #include <sstream>
 
 using namespace timeshift;
@@ -49,7 +50,7 @@ void Buffer::Close()
   CloseHandle(m_inputHandle);
 }
 
-void Buffer::CloseHandle(void *&handle)
+void Buffer::CloseHandle(void*& handle)
 {
   if (handle)
   {

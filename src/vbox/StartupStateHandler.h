@@ -21,15 +21,17 @@
 */
 
 #include <chrono>
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
 
-namespace vbox {
+namespace vbox
+{
 
   /**
     * The various startup states the addon can be in
     */
-  enum StartupState {
+  enum StartupState
+  {
     UNINITIALIZED,
     INITIALIZED,
     CHANNELS_LOADED,
@@ -46,13 +48,11 @@ namespace vbox {
   class StartupStateHandler
   {
   public:
-
     /**
       * Initializes the handler. The state is set to UNINITIALIZED by default.
       */
-    StartupStateHandler()
-      : m_state(StartupState::UNINITIALIZED) { }
-    ~StartupStateHandler() {};
+    StartupStateHandler() : m_state(StartupState::UNINITIALIZED) {}
+    ~StartupStateHandler(){};
 
     /**
       * Waits for the specified state.
@@ -66,10 +66,10 @@ namespace vbox {
 
       // Wait for the state to change
       m_condition.wait_for(lock, std::chrono::seconds(STATE_WAIT_TIMEOUT),
-        [this, state]()
-      {
-        return m_state >= state;
-      });
+                           [this, state]()
+                           {
+                             return m_state >= state;
+                           });
 
       return m_state >= state;
     }
@@ -100,7 +100,6 @@ namespace vbox {
     }
 
   private:
-
     /**
      * The maximum amount of seconds to block while waiting for a state
      * change
@@ -122,4 +121,4 @@ namespace vbox {
       */
     mutable std::condition_variable m_condition;
   };
-}
+} // namespace vbox

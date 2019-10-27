@@ -23,8 +23,7 @@
 
 using namespace vbox;
 
-SeriesRecording::SeriesRecording(const std::string &channelId)
-	: m_id(0), m_scheduledId(0), m_channelId(channelId), m_fIsAuto(false), m_weekdays(0)
+SeriesRecording::SeriesRecording(const std::string& channelId)
+  : m_id(0), m_scheduledId(0), m_channelId(channelId), m_fIsAuto(false), m_weekdays(0)
 {
-
 }

@@ -1,3 +1,6 @@
+5.5.1
+- Coding guidelines, strncpy safety and remove memset calls where possible
+
 5.5.0
 - Skip initial EPG load to avoid crash scenario on boot on LibreElec/CoreElec
 - New settings format and settings levels / help text

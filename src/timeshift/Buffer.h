@@ -20,9 +20,10 @@
 *
 */
 
-#include <string>
-#include <ctime>
 #include "../client.h"
+
+#include <ctime>
+#include <string>
 
 /**
 * The basic type all buffers operate on
@@ -33,16 +34,15 @@
 typedef unsigned char byte;
 #endif
 
-namespace timeshift {
+namespace timeshift
+{
   /**
    * Base class for all timeshift buffers
    */
   class Buffer
   {
   public:
-    Buffer() :
-      m_inputHandle(nullptr), m_startTime(0),
-      m_readTimeout(DEFAULT_READ_TIMEOUT) {};
+    Buffer() : m_inputHandle(nullptr), m_startTime(0), m_readTimeout(DEFAULT_READ_TIMEOUT) {};
     virtual ~Buffer();
 
     /**
@@ -60,7 +60,7 @@ namespace timeshift {
      * Reads "length" bytes into the specified buffer
      * @return the number of bytes read
      */
-    virtual int Read(byte *buffer, size_t length) = 0;
+    virtual int Read(byte* buffer, size_t length) = 0;
 
     /**
      * Seeks to the specified position
@@ -91,27 +91,18 @@ namespace timeshift {
     /**
      * @return the time the buffering started
      */
-    time_t GetStartTime() const
-    {
-      return m_startTime;
-    }
+    time_t GetStartTime() const { return m_startTime; }
 
     /**
      * @return basically the current time
      */
-    time_t GetEndTime() const
-    {
-      return time(nullptr);
-    }
+    time_t GetEndTime() const { return time(nullptr); }
 
     /**
      * Sets the read timeout (defaults to 10 seconds)
      * @param timeout the read timeout in seconds
      */
-    void SetReadTimeout(int timeout)
-    {
-      m_readTimeout = timeout;
-    }
+    void SetReadTimeout(int timeout) { m_readTimeout = timeout; }
 
   protected:
     const static int DEFAULT_READ_TIMEOUT;
@@ -120,12 +111,12 @@ namespace timeshift {
      * Safely closes an open file handle.
      * @param the handle to close. The pointer will be nulled.
      */
-    void CloseHandle(void *&handle);
+    void CloseHandle(void*& handle);
 
     /**
      * The input handle (where data is read from)
      */
-    void *m_inputHandle;
+    void* m_inputHandle;
 
     /**
      * The time (in seconds) to wait when opening a read handle and when
@@ -139,4 +130,4 @@ namespace timeshift {
      */
     time_t m_startTime;
   };
-}
+} // namespace timeshift

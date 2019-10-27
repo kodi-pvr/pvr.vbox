@@ -20,16 +20,17 @@
 */
 
 #include "Programme.h"
+
 #include "Utilities.h"
-#include "lib/tinyxml2/tinyxml2.h"
+
+#include <lib/tinyxml2/tinyxml2.h>
 
 using namespace xmltv;
 using namespace tinyxml2;
 
 const std::string Programme::STRING_FORMAT_NOT_SUPPORTED = "String format is not supported";
 
-Programme::Programme(const tinyxml2::XMLElement *xml)
-  : m_year(0)
+Programme::Programme(const tinyxml2::XMLElement* xml) : m_year(0)
 {
   // Construct a basic event
   m_startTime = xmltv::Utilities::GetStdString(xml->Attribute("start"));
@@ -37,7 +38,7 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   m_channelName = Utilities::UrlDecode(xmltv::Utilities::GetStdString(xml->Attribute("channel")));
 
   // Title
-  const XMLElement *element = xml->FirstChildElement("title");
+  const XMLElement* element = xml->FirstChildElement("title");
   if (element)
     m_title = xmltv::Utilities::GetStdString(element->GetText());
   // Subtitle
@@ -66,8 +67,7 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
 
   // Categories. Skip "movie" and "series" since most people treat categories
   // as genres
-  for (element = xml->FirstChildElement("category");
-    element != NULL; element = element->NextSiblingElement("category"))
+  for (element = xml->FirstChildElement("category"); element != NULL; element = element->NextSiblingElement("category"))
   {
     std::string category = xmltv::Utilities::GetStdString(element->GetText());
     if (category.empty())
@@ -90,8 +90,8 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
   }
 
   // series IDs
-  for (element = xml->FirstChildElement("episode-num");
-    element != NULL; element = element->NextSiblingElement("episode-num"))
+  for (element = xml->FirstChildElement("episode-num"); element != NULL;
+       element = element->NextSiblingElement("episode-num"))
   {
     std::string seriesId = xmltv::Utilities::GetStdString(element->GetText());
     if (seriesId.empty())
@@ -100,20 +100,20 @@ Programme::Programme(const tinyxml2::XMLElement *xml)
     if (systemAttr.empty())
       systemAttr = "xmltv_ns";
 
-    m_seriesIds.insert(std::pair<std::string,std::string>(systemAttr, seriesId));
+    m_seriesIds.insert(std::pair<std::string, std::string>(systemAttr, seriesId));
   }
 }
 
-void Programme::ParseCredits(const XMLElement *creditsElement)
+void Programme::ParseCredits(const XMLElement* creditsElement)
 {
   // Actors
-  for (const XMLElement *element = creditsElement->FirstChildElement("actor");
-    element != NULL; element = element->NextSiblingElement("actor"))
+  for (const XMLElement* element = creditsElement->FirstChildElement("actor"); element != NULL;
+       element = element->NextSiblingElement("actor"))
   {
     Actor actor;
 
-    auto *name = element->GetText();
-    auto *role = element->Attribute("role");
+    auto* name = element->GetText();
+    auto* role = element->Attribute("role");
 
     if (name)
       actor.name = element->GetText();
@@ -124,28 +124,28 @@ void Programme::ParseCredits(const XMLElement *creditsElement)
   }
 
   // Directors
-  for (const XMLElement *element = creditsElement->FirstChildElement("director");
-    element != NULL; element = element->NextSiblingElement("director"))
+  for (const XMLElement* element = creditsElement->FirstChildElement("director"); element != NULL;
+       element = element->NextSiblingElement("director"))
   {
-    auto *director = element->GetText();
+    auto* director = element->GetText();
     if (director)
       m_credits.directors.push_back(director);
   }
 
   // Producers
-  for (const XMLElement *element = creditsElement->FirstChildElement("producer");
-    element != NULL; element = element->NextSiblingElement("producer"))
+  for (const XMLElement* element = creditsElement->FirstChildElement("producer"); element != NULL;
+       element = element->NextSiblingElement("producer"))
   {
-    auto *producer = element->GetText();
+    auto* producer = element->GetText();
     if (producer)
       m_credits.producers.push_back(producer);
   }
 
   // Writers
-  for (const XMLElement *element = creditsElement->FirstChildElement("writer");
-    element != NULL; element = element->NextSiblingElement("writer"))
+  for (const XMLElement* element = creditsElement->FirstChildElement("writer"); element != NULL;
+       element = element->NextSiblingElement("writer"))
   {
-    auto *writer = element->GetText();
+    auto* writer = element->GetText();
     if (writer)
       m_credits.writers.push_back(writer);
   }

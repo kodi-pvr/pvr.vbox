@@ -20,10 +20,11 @@
 *
 */
 
-#include <string>
 #include <memory>
+#include <string>
 
-namespace vbox {
+namespace vbox
+{
 
   class SeriesRecording;
   typedef std::unique_ptr<SeriesRecording> SeriesRecordingPtr;
@@ -34,21 +35,21 @@ namespace vbox {
   class SeriesRecording
   {
   public:
-    SeriesRecording(const std::string &channelId);
+    SeriesRecording(const std::string& channelId);
     ~SeriesRecording() = default;
 
-    bool operator== (const SeriesRecording &other)
+    bool operator==(const SeriesRecording& other)
     {
       return m_id == other.m_id &&
-        m_scheduledId == other.m_scheduledId &&
-        m_channelId == other.m_channelId &&
-        m_title == other.m_title &&
-        m_description == other.m_description &&
-        m_startTime == other.m_startTime &&
-        m_endTime == other.m_endTime;
+             m_scheduledId == other.m_scheduledId &&
+             m_channelId == other.m_channelId &&
+             m_title == other.m_title &&
+             m_description == other.m_description &&
+             m_startTime == other.m_startTime &&
+             m_endTime == other.m_endTime;
     }
 
-    bool operator!= (const SeriesRecording &other)
+    bool operator!=(const SeriesRecording& other)
     {
       return !(*this == other);
     }
@@ -64,4 +65,4 @@ namespace vbox {
     unsigned int m_weekdays;
   };
 
-}
+} // namespace vbox
