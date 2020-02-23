@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/kodi-pvr/pvr.vbox.svg?branch=Matrix)](https://travis-ci.org/kodi-pvr/pvr.vbox/branches)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/kodi-pvr/pvr.vuplus?branch=Matrix&svg=true)](https://ci.appveyor.com/project/kodi-pvr/pvr-vuplus?branch=Matrix)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5120/badge.svg)](https://scan.coverity.com/projects/5120)
 
 # VBox Home TV Gateway PVR Client
