@@ -29,10 +29,6 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/Recording.cpp
                 src/vbox/RecordingReader.cpp
                 src/vbox/RecordingReader.h
-                src/vbox/Reminder.h
-                src/vbox/Reminder.cpp
-                src/vbox/ReminderManager.h
-                src/vbox/ReminderManager.cpp
                 src/vbox/SeriesRecording.h
                 src/vbox/SeriesRecording.cpp
                 src/vbox/Settings.h

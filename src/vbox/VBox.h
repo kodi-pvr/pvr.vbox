@@ -29,8 +29,6 @@
 #include "Exceptions.h"
 #include "GuideChannelMapper.h"
 #include "Recording.h"
-#include "Reminder.h"
-#include "ReminderManager.h"
 #include "SeriesRecording.h"
 #include "Settings.h"
 #include "SoftwareVersion.h"
@@ -208,13 +206,6 @@ namespace vbox
     bool IsInitialEpgSkippingCompleted();
     void MarkChannelAsInitialEpgSkipped(unsigned int channelUid);
 
-    // Reminder methods
-    bool AddReminder(const ChannelPtr& channel, const ::xmltv::ProgrammePtr& programme);
-    bool AddReminder(const ChannelPtr& channel, time_t startTime, std::string& progName);
-    bool DeleteChannelReminders(const ChannelPtr& channel);
-    bool DeleteProgramReminders(unsigned int epgUid);
-    const ChannelPtr FindChannelForEPGReminder(int epgUid);
-
     // Helpers
     static void Log(const ADDON::addon_log level, const char* format, ...);
     static void LogException(VBoxException& e);
@@ -234,9 +225,6 @@ namespace vbox
     void RetrieveChannels(bool triggerEvent = true);
     void RetrieveRecordings(bool triggerEvent = true);
     void RetrieveGuide(bool triggerEvent = true);
-    ReminderPtr GetActiveReminder();
-    void DisplayReminder(const ReminderPtr& reminder);
-    void RetrieveReminders();
     void InitializeGenreMapper();
     void SwapChannelIcons(std::vector<ChannelPtr>& channels);
     void SendScanEPG(std::string& rEpgDetectionCheckMethod) const;
@@ -299,11 +287,6 @@ namespace vbox
      * The category<->genre mapper
      */
     CategoryMapperPtr m_categoryGenreMapper;
-
-    /**
-    * The reminder manager
-    */
-    ReminderManagerPtr m_reminderManager;
 
     /**
      * Handler for the startup state
