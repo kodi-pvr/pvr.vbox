@@ -1,3 +1,7 @@
+v5.5.5
+- Update: PVR API 6.2.0
+- Update: Remove reminders feature as it is now part of kodi
+
 5.5.1
 - Coding guidelines, strncpy safety and remove memset calls where possible
 
