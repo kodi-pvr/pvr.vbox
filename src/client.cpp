@@ -412,6 +412,8 @@ PVR_ERROR GetRecordings(ADDON_HANDLE handle, bool deleted)
       continue;
 
     PVR_RECORDING recording = {0};
+    recording.iSeriesNumber = PVR_RECORDING_INVALID_SERIES_EPISODE;
+    recording.iEpisodeNumber = PVR_RECORDING_INVALID_SERIES_EPISODE;
 
     time_t startTime = xmltv::Utilities::XmltvToUnixTime(item->m_startTime);
     time_t endTime = xmltv::Utilities::XmltvToUnixTime(item->m_endTime);
@@ -878,6 +880,9 @@ PVR_ERROR GetEPGForChannel(ADDON_HANDLE handle, int iChannelUid, time_t iStart, 
     event.iYear = programme->m_year;
     event.strEpisodeName = programme->m_subTitle.c_str();
     event.strIconPath = programme->m_icon.c_str();
+    event.iSeriesNumber = EPG_TAG_INVALID_SERIES_EPISODE;
+    event.iEpisodeNumber = EPG_TAG_INVALID_SERIES_EPISODE;
+    event.iEpisodePartNumber = EPG_TAG_INVALID_SERIES_EPISODE;
 
     std::string directors = xmltv::Utilities::ConcatenateStringList(programme->GetDirectors());
     std::string writers = xmltv::Utilities::ConcatenateStringList(programme->GetWriters());
