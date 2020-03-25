@@ -3,9 +3,9 @@ Priority: extra
 Maintainer: Sam Stenvall <sam.stenvall@kodi.tv>
 Build-Depends: debhelper (>= 9.0.0), cmake,
                libp8-platform-dev, kodi-addon-dev
-Standards-Version: 3.9.4
+Standards-Version: 4.1.2
 Section: libs
-Homepage: https://github.com/Jalle19/pvr.vbox
+Homepage: https://github.com/kodi-pvr/pvr.vbox
 
 Package: kodi-pvr-vbox
 Section: libs
