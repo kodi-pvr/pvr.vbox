@@ -1,6 +1,22 @@
-v5.5.5
+5.5.6
+- Update Debian build code
+- Update with some minor cleanups
+- Cleanup source copyright to match SPDX
+- Add license name forum url and source url to addon.xml
+- Add GPL2+ license file and show GPL2+ on README.md
+
+5.5.5
 - Update: PVR API 6.2.0
 - Update: Remove reminders feature as it is now part of kodi
+
+5.5.4
+- Update Language files from Transifex
+
+5.5.3
+- Update Language files from Transifex
+
+5.5.2
+- Update Language files from Transifex
 
 5.5.1
 - Coding guidelines, strncpy safety and remove memset calls where possible
