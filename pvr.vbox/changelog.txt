@@ -1,3 +1,6 @@
+5.5.7
+- Update: PVR API 6.3.0
+
 5.5.6
 - Update Debian build code
 - Update with some minor cleanups
