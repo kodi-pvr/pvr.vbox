@@ -41,7 +41,7 @@ CategoryGenreMapper::CategoryGenreMapper()
 
 void CategoryGenreMapper::Initialize(const std::string& xmlFileName)
 {
-  g_vbox->Log(ADDON::LOG_INFO, "Initializing genre mapper");
+  g_vbox->Log(LOG_INFO, "Initializing genre mapper");
   LoadCategoryToGenreXML(xmlFileName);
 }
 
@@ -49,17 +49,17 @@ bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string& xmlFileName)
 {
   if (!XBMC->FileExists(xmlFileName.c_str(), false))
   {
-    g_vbox->Log(ADDON::LOG_INFO, "No Category to Genre mapping XML found");
+    g_vbox->Log(LOG_INFO, "No Category to Genre mapping XML found");
     return false;
   }
   else
   {
-    g_vbox->Log(ADDON::LOG_INFO, "Found channel mapping file, attempting to load it");
+    g_vbox->Log(LOG_INFO, "Found channel mapping file, attempting to load it");
     void* fileHandle = XBMC->OpenFile(xmlFileName.c_str(), 0x08 /* READ_NO_CACHE */);
 
     if (!fileHandle)
     {
-      g_vbox->Log(ADDON::LOG_INFO, "Could not open Category to Genre mapping XML");
+      g_vbox->Log(LOG_INFO, "Could not open Category to Genre mapping XML");
       return false;
     }
     // Read the XML
@@ -174,6 +174,6 @@ int CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string>& catego
 
   UpdateFinalMatch(matches, finalMatch);
 
-  XBMC->Log(ADDON::LOG_DEBUG, "Final match is %d", finalMatch->first);
+  XBMC->Log(LOG_DEBUG, "Final match is %d", finalMatch->first);
   return finalMatch->first;
 }

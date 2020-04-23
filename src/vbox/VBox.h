@@ -196,7 +196,7 @@ namespace vbox
     void MarkChannelAsInitialEpgSkipped(unsigned int channelUid);
 
     // Helpers
-    static void Log(const ADDON::addon_log level, const char* format, ...);
+    static void Log(const addon_log level, const char* format, ...);
     static void LogException(VBoxException& e);
 
     // Event handlers

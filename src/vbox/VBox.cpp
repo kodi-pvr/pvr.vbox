@@ -222,7 +222,7 @@ void VBox::UpdateEpgScan(bool fRetrieveGuide)
         // if done detecting EPG - change flag to false
         if (m_epgScanState == EPGSCAN_FINISHED)
         {
-          XBMC->QueueNotification(ADDON::QUEUE_INFO, "EPG scanned and synced with guide");
+          XBMC->QueueNotification(QUEUE_INFO, "EPG scanned and synced with guide");
           m_epgScanState = EPGSCAN_NO_SCAN;
         }
       }
@@ -1139,7 +1139,7 @@ response::ResponsePtr VBox::PerformRequest(const request::Request& request) cons
   throw RequestFailedException("Unable to perform request (" + request.GetIdentifier() + ")");
 }
 
-void VBox::Log(const ADDON::addon_log level, const char* format, ...)
+void VBox::Log(const addon_log level, const char* format, ...)
 {
   char* buf = new char[VBOX_LOG_BUFFER];
   size_t c = sprintf(buf, "pvr.vbox - ");
