@@ -171,7 +171,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
     }
     catch (FirmwareVersionException& e)
     {
-      XBMC->QueueNotification(ADDON::QUEUE_ERROR, e.what());
+      XBMC->QueueNotification(QUEUE_ERROR, e.what());
       g_status = ADDON_STATUS_PERMANENT_FAILURE;
     }
     catch (VBoxException& e)
@@ -1046,13 +1046,13 @@ PVR_ERROR CallMenuHook(const PVR_MENUHOOK& menuhook, const PVR_MENUHOOK_DATA& it
   {
     if (menuhook.iHookId == MENUHOOK_ID_RESCAN_EPG)
     {
-      XBMC->QueueNotification(ADDON::QUEUE_INFO, "Rescanning EPG, this will take a while");
+      XBMC->QueueNotification(QUEUE_INFO, "Rescanning EPG, this will take a while");
       g_vbox->StartEPGScan();
       return PVR_ERROR_NO_ERROR;
     }
     else if (menuhook.iHookId == MENUHOOK_ID_SYNC_EPG)
     {
-      XBMC->QueueNotification(ADDON::QUEUE_INFO, "Getting EPG from VBox device");
+      XBMC->QueueNotification(QUEUE_INFO, "Getting EPG from VBox device");
       g_vbox->SyncEPGNow();
       return PVR_ERROR_NO_ERROR;
     }

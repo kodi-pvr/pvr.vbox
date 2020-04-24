@@ -1,5 +1,9 @@
+5.5.8
+- Update to PVR API 6.4.0
+- Correct license name on addon.xml
+
 5.5.7
-- Update: PVR API 6.3.0
+- Update to PVR API 6.3.0
 
 5.5.6
 - Update Debian build code

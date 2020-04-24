@@ -29,7 +29,7 @@ GuideChannelMapper::GuideChannelMapper(const ::xmltv::Guide& vboxGuide, const ::
 
 void GuideChannelMapper::Initialize()
 {
-  g_vbox->Log(ADDON::LOG_INFO, "Initializing channel mapper with default mappings");
+  g_vbox->Log(LOG_INFO, "Initializing channel mapper with default mappings");
 
   // Generate default mappings
   m_channelMappings = CreateDefaultMappings();
@@ -37,12 +37,12 @@ void GuideChannelMapper::Initialize()
   // Create a default mapping file if none exists, otherwise load it
   if (!XBMC->FileExists(MAPPING_FILE_PATH.c_str(), false))
   {
-    g_vbox->Log(ADDON::LOG_INFO, "No external XMLTV channel mapping file found, saving default mappings");
+    g_vbox->Log(LOG_INFO, "No external XMLTV channel mapping file found, saving default mappings");
     Save();
   }
   else
   {
-    g_vbox->Log(ADDON::LOG_INFO, "Found channel mapping file, attempting to load it");
+    g_vbox->Log(LOG_INFO, "Found channel mapping file, attempting to load it");
     Load();
   }
 }
