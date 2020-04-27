@@ -28,7 +28,6 @@ using namespace vbox;
 // Initialize helpers
 CHelper_libXBMC_addon* XBMC = NULL;
 CHelper_libXBMC_pvr* PVR = NULL;
-CHelper_libKODI_guilib* GUI = NULL;
 
 // Initialize globals
 ADDON_STATUS g_status = ADDON_STATUS_UNKNOWN;
@@ -101,13 +100,11 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   // Instantiate helpers
   XBMC = new CHelper_libXBMC_addon;
   PVR = new CHelper_libXBMC_pvr;
-  GUI = new CHelper_libKODI_guilib;
 
-  if (!XBMC->RegisterMe(hdl) || !PVR->RegisterMe(hdl) || !GUI->RegisterMe(hdl))
+  if (!XBMC->RegisterMe(hdl) || !PVR->RegisterMe(hdl))
   {
     SAFE_DELETE(XBMC);
     SAFE_DELETE(PVR);
-    SAFE_DELETE(GUI);
     return ADDON_STATUS_PERMANENT_FAILURE;
   }
 
