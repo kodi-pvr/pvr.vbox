@@ -910,7 +910,7 @@ PVR_ERROR SetEPGTimeFrame(int)
   return PVR_ERROR_NOT_IMPLEMENTED;
 }
 
-PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS& signalStatus)
+PVR_ERROR GetSignalStatus(int channelUid, PVR_SIGNAL_STATUS* signalStatus)
 {
   const ChannelPtr currentChannel = g_vbox->GetCurrentChannel();
 
@@ -922,14 +922,14 @@ PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS& signalStatus)
     ChannelStreamingStatus status = g_vbox->GetChannelStreamingStatus(currentChannel);
 
     // Adjust for Kodi's weird handling of the signal strength
-    signalStatus.iSignal = static_cast<int>(status.GetSignalStrength()) * 655;
-    signalStatus.iSNR = static_cast<int>(status.m_signalQuality) * 655;
-    signalStatus.iBER = status.GetBer();
+    signalStatus->iSignal = static_cast<int>(status.GetSignalStrength()) * 655;
+    signalStatus->iSNR = static_cast<int>(status.m_signalQuality) * 655;
+    signalStatus->iBER = status.GetBer();
 
-    strncpy(signalStatus.strAdapterName, status.GetTunerName().c_str(), sizeof(signalStatus.strAdapterName) - 1);
-    strncpy(signalStatus.strAdapterStatus, status.m_lockStatus.c_str(), sizeof(signalStatus.strAdapterStatus) - 1);
-    strncpy(signalStatus.strServiceName, status.GetServiceName().c_str(), sizeof(signalStatus.strServiceName) - 1);
-    strncpy(signalStatus.strMuxName, status.GetMuxName().c_str(), sizeof(signalStatus.strMuxName) - 1);
+    strncpy(signalStatus->strAdapterName, status.GetTunerName().c_str(), sizeof(signalStatus->strAdapterName) - 1);
+    strncpy(signalStatus->strAdapterStatus, status.m_lockStatus.c_str(), sizeof(signalStatus->strAdapterStatus) - 1);
+    strncpy(signalStatus->strServiceName, status.GetServiceName().c_str(), sizeof(signalStatus->strServiceName) - 1);
+    strncpy(signalStatus->strMuxName, status.GetMuxName().c_str(), sizeof(signalStatus->strMuxName) - 1);
   }
   catch (VBoxException& e)
   {
@@ -939,7 +939,7 @@ PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS& signalStatus)
   return PVR_ERROR_NO_ERROR;
 }
 
-PVR_ERROR GetDescrambleInfo(PVR_DESCRAMBLE_INFO*)
+PVR_ERROR GetDescrambleInfo(int, PVR_DESCRAMBLE_INFO*)
 {
   return PVR_ERROR_NOT_IMPLEMENTED;
 }
