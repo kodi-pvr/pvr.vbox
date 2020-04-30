@@ -11,7 +11,6 @@
 
 #include "vbox/VBox.h"
 
-#include <kodi/libKODI_guilib.h>
 #include <kodi/libXBMC_addon.h>
 #include <kodi/libXBMC_pvr.h>
 
@@ -22,7 +21,6 @@
 // Helpers
 extern ADDON::CHelper_libXBMC_addon* XBMC;
 extern CHelper_libXBMC_pvr* PVR;
-extern CHelper_libKODI_guilib* GUI;
 
 // Globals
 extern ADDON_STATUS g_status;
