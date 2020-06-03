@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "../client.h"
-
 #include <algorithm>
 #include <memory>
+
+#include <kodi/Filesystem.h>
 
 namespace utilities
 {
@@ -40,7 +40,7 @@ namespace utilities
    * @param fileHandle the file handle
    * @return the contents (unique pointer)
    */
-  inline std::unique_ptr<std::string> ReadFileContents(void* fileHandle)
+  inline std::unique_ptr<std::string> ReadFileContents(kodi::vfs::CFile& fileHandle)
   {
     std::unique_ptr<std::string> content(new std::string());
 
@@ -48,7 +48,7 @@ namespace utilities
     int bytesRead = 0;
 
     // Read until EOF or explicit error
-    while ((bytesRead = XBMC->ReadFile(fileHandle, buffer, sizeof(buffer) - 1)) > 0)
+    while ((bytesRead = fileHandle.Read(buffer, sizeof(buffer) - 1)) > 0)
       content->append(buffer, bytesRead);
 
     return content;

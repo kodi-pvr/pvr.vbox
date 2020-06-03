@@ -21,14 +21,14 @@
 
 #include "DummyBuffer.h"
 
-using namespace vbox::timeshift;
+using namespace timeshift;
 
 int DummyBuffer::Read(byte* buffer, size_t length)
 {
-  return XBMC->ReadFile(m_inputHandle, buffer, length);
+  return m_inputHandle.Read(buffer, length);
 }
 
 int64_t DummyBuffer::Seek(int64_t position, int whence)
 {
-  return XBMC->SeekFile(m_inputHandle, position, whence);
+  return m_inputHandle.Seek(position, whence);
 }

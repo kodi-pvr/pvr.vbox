@@ -37,7 +37,7 @@ namespace timeshift
 
     virtual int Read(byte* buffer, size_t length) override
     {
-      return XBMC->ReadFile(m_inputHandle, buffer, length);
+      return m_inputHandle.Read(buffer, length);
     }
 
     virtual int64_t Seek(int64_t position, int whence) override
@@ -57,12 +57,14 @@ namespace timeshift
 
     virtual int64_t Position() const override
     {
-      return XBMC->GetFilePosition(m_inputHandle);
+      kodi::vfs::CacheStatus status;
+      m_inputHandle.IoControlGetCacheStatus(status);
+      return m_inputHandle.GetPosition();
     }
 
     virtual int64_t Length() const override
     {
-      return XBMC->GetFileLength(m_inputHandle);
+      return m_inputHandle.GetLength();
     }
   };
 } // namespace timeshift

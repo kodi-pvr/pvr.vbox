@@ -9,7 +9,6 @@
 
 #include "ApiRequest.h"
 
-#include "../../client.h"
 #include "../../xmltv/Utilities.h"
 
 #include <algorithm>
@@ -32,7 +31,7 @@ const std::vector<std::string> ApiRequest::xmltvMethods = {
     "GetXmltvProgramsList",
 };
 
-ApiRequest::ApiRequest(const std::string& method) : m_method(method), m_timeout(0)
+ApiRequest::ApiRequest(const std::string& method, const std::string& hostname, int upnpPort) : m_method(method), m_timeout(0)
 {
   AddParameter("Method", method);
 
@@ -40,8 +39,8 @@ ApiRequest::ApiRequest(const std::string& method) : m_method(method), m_timeout(
   if (std::find(externalCapableMethods.cbegin(), externalCapableMethods.cend(), method) !=
       externalCapableMethods.cend())
   {
-    AddParameter("ExternalIP", g_vbox->GetConnectionParams().hostname);
-    AddParameter("Port", g_vbox->GetConnectionParams().upnpPort);
+    AddParameter("ExternalIP", hostname);
+    AddParameter("Port", upnpPort);
   }
 }
 
@@ -56,10 +55,8 @@ ResponseType ApiRequest::GetResponseType() const
   return ResponseType::GENERIC;
 }
 
-std::string ApiRequest::GetLocation() const
+std::string ApiRequest::GetLocation(std::string url) const
 {
-  std::string url = g_vbox->GetApiBaseUrl();
-
   // Append parameters (including method)
   if (!m_parameters.empty())
   {

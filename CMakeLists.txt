@@ -12,8 +12,10 @@ include_directories(${p8-platform_INCLUDE_DIRS}
 
 # Sources and headers
 set(VBOX_SOURCES
-                src/client.h
-                src/client.cpp)
+                src/addon.h
+                src/addon.cpp
+                src/VBoxInstance.h
+                src/VBoxInstance.cpp)
 
 set(VBOX_SOURCES_VBOX
                 src/vbox/CategoryGenreMapper.h

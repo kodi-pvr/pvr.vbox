@@ -27,13 +27,8 @@ using namespace timeshift;
 
 const int FilesystemBuffer::INPUT_READ_LENGTH = 32768;
 
-// Fix a stupid #define on Windows which causes XBMC->DeleteFile() to break
-#ifdef _WIN32
-#undef DeleteFile
-#endif // _WIN32
-
 FilesystemBuffer::FilesystemBuffer(const std::string& bufferPath)
-  : Buffer(), m_outputReadHandle(nullptr), m_outputWriteHandle(nullptr), m_readPosition(0), m_writePosition(0)
+  : Buffer(), m_readPosition(0), m_writePosition(0)
 {
   m_bufferPath = bufferPath + "/buffer.ts";
 }
@@ -43,16 +38,16 @@ FilesystemBuffer::~FilesystemBuffer()
   FilesystemBuffer::Close();
 
   // Remove the buffer file so it doesn't take up space once Kodi has exited
-  XBMC->DeleteFile(m_bufferPath.c_str());
+  kodi::vfs::DeleteFile(m_bufferPath);
 }
 
 bool FilesystemBuffer::Open(const std::string inputUrl)
 {
   // Open the file handles
-  m_outputWriteHandle = XBMC->OpenFileForWrite(m_bufferPath.c_str(), true);
-  m_outputReadHandle = XBMC->OpenFile(m_bufferPath.c_str(), 0x08 /*READ_NO_CACHE*/);
+  m_outputWriteHandle.OpenFileForWrite(m_bufferPath, true);
+  m_outputReadHandle.OpenFile(m_bufferPath, ADDON_READ_NO_CACHE);
 
-  if (!Buffer::Open(inputUrl) || !m_outputReadHandle || !m_outputWriteHandle)
+  if (!Buffer::Open(inputUrl) || !m_outputReadHandle.IsOpen() || !m_outputWriteHandle.IsOpen())
     return false;
 
   // Start the input thread
@@ -79,14 +74,13 @@ void FilesystemBuffer::Reset()
   // Close any open handles
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  if (m_outputReadHandle)
+  if (m_outputReadHandle.IsOpen())
     CloseHandle(m_outputReadHandle);
 
-  if (m_outputWriteHandle)
+  if (m_outputWriteHandle.IsOpen())
     CloseHandle(m_outputWriteHandle);
 
   // Reset
-  m_outputReadHandle = m_outputWriteHandle = nullptr;
   m_readPosition = m_writePosition = 0;
 }
 
@@ -103,7 +97,7 @@ int FilesystemBuffer::Read(byte* buffer, size_t length)
                        });
 
   // Now we can read
-  int read = XBMC->ReadFile(m_outputReadHandle, buffer, length);
+  int read = m_outputReadHandle.Read(buffer, length);
 
   m_readPosition += read;
   return read;
@@ -112,7 +106,7 @@ int FilesystemBuffer::Read(byte* buffer, size_t length)
 int64_t FilesystemBuffer::Seek(int64_t position, int whence)
 {
   std::unique_lock<std::mutex> lock(m_mutex);
-  int64_t newPosition = XBMC->SeekFile(m_outputReadHandle, position, whence);
+  int64_t newPosition = m_outputReadHandle.Seek(position, whence);
 
   m_readPosition.exchange(newPosition);
   return newPosition;
@@ -125,11 +119,11 @@ void FilesystemBuffer::ConsumeInput()
   while (m_active)
   {
     // Read from m_inputHandle
-    ssize_t read = XBMC->ReadFile(m_inputHandle, buffer, INPUT_READ_LENGTH);
+    ssize_t read = m_inputHandle.Read(buffer, INPUT_READ_LENGTH);
 
     // Write to m_outputHandle
     std::unique_lock<std::mutex> lock(m_mutex);
-    ssize_t written = XBMC->WriteFile(m_outputWriteHandle, buffer, read);
+    ssize_t written = m_outputWriteHandle.Write(buffer, read);
     m_writePosition += written;
 
     // Signal that we have data again

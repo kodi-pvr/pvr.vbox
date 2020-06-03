@@ -20,8 +20,6 @@
 *
 */
 
-#include "../client.h"
-
 #include <ctime>
 #include <string>
 
@@ -34,6 +32,8 @@
 typedef unsigned char byte;
 #endif
 
+#include <kodi/Filesystem.h>
+
 namespace timeshift
 {
   /**
@@ -42,7 +42,7 @@ namespace timeshift
   class Buffer
   {
   public:
-    Buffer() : m_inputHandle(nullptr), m_startTime(0), m_readTimeout(DEFAULT_READ_TIMEOUT) {};
+    Buffer() = default;
     virtual ~Buffer();
 
     /**
@@ -111,23 +111,23 @@ namespace timeshift
      * Safely closes an open file handle.
      * @param the handle to close. The pointer will be nulled.
      */
-    void CloseHandle(void*& handle);
+    void CloseHandle(kodi::vfs::CFile& handle);
 
     /**
      * The input handle (where data is read from)
      */
-    void* m_inputHandle;
+    kodi::vfs::CFile m_inputHandle;
 
     /**
      * The time (in seconds) to wait when opening a read handle and when
      * waiting for the buffer to have enough data
      */
-    int m_readTimeout;
+    int m_readTimeout = DEFAULT_READ_TIMEOUT;
 
   private:
     /**
      * The time the buffer was created
      */
-    time_t m_startTime;
+    time_t m_startTime = 0;
   };
 } // namespace timeshift

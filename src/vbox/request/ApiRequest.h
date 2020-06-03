@@ -26,7 +26,7 @@ namespace vbox
     class ApiRequest : public Request
     {
     public:
-      ApiRequest(const std::string& method);
+      ApiRequest(const std::string& method, const std::string& hostname, int upnpPort);
       virtual ~ApiRequest(){};
 
       /**
@@ -42,7 +42,7 @@ namespace vbox
       void SetTimeout(int timeout);
 
       virtual vbox::response::ResponseType GetResponseType() const override;
-      virtual std::string GetLocation() const override;
+      virtual std::string GetLocation(std::string url) const override;
       virtual std::string GetIdentifier() const override;
 
     private:

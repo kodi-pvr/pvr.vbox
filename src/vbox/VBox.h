@@ -34,7 +34,7 @@
 #include <thread>
 #include <vector>
 
-#include <kodi/libXBMC_addon.h>
+#include <kodi/addon-instance/PVR.h>
 
 namespace vbox
 {
@@ -196,7 +196,6 @@ namespace vbox
     void MarkChannelAsInitialEpgSkipped(unsigned int channelUid);
 
     // Helpers
-    static void Log(const addon_log level, const char* format, ...);
     static void LogException(VBoxException& e);
 
     // Event handlers
@@ -204,6 +203,9 @@ namespace vbox
     std::function<void()> OnRecordingsUpdated;
     std::function<void()> OnTimersUpdated;
     std::function<void()> OnGuideUpdated;
+
+  protected:
+    bool m_skippingInitialEpgLoad = false;
 
   private:
     static const int INITIAL_EPG_WAIT_SECS = 60;
