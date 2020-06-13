@@ -9,7 +9,6 @@
 
 #include "VBox.h"
 
-#include "../client.h"
 #include "../xmltv/Utilities.h"
 #include "ContentIdentifier.h"
 #include "Exceptions.h"
@@ -25,9 +24,9 @@
 #include <sstream>
 #include <string>
 
+#include <kodi/General.h>
 #include <p8-platform/util/timeutils.h>
 
-using namespace ADDON;
 using namespace vbox;
 
 const char* VBox::MINIMUM_SOFTWARE_VERSION = "2.48";
@@ -60,12 +59,12 @@ void VBox::Initialize()
   DetermineConnectionParams();
 
   // Query the software version, we need a few elements from that response
-  request::ApiRequest versionRequest("QuerySwVersion");
+  request::ApiRequest versionRequest("QuerySwVersion", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   response::ResponsePtr response = PerformRequest(versionRequest);
   response::Content versionContent(response->GetReplyElement());
 
   // Query the board info, we need some elements from that as well
-  request::ApiRequest boardRequest("QueryBoardInfo");
+  request::ApiRequest boardRequest("QueryBoardInfo", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   response::ResponsePtr boardResponse = PerformRequest(boardRequest);
   response::Content boardInfo(boardResponse->GetReplyElement());
 
@@ -74,14 +73,14 @@ void VBox::Initialize()
   model += " " + versionContent.GetString("DeviceType"); // e.g. XTI
   model += " " + boardInfo.GetString("ProductNumber"); // e.g. 3352
 
-  Log(LOG_INFO, "device information: ");
-  Log(LOG_INFO, std::string("                 model: " + model).c_str());
-  Log(LOG_INFO, std::string("     hardware revision: " + boardInfo.GetString("HWRev")).c_str());
-  Log(LOG_INFO, std::string("     firmware revision: " + boardInfo.GetString("FWRev")).c_str());
-  Log(LOG_INFO, std::string("         uboot version: " + boardInfo.GetString("UbootVersion")).c_str());
-  Log(LOG_INFO, std::string("        kernel version: " + boardInfo.GetString("KernelVersion")).c_str());
-  Log(LOG_INFO, std::string("      software version: " + boardInfo.GetString("SoftwareVersion")).c_str());
-  Log(LOG_INFO, std::string("      number of tuners: " + std::to_string(boardInfo.GetInteger("TunersNumber"))).c_str());
+  kodi::Log(ADDON_LOG_INFO, "device information: ");
+  kodi::Log(ADDON_LOG_INFO, std::string("                 model: " + model).c_str());
+  kodi::Log(ADDON_LOG_INFO, std::string("     hardware revision: " + boardInfo.GetString("HWRev")).c_str());
+  kodi::Log(ADDON_LOG_INFO, std::string("     firmware revision: " + boardInfo.GetString("FWRev")).c_str());
+  kodi::Log(ADDON_LOG_INFO, std::string("         uboot version: " + boardInfo.GetString("UbootVersion")).c_str());
+  kodi::Log(ADDON_LOG_INFO, std::string("        kernel version: " + boardInfo.GetString("KernelVersion")).c_str());
+  kodi::Log(ADDON_LOG_INFO, std::string("      software version: " + boardInfo.GetString("SoftwareVersion")).c_str());
+  kodi::Log(ADDON_LOG_INFO, std::string("      number of tuners: " + std::to_string(boardInfo.GetInteger("TunersNumber"))).c_str());
 
   // Construct backend information
   m_backendInformation.name = model;
@@ -99,7 +98,7 @@ void VBox::Initialize()
   // is attached
   try
   {
-    request::ApiRequest mediaRequest("QueryExternalMediaStatus");
+    request::ApiRequest mediaRequest("QueryExternalMediaStatus", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
     response::ResponsePtr mediaResponse = PerformRequest(mediaRequest);
     response::Content mediaStatus = response::Content(mediaResponse->GetReplyElement());
 
@@ -116,7 +115,7 @@ void VBox::Initialize()
   }
 
   // Query the timezone offset used
-  request::ApiRequest timezoneRequest("QuerySystemTime");
+  request::ApiRequest timezoneRequest("QuerySystemTime", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   timezoneRequest.AddParameter("TimeFormat", "XMLTV");
   response::ResponsePtr timezoneResponse = PerformRequest(timezoneRequest);
   response::Content timezoneInfo(timezoneResponse->GetReplyElement());
@@ -127,7 +126,7 @@ void VBox::Initialize()
   // Consider the addon initialized
   m_stateHandler.EnterState(StartupState::INITIALIZED);
 
-  g_skippingInitialEpgLoad = m_settings.m_skipInitialEpgLoad;
+  m_skippingInitialEpgLoad = m_settings.m_skipInitialEpgLoad;
 
   RetrieveChannels(false);
   {
@@ -151,7 +150,7 @@ void VBox::DetermineConnectionParams()
 
   try
   {
-    request::ApiRequest request("QuerySwVersion");
+    request::ApiRequest request("QuerySwVersion", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
     request.SetTimeout(m_currentConnectionParameters.timeout);
     PerformRequest(request);
   }
@@ -160,25 +159,25 @@ void VBox::DetermineConnectionParams()
     // Retry the request with the external parameters
     if (m_settings.m_externalConnectionParams.AreValid())
     {
-      Log(LOG_INFO, "Unable to connect using internal connection settings, trying with external");
+      kodi::Log(ADDON_LOG_INFO, "Unable to connect using internal connection settings, trying with external");
       m_currentConnectionParameters = m_settings.m_externalConnectionParams;
 
-      request::ApiRequest request("QuerySwVersion");
+      request::ApiRequest request("QuerySwVersion", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
       request.SetTimeout(m_currentConnectionParameters.timeout);
       PerformRequest(request);
     }
   }
 
   auto& params = m_currentConnectionParameters;
-  Log(LOG_INFO, "Connection parameters used: ");
-  Log(LOG_INFO, "    Hostname: %s", params.hostname.c_str());
+  kodi::Log(ADDON_LOG_INFO, "Connection parameters used: ");
+  kodi::Log(ADDON_LOG_INFO, "    Hostname: %s", params.hostname.c_str());
 
   if (params.UseHttps())
-    Log(LOG_INFO, "    HTTPS port: %d", params.httpsPort);
+    kodi::Log(ADDON_LOG_INFO, "    HTTPS port: %d", params.httpsPort);
   else
-    Log(LOG_INFO, "    HTTP port: %d", params.httpPort);
+    kodi::Log(ADDON_LOG_INFO, "    HTTP port: %d", params.httpPort);
 
-  Log(LOG_INFO, "    UPnP port: %d", params.upnpPort);
+  kodi::Log(ADDON_LOG_INFO, "    UPnP port: %d", params.upnpPort);
 }
 
 void VBox::InitScanningEPG(std::string& rScanMethod, std::string& rGetStatusMethod, std::string& rfIsScanningFlag)
@@ -222,7 +221,7 @@ void VBox::UpdateEpgScan(bool fRetrieveGuide)
         // if done detecting EPG - change flag to false
         if (m_epgScanState == EPGSCAN_FINISHED)
         {
-          XBMC->QueueNotification(QUEUE_INFO, "EPG scanned and synced with guide");
+          kodi::QueueNotification(QUEUE_INFO, "", "EPG scanned and synced with guide");
           m_epgScanState = EPGSCAN_NO_SCAN;
         }
       }
@@ -255,7 +254,7 @@ void VBox::BackgroundUpdater()
       std::this_thread::sleep_for(std::chrono::milliseconds(INITIAL_EPG_STEP_SECS * 1000));
   }
 
-  g_skippingInitialEpgLoad = false;
+  m_skippingInitialEpgLoad = false;
 
   // Whether or not initial EPG updates occurred now Trigger "Real" EPG updates
   // This will regard Initial EPG as completed anyway.
@@ -291,7 +290,7 @@ void VBox::BackgroundUpdater()
 
 bool VBox::IsInitialEpgSkippingCompleted()
 {
-  Log(LOG_DEBUG, "%s Waiting to Get Initial EPG for %d remaining channels", __FUNCTION__,
+  kodi::Log(ADDON_LOG_DEBUG, "%s Waiting to Get Initial EPG for %d remaining channels", __FUNCTION__,
       m_unskippedInitialEpgChannelsMap.size());
 
   return m_unskippedInitialEpgChannelsMap.size() == 0;
@@ -306,7 +305,7 @@ void VBox::TriggerEpgUpdatesForChannels()
       //We want to trigger full updates only so let's make sure it's not an initialEpg
       m_unskippedInitialEpgChannelsMap.erase(channel->m_uniqueId);
 
-      Log(LOG_DEBUG, "%s - Trigger EPG update for channel: %s (%s)", __FUNCTION__, channel->m_name.c_str(),
+      kodi::Log(ADDON_LOG_DEBUG, "%s - Trigger EPG update for channel: %s (%s)", __FUNCTION__, channel->m_name.c_str(),
           channel->m_uniqueId.c_str());
     }
   }
@@ -316,7 +315,7 @@ void VBox::TriggerEpgUpdatesForChannels()
 
 void VBox::MarkChannelAsInitialEpgSkipped(unsigned int channelUid)
 {
-  const ChannelPtr channelPtr = g_vbox->GetChannel(channelUid);
+  const ChannelPtr channelPtr = GetChannel(channelUid);
 
   m_unskippedInitialEpgChannelsMap.erase(channelPtr->m_uniqueId);
 }
@@ -328,7 +327,8 @@ bool VBox::ValidateSettings() const
     return false;
 
   // Check timeshift settings
-  if (m_settings.m_timeshiftEnabled && !XBMC->CanOpenDirectory(m_settings.m_timeshiftBufferPath.c_str()))
+  std::vector<kodi::vfs::CDirEntry> items;
+  if (m_settings.m_timeshiftEnabled && !kodi::vfs::GetDirectory(m_settings.m_timeshiftBufferPath, "", items))
     return false;
 
   return true;
@@ -434,7 +434,7 @@ void VBox::SyncEPGNow()
 void VBox::SendScanEPG(std::string& rEpgDetectionCheckMethod) const
 {
   // call method to send EPG detection command
-  request::ApiRequest request(rEpgDetectionCheckMethod);
+  request::ApiRequest request(rEpgDetectionCheckMethod, GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   request.AddParameter("ChannelID", "All");
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
@@ -443,7 +443,7 @@ void VBox::SendScanEPG(std::string& rEpgDetectionCheckMethod) const
 void VBox::GetEpgDetectionState(std::string& methodName, std::string& flagName)
 {
   // call method to check EPG detection status
-  request::ApiRequest request(methodName);
+  request::ApiRequest request(methodName, GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
 
@@ -456,7 +456,7 @@ void VBox::SetChannelStreamingStatus(const ChannelPtr& channel)
 {
   ChannelStreamingStatus status;
 
-  request::ApiRequest request("QueryChannelStreamingStatus");
+  request::ApiRequest request("QueryChannelStreamingStatus", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   request.AddParameter("ChannelID", channel->m_xmltvName);
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
@@ -531,7 +531,7 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr& recor
     requestMethod = "CancelRecord";
 
   // Create the request
-  request::ApiRequest request(requestMethod);
+  request::ApiRequest request(requestMethod, GetConnectionParams().hostname, GetConnectionParams().upnpPort);
 
   // Determine request parameters
   request.AddParameter("RecordID", idToDelete);
@@ -543,13 +543,13 @@ request::ApiRequest VBox::CreateDeleteRecordingRequest(const RecordingPtr& recor
 
 request::ApiRequest VBox::CreateDeleteSeriesRequest(const SeriesRecordingPtr& series) const
 {
-  Log(LOG_DEBUG, "Removing series with ID %d", series->m_id);
+  kodi::Log(ADDON_LOG_DEBUG, "Removing series with ID %d", series->m_id);
   // For a series, CancelRecord cancels next episodes, and if there's a current
   // episode being recorded, it is stopped
   std::string requestMethod = "CancelRecord";
 
   // Create the request
-  request::ApiRequest request(requestMethod);
+  request::ApiRequest request(requestMethod, GetConnectionParams().hostname, GetConnectionParams().upnpPort);
 
   // Determine request parameters
   request.AddParameter("RecordID", series->m_id);
@@ -614,7 +614,7 @@ const RecordingMargins VBox::GetRecordingMargins(bool fBackendSingleMargin) cons
   RecordingMargins margins = {0};
 
   // get recording margins
-  request::ApiRequest request("GetRecordingsTimeOffset");
+  request::ApiRequest request("GetRecordingsTimeOffset", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
 
@@ -631,14 +631,14 @@ const RecordingMargins VBox::GetRecordingMargins(bool fBackendSingleMargin) cons
     margins.m_beforeMargin = content.GetUnsignedInteger("MinutesPaddingBefore");
     margins.m_afterMargin = content.GetUnsignedInteger("MinutesPaddingAfter");
   }
-  Log(LOG_DEBUG, "GetRecordingMargins(): Current recording margins: %u and %u", margins.m_beforeMargin,
+  kodi::Log(ADDON_LOG_DEBUG, "GetRecordingMargins(): Current recording margins: %u and %u", margins.m_beforeMargin,
       margins.m_afterMargin);
   return margins;
 }
 
 void VBox::SetRecordingMargins(RecordingMargins margins, bool fBackendSingleMargin)
 {
-  request::ApiRequest request("SetRecordingsTimeOffset");
+  request::ApiRequest request("SetRecordingsTimeOffset", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
 
   // If version < 2.57, there is a single margin (for both before & after the program).
   // In that case, set either margin (they're the same)
@@ -681,13 +681,13 @@ void VBox::UpdateRecordingMargins(RecordingMargins defaultMargins)
 
   // set the updated margins in backend, if different from the current ones
   if (updatedMargins != currMargins)
-    g_vbox->SetRecordingMargins(updatedMargins, fBackendSingleMargin);
+    SetRecordingMargins(updatedMargins, fBackendSingleMargin);
 }
 
 void VBox::AddTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr programme)
 {
   // Add the timer
-  request::ApiRequest request("ScheduleProgramRecord");
+  request::ApiRequest request("ScheduleProgramRecord", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   request.AddParameter("ChannelID", channel->m_xmltvName);
   request.AddParameter("ProgramTitle", programme->m_title);
   request.AddParameter("StartTime", programme->m_startTime);
@@ -732,10 +732,10 @@ static void AddWeekdays(request::ApiRequest& rRequest, const unsigned int weekda
 
 void VBox::AddSeriesTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr programme)
 {
-  Log(LOG_DEBUG, "Series timer for channel %s, program %s", channel->m_name.c_str(), programme->m_title.c_str());
+  kodi::Log(ADDON_LOG_DEBUG, "Series timer for channel %s, program %s", channel->m_name.c_str(), programme->m_title.c_str());
 
   // Add the timer
-  request::ApiRequest request("ScheduleProgramRecord");
+  request::ApiRequest request("ScheduleProgramRecord", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   request.AddParameter("ChannelID", channel->m_xmltvName);
   request.AddParameter("ProgramTitle", programme->m_title);
   request.AddParameter("StartTime", programme->m_startTime);
@@ -749,9 +749,9 @@ void VBox::AddSeriesTimer(const ChannelPtr& channel, const ::xmltv::ProgrammePtr
 void VBox::AddTimer(const ChannelPtr& channel, time_t startTime, time_t endTime,
                     const std::string title, const std::string description)
 {
-  Log(LOG_DEBUG, "Adding Manual timer for channel %s", channel->m_name.c_str());
+  kodi::Log(ADDON_LOG_DEBUG, "Adding Manual timer for channel %s", channel->m_name.c_str());
   // Add the timer
-  request::ApiRequest request("ScheduleChannelRecord");
+  request::ApiRequest request("ScheduleChannelRecord", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   request.AddParameter("ChannelID", channel->m_xmltvName);
   request.AddParameter("StartTime", CreateTimestamp(startTime));
   request.AddParameter("EndTime", CreateTimestamp(endTime));
@@ -773,9 +773,9 @@ void VBox::AddTimer(const ChannelPtr& channel,
                     const std::string description,
                     const unsigned int weekdays)
 {
-  Log(LOG_DEBUG, "Manual series timer for channel %s, weekdays = 0x%x", channel->m_name.c_str(), weekdays);
+  kodi::Log(ADDON_LOG_DEBUG, "Manual series timer for channel %s, weekdays = 0x%x", channel->m_name.c_str(), weekdays);
   // Add the timer
-  request::ApiRequest request("ScheduleChannelRecord");
+  request::ApiRequest request("ScheduleChannelRecord", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   request.AddParameter("ChannelID", channel->m_xmltvName);
   request.AddParameter("Periodic", "YES");
   request.AddParameter("FromTime", CreateDailyTime(startTime));
@@ -858,7 +858,7 @@ std::string VBox::CreateDailyTime(const time_t unixTimestamp) const
 unsigned int VBox::GetDBVersion(std::string& versionName) const
 {
   // get the backend's database version
-  request::ApiRequest request("QueryDataBaseVersion");
+  request::ApiRequest request("QueryDataBaseVersion", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
   response::ResponsePtr response = PerformRequest(request);
   response::Content content(response->GetReplyElement());
   return content.GetUnsignedInteger(versionName);
@@ -877,7 +877,7 @@ void VBox::RetrieveChannels(bool triggerEvent /* = true*/)
     int lastChannelIndex;
 
     {
-      request::ApiRequest request("QueryXmltvNumOfChannels");
+      request::ApiRequest request("QueryXmltvNumOfChannels", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
       response::ResponsePtr response = PerformRequest(request);
       response::Content content(response->GetReplyElement());
 
@@ -900,7 +900,7 @@ void VBox::RetrieveChannels(bool triggerEvent /* = true*/)
       // one request failed
       try
       {
-        request::ApiRequest request("GetXmltvChannelsList");
+        request::ApiRequest request("GetXmltvChannelsList", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
         request.AddParameter("FromChIndex", fromIndex);
         request.AddParameter("ToChIndex", toIndex);
         response::ResponsePtr response = PerformRequest(request);
@@ -921,7 +921,7 @@ void VBox::RetrieveChannels(bool triggerEvent /* = true*/)
     {
       std::unique_lock<std::mutex> lock(m_mutex);
       m_channels = allChannels;
-      Log(LOG_INFO, "Channels database version updated to %u", newDBversion);
+      kodi::Log(ADDON_LOG_INFO, "Channels database version updated to %u", newDBversion);
       m_channelsDBVersion = newDBversion;
 
       if (triggerEvent)
@@ -945,7 +945,7 @@ void VBox::RetrieveRecordings(bool triggerEvent /* = true*/)
   {
     try
     {
-      request::ApiRequest request("GetRecordsList");
+      request::ApiRequest request("GetRecordsList", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
       request.AddParameter("Externals", "YES");
       response::ResponsePtr response = PerformRequest(request);
       response::RecordingResponseContent content(response->GetReplyElement());
@@ -981,7 +981,7 @@ void VBox::RetrieveRecordings(bool triggerEvent /* = true*/)
 
 void VBox::RetrieveGuide(bool triggerEvent /* = true*/)
 {
-  Log(LOG_INFO, "Fetching guide data from backend (this will take a while)");
+  kodi::Log(ADDON_LOG_INFO, "Fetching guide data from backend (this will take a while)");
 
   try
   {
@@ -1015,7 +1015,7 @@ void VBox::RetrieveGuide(bool triggerEvent /* = true*/)
       // one request failed
       try
       {
-        request::ApiRequest request("GetXmltvSection");
+        request::ApiRequest request("GetXmltvSection", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
         request.AddParameter("FromChIndex", fromIndex);
         request.AddParameter("ToChIndex", toIndex);
         response::ResponsePtr response = PerformRequest(request);
@@ -1036,7 +1036,7 @@ void VBox::RetrieveGuide(bool triggerEvent /* = true*/)
     {
       std::unique_lock<std::mutex> lock(m_mutex);
       m_guide = guide;
-      Log(LOG_INFO, "Guide database version updated to %u", newDBversion);
+      kodi::Log(ADDON_LOG_INFO, "Guide database version updated to %u", newDBversion);
       m_programsDBVersion = newDBversion;
     }
 
@@ -1059,7 +1059,7 @@ void VBox::InitializeGenreMapper()
   if (m_categoryGenreMapper)
     return;
 
-  Log(LOG_INFO, "Loading category genre mapper");
+  kodi::Log(ADDON_LOG_INFO, "Loading category genre mapper");
 
   m_categoryGenreMapper = CategoryMapperPtr(new CategoryGenreMapper());
 
@@ -1070,7 +1070,7 @@ void VBox::InitializeGenreMapper()
   catch (VBoxException& e)
   {
     LogException(e);
-    Log(LOG_INFO, "Failed to load the genre mapper");
+    kodi::Log(ADDON_LOG_INFO, "Failed to load the genre mapper");
   }
 }
 
@@ -1103,20 +1103,20 @@ void VBox::LogGuideStatistics(const xmltv::Guide& guide) const
 {
   for (const auto& schedule : guide.GetSchedules())
   {
-    Log(LOG_INFO, "Fetched %d events for channel %s", schedule.second->GetLength(), schedule.first.c_str());
+    kodi::Log(ADDON_LOG_INFO, "Fetched %d events for channel %s", schedule.second->GetLength(), schedule.first.c_str());
   }
 }
 
 response::ResponsePtr VBox::PerformRequest(const request::Request& request) const
 {
   // Attempt to open a HTTP file handle
-  void* fileHandle = XBMC->OpenFile(request.GetLocation().c_str(), 0x08 /* READ_NO_CACHE */);
+  kodi::vfs::CFile fileHandle;
 
-  if (fileHandle)
+  if (fileHandle.OpenFile(request.GetLocation(GetApiBaseUrl()), ADDON_READ_NO_CACHE))
   {
     // Read the response string
     std::unique_ptr<std::string> responseContent = utilities::ReadFileContents(fileHandle);
-    XBMC->CloseFile(fileHandle);
+    fileHandle.Close();
 
     // Parse the response
     response::ResponsePtr response = response::Factory::CreateResponse(request);
@@ -1139,20 +1139,8 @@ response::ResponsePtr VBox::PerformRequest(const request::Request& request) cons
   throw RequestFailedException("Unable to perform request (" + request.GetIdentifier() + ")");
 }
 
-void VBox::Log(const addon_log level, const char* format, ...)
-{
-  char* buf = new char[VBOX_LOG_BUFFER];
-  size_t c = sprintf(buf, "pvr.vbox - ");
-  va_list va;
-  va_start(va, format);
-  vsnprintf(buf + c, VBOX_LOG_BUFFER - c, format, va);
-  va_end(va);
-  XBMC->Log(level, "%s", buf);
-  delete[] buf;
-}
-
 void VBox::LogException(VBoxException& e)
 {
   std::string message = "Request failed: " + std::string(e.what());
-  Log(LOG_ERROR, message.c_str());
+  kodi::Log(ADDON_LOG_ERROR, message.c_str());
 }

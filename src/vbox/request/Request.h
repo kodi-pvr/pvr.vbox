@@ -34,7 +34,7 @@ namespace vbox
       /**
        * @return the request location
        */
-      virtual std::string GetLocation() const = 0;
+      virtual std::string GetLocation(std::string url) const = 0;
 
       /**
        * @return an identifier for this request (mainly for logging purposes)

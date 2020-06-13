@@ -27,6 +27,8 @@
 #include <mutex>
 #include <thread>
 
+#include <kodi/Filesystem.h>
+
 namespace timeshift
 {
 
@@ -78,12 +80,12 @@ namespace timeshift
     /**
      * Read-only handle to the buffer file
      */
-    void* m_outputReadHandle;
+    kodi::vfs::CFile m_outputReadHandle;
 
     /**
      * Write-only handle to the buffer file
      */
-    void* m_outputWriteHandle;
+    kodi::vfs::CFile m_outputWriteHandle;
 
     /**
      * The thread that reads from m_inputHandle and writes to the output

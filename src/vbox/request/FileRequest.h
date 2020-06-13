@@ -33,7 +33,7 @@ namespace vbox
         return response::ResponseType::XMLTV;
       }
 
-      virtual std::string GetLocation() const override { return m_path; }
+      virtual std::string GetLocation(std::string url) const override { return m_path; }
 
       virtual std::string GetIdentifier() const override { return "FileRequest for \"" + m_path + "\""; }
 

@@ -9,7 +9,6 @@
 
 #include "GuideChannelMapper.h"
 
-#include "../client.h"
 #include "Exceptions.h"
 #include "Utilities.h"
 
@@ -29,20 +28,20 @@ GuideChannelMapper::GuideChannelMapper(const ::xmltv::Guide& vboxGuide, const ::
 
 void GuideChannelMapper::Initialize()
 {
-  g_vbox->Log(LOG_INFO, "Initializing channel mapper with default mappings");
+  kodi::Log(ADDON_LOG_INFO, "Initializing channel mapper with default mappings");
 
   // Generate default mappings
   m_channelMappings = CreateDefaultMappings();
 
   // Create a default mapping file if none exists, otherwise load it
-  if (!XBMC->FileExists(MAPPING_FILE_PATH.c_str(), false))
+  if (!kodi::vfs::FileExists(MAPPING_FILE_PATH, false))
   {
-    g_vbox->Log(LOG_INFO, "No external XMLTV channel mapping file found, saving default mappings");
+    kodi::Log(ADDON_LOG_INFO, "No external XMLTV channel mapping file found, saving default mappings");
     Save();
   }
   else
   {
-    g_vbox->Log(LOG_INFO, "Found channel mapping file, attempting to load it");
+    kodi::Log(ADDON_LOG_INFO, "Found channel mapping file, attempting to load it");
     Load();
   }
 }
@@ -67,9 +66,9 @@ ChannelMappings GuideChannelMapper::CreateDefaultMappings()
 
 void GuideChannelMapper::Load()
 {
-  void* fileHandle = XBMC->OpenFile(MAPPING_FILE_PATH.c_str(), 0x08 /* READ_NO_CACHE */);
+  kodi::vfs::CFile fileHandle;
 
-  if (fileHandle)
+  if (fileHandle.OpenFile(MAPPING_FILE_PATH, ADDON_READ_NO_CACHE))
   {
     // Read the XML
     tinyxml2::XMLDocument document;
@@ -88,8 +87,6 @@ void GuideChannelMapper::Load()
 
       m_channelMappings[vboxName] = xmltvName;
     }
-
-    XBMC->CloseFile(fileHandle);
   }
 }
 
@@ -115,17 +112,15 @@ void GuideChannelMapper::Save()
   }
 
   // Save the file
-  void* fileHandle = XBMC->OpenFileForWrite(MAPPING_FILE_PATH.c_str(), false);
+  kodi::vfs::CFile fileHandle;
 
-  if (fileHandle)
+  if (fileHandle.OpenFileForWrite(MAPPING_FILE_PATH, false))
   {
     XMLPrinter printer;
     document.Accept(&printer);
 
     std::string xml = printer.CStr();
-    XBMC->WriteFile(fileHandle, xml.c_str(), xml.length());
-
-    XBMC->CloseFile(fileHandle);
+    fileHandle.Write(xml.c_str(), xml.length());
   }
 }
 

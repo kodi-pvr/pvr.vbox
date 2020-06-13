@@ -9,16 +9,17 @@
 
 #include "CategoryGenreMapper.h"
 
-#include "../client.h"
 #include "Exceptions.h"
 #include "Utilities.h"
 
 #include <algorithm>
 
+#include <kodi/General.h>
+#include <kodi/addon-instance/pvr/EPG.h>
 #include <lib/tinyxml2/tinyxml2.h>
 #include <p8-platform/util/StringUtils.h>
 
-using namespace xmltv;
+// using namespace xmltv;
 using namespace vbox;
 using namespace tinyxml2;
 
@@ -41,25 +42,25 @@ CategoryGenreMapper::CategoryGenreMapper()
 
 void CategoryGenreMapper::Initialize(const std::string& xmlFileName)
 {
-  g_vbox->Log(LOG_INFO, "Initializing genre mapper");
+  kodi::Log(ADDON_LOG_INFO, "Initializing genre mapper");
   LoadCategoryToGenreXML(xmlFileName);
 }
 
 bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string& xmlFileName)
 {
-  if (!XBMC->FileExists(xmlFileName.c_str(), false))
+  if (!kodi::vfs::FileExists(xmlFileName, false))
   {
-    g_vbox->Log(LOG_INFO, "No Category to Genre mapping XML found");
+    kodi::Log(ADDON_LOG_INFO, "No Category to Genre mapping XML found");
     return false;
   }
   else
   {
-    g_vbox->Log(LOG_INFO, "Found channel mapping file, attempting to load it");
-    void* fileHandle = XBMC->OpenFile(xmlFileName.c_str(), 0x08 /* READ_NO_CACHE */);
+    kodi::Log(ADDON_LOG_INFO, "Found channel mapping file, attempting to load it");
+    kodi::vfs::CFile fileHandle;
 
-    if (!fileHandle)
+    if (!fileHandle.OpenFile(xmlFileName, ADDON_READ_NO_CACHE))
     {
-      g_vbox->Log(LOG_INFO, "Could not open Category to Genre mapping XML");
+      kodi::Log(ADDON_LOG_INFO, "Could not open Category to Genre mapping XML");
       return false;
     }
     // Read the XML
@@ -80,8 +81,6 @@ bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string& xmlFileName)
         continue;
       m_categoryMap.insert(std::pair<std::string, int>(element->GetText(), m_genreMap[pGenreAttr]));
     }
-
-    XBMC->CloseFile(fileHandle);
   }
   return true;
 }
@@ -174,6 +173,6 @@ int CategoryGenreMapper::GetCategoriesGenreType(std::vector<std::string>& catego
 
   UpdateFinalMatch(matches, finalMatch);
 
-  XBMC->Log(LOG_DEBUG, "Final match is %d", finalMatch->first);
+  kodi::Log(ADDON_LOG_DEBUG, "Final match is %d", finalMatch->first);
   return finalMatch->first;
 }

@@ -12,7 +12,7 @@
 #include <ctime>
 #include <string>
 
-#include <kodi/libXBMC_addon.h>
+#include <kodi/Filesystem.h>
 
 namespace vbox
 {
@@ -35,7 +35,7 @@ namespace vbox
     static const int REOPEN_INTERVAL_FAST = 10;
 
     const std::string& m_streamURL;
-    void* m_readHandle;
+    kodi::vfs::CFile m_readHandle;
 
     int m_duration;
 

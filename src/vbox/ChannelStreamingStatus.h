@@ -21,9 +21,8 @@ namespace vbox
   class ChannelStreamingStatus
   {
   public:
-    ChannelStreamingStatus() : m_active(false), m_signalQuality(0), m_sid(0){};
-
-    ~ChannelStreamingStatus(){};
+    ChannelStreamingStatus() = default;
+    ~ChannelStreamingStatus() = default;
 
     /**
      * @return the service name (SID XXX)
@@ -57,18 +56,18 @@ namespace vbox
     void SetBer(const std::string& ber) { m_ber = ber; }
 
   public:
-    bool m_active;
+    bool m_active = false;
     std::string m_lockStatus;
     std::string m_lockedMode;
     std::string m_modulation;
     std::string m_frequency;
-    unsigned int m_signalQuality;
+    unsigned int m_signalQuality = 0;
 
   private:
     const static int RFLEVEL_MIN;
     const static int RFLEVEL_MAX;
 
-    unsigned int m_sid;
+    unsigned int m_sid = 0;
     std::string m_tunerId;
     std::string m_tunerType;
     std::string m_rfLevel;

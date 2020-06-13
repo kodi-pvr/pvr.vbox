@@ -14,7 +14,6 @@
 #include "../../xmltv/Utilities.h"
 #include "../Channel.h"
 
-#include <kodi/xbmc_pvr_types.h>
 #include <lib/tinyxml2/tinyxml2.h>
 
 using namespace tinyxml2;

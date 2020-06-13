@@ -35,9 +35,8 @@ bool Buffer::Open(const std::string inputUrl)
 
   // Remember the start time and open the input
   m_startTime = time(nullptr);
-  m_inputHandle = XBMC->OpenFile(ss.str().c_str(), 0x08 /*READ_NO_CACHE*/);
 
-  return m_inputHandle != nullptr;
+  return m_inputHandle.OpenFile(ss.str(), ADDON_READ_NO_CACHE);
 }
 
 Buffer::~Buffer()
@@ -50,11 +49,10 @@ void Buffer::Close()
   CloseHandle(m_inputHandle);
 }
 
-void Buffer::CloseHandle(void*& handle)
+void Buffer::CloseHandle(kodi::vfs::CFile& handle)
 {
-  if (handle)
+  if (handle.IsOpen())
   {
-    XBMC->CloseFile(handle);
-    handle = nullptr;
+    handle.Close();
   }
 }
