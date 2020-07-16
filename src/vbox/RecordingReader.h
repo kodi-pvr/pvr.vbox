@@ -16,7 +16,7 @@
 
 namespace vbox
 {
-  class RecordingReader
+  class ATTRIBUTE_HIDDEN RecordingReader
   {
   public:
     RecordingReader(const std::string& streamURL, std::time_t start, std::time_t end, int duration);
