@@ -1,3 +1,7 @@
+8.0.0
+- Update PVR API 7.0.2
+- Fix some compile warnings by add of ATTRIBUTE_HIDDEN
+
 7.0.3
 - Remove p8 from debian control file
 
