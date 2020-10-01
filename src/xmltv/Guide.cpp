@@ -9,6 +9,7 @@
 
 #include "Guide.h"
 
+#include "../utilities/StringUtils.h"
 #include "../vbox/ContentIdentifier.h"
 #include "Channel.h"
 #include "Utilities.h"
@@ -16,7 +17,6 @@
 #include <algorithm>
 
 #include <lib/tinyxml2/tinyxml2.h>
-#include <p8-platform/util/StringUtils.h>
 
 using namespace xmltv;
 using namespace tinyxml2;

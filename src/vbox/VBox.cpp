@@ -25,7 +25,6 @@
 #include <string>
 
 #include <kodi/General.h>
-#include <p8-platform/util/timeutils.h>
 
 using namespace vbox;
 
@@ -284,7 +283,7 @@ void VBox::BackgroundUpdater()
       RetrieveGuide();
 
     lapCounter++;
-    usleep(5000 * 1000); // for some infinitely retarded reason, std::thread::sleep_for doesn't work
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
   }
 }
 
