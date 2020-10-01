@@ -4,10 +4,8 @@ project(pvr.vbox)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 
 find_package(Kodi REQUIRED)
-find_package(p8-platform REQUIRED)
 
-include_directories(${p8-platform_INCLUDE_DIRS}
-                    ${KODI_INCLUDE_DIR}/.. # Hack way with "/..", need bigger Kodi cmake rework to match right include ways
+include_directories(${KODI_INCLUDE_DIR}/.. # Hack way with "/..", need bigger Kodi cmake rework to match right include ways
                     ${PROJECT_SOURCE_DIR})
 
 # Sources and headers
@@ -74,12 +72,17 @@ set(VBOX_SOURCES_XMLTV
                 src/xmltv/Utilities.h
                 src/xmltv/Utilities.cpp)
 
+set(VBOX_SOURCES_UTILITIES
+                src/utilities/StringUtils.h
+                src/utilities/StringUtils.cpp)
+
 source_group("Source Files" FILES ${VBOX_SOURCES})
 source_group("Source Files\\vbox" FILES ${VBOX_SOURCES_VBOX})
 source_group("Source Files\\vbox\\request" FILES ${VBOX_SOURCES_VBOX_REQUEST})
 source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
 source_group("Source Files\\timeshift" FILES ${VBOX_SOURCES_TIMESHIFT})
 source_group("Source Files\\xmltv" FILES ${VBOX_SOURCES_XMLTV})
+source_group("Source Files\\utilities" FILES ${VBOX_SOURCES_UTILITIES})
 
 # Library files
 set(VBOX_LIBRARIES_TINYXML2
@@ -107,10 +110,10 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX_RESPONSE}
                 ${VBOX_SOURCES_TIMESHIFT}
                 ${VBOX_SOURCES_XMLTV}
+                ${VBOX_SOURCES_UTILITIES}
                 ${VBOX_RESOURCES}
                 ${VBOX_LIBRARIES_TINYXML2})
 
-set(DEPLIBS ${p8-platform_LIBRARIES})
 build_addon(pvr.vbox VBOX DEPLIBS)
 
 include(CPack)
