@@ -72,17 +72,12 @@ set(VBOX_SOURCES_XMLTV
                 src/xmltv/Utilities.h
                 src/xmltv/Utilities.cpp)
 
-set(VBOX_SOURCES_UTILITIES
-                src/utilities/StringUtils.h
-                src/utilities/StringUtils.cpp)
-
 source_group("Source Files" FILES ${VBOX_SOURCES})
 source_group("Source Files\\vbox" FILES ${VBOX_SOURCES_VBOX})
 source_group("Source Files\\vbox\\request" FILES ${VBOX_SOURCES_VBOX_REQUEST})
 source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
 source_group("Source Files\\timeshift" FILES ${VBOX_SOURCES_TIMESHIFT})
 source_group("Source Files\\xmltv" FILES ${VBOX_SOURCES_XMLTV})
-source_group("Source Files\\utilities" FILES ${VBOX_SOURCES_UTILITIES})
 
 # Library files
 set(VBOX_LIBRARIES_TINYXML2
@@ -110,7 +105,6 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX_RESPONSE}
                 ${VBOX_SOURCES_TIMESHIFT}
                 ${VBOX_SOURCES_XMLTV}
-                ${VBOX_SOURCES_UTILITIES}
                 ${VBOX_RESOURCES}
                 ${VBOX_LIBRARIES_TINYXML2})
 

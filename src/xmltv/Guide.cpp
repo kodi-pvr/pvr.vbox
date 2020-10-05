@@ -9,15 +9,16 @@
 
 #include "Guide.h"
 
-#include "../utilities/StringUtils.h"
 #include "../vbox/ContentIdentifier.h"
 #include "Channel.h"
 #include "Utilities.h"
 
 #include <algorithm>
 
+#include <kodi/tools/StringUtils.h>
 #include <lib/tinyxml2/tinyxml2.h>
 
+using namespace kodi::tools;
 using namespace xmltv;
 using namespace tinyxml2;
 

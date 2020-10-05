@@ -1,3 +1,6 @@
+7.0.2
+- Use kodi add-on StringUtils instead of local copy
+
 7.0.1
 - Remove p8-platforms and add local StringUtils for cpp17
 

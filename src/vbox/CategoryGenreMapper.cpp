@@ -9,7 +9,6 @@
 
 #include "CategoryGenreMapper.h"
 
-#include "../utilities/StringUtils.h"
 #include "Exceptions.h"
 #include "Utilities.h"
 
@@ -17,9 +16,11 @@
 
 #include <kodi/General.h>
 #include <kodi/addon-instance/pvr/EPG.h>
+#include <kodi/tools/StringUtils.h>
 #include <lib/tinyxml2/tinyxml2.h>
 
 // using namespace xmltv;
+using namespace kodi::tools;
 using namespace vbox;
 using namespace tinyxml2;
 
