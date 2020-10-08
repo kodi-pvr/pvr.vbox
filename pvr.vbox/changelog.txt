@@ -1,3 +1,6 @@
+7.0.3
+- Remove p8 from debian control file
+
 7.0.2
 - Use kodi add-on StringUtils instead of local copy
 
