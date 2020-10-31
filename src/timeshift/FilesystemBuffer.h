@@ -35,7 +35,7 @@ namespace timeshift
   /**
    * Timeshift buffer which buffers into a file
    */
-  class FilesystemBuffer : public Buffer
+  class ATTRIBUTE_HIDDEN FilesystemBuffer : public Buffer
   {
   public:
     /**

@@ -802,7 +802,7 @@ PVR_ERROR CVBoxInstance::GetStreamTimes(kodi::addon::PVRStreamTimes& times)
     times.SetPTSStart(0);
     times.SetPTSBegin(0);
     times.SetPTSEnd((!m_timeshiftBuffer->CanSeekStream()) ? 0
-        : (m_timeshiftBuffer->GetEndTime() - m_timeshiftBuffer->GetStartTime()) * DVD_TIME_BASE);
+        : (m_timeshiftBuffer->GetEndTime() - m_timeshiftBuffer->GetStartTime()) * STREAM_TIME_BASE);
 
     return PVR_ERROR_NO_ERROR;
   }
@@ -811,7 +811,7 @@ PVR_ERROR CVBoxInstance::GetStreamTimes(kodi::addon::PVRStreamTimes& times)
     times.SetStartTime(0);
     times.SetPTSStart(0);
     times.SetPTSBegin(0);
-    times.SetPTSEnd(static_cast<int64_t>(m_recordingReader->CurrentDuration()) * DVD_TIME_BASE);
+    times.SetPTSEnd(static_cast<int64_t>(m_recordingReader->CurrentDuration()) * STREAM_TIME_BASE);
 
     return PVR_ERROR_NO_ERROR;
   }

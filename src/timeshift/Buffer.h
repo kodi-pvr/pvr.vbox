@@ -39,7 +39,7 @@ namespace timeshift
   /**
    * Base class for all timeshift buffers
    */
-  class Buffer
+  class ATTRIBUTE_HIDDEN Buffer
   {
   public:
     Buffer() = default;
