@@ -10,10 +10,10 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Kodi Translation Team\n"
 "Language-Team: Hebrew (Israel) (http://www.transifex.com/projects/p/kodi-main/language/he_IL/)\n"
+"Language: he_IL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: he_IL\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#30000"
@@ -163,3 +163,28 @@ msgstr "הערך (בשניות) שמציין מתי ניסיון חיבור נכ
 msgctxt "#30620"
 msgid "Settings related to Channels & EPG."
 msgstr "הגדרות שקשורות בערוצים וב־EPG"
+
+msgctxt "#30621"
+msgid "Channel numbers can be set via either of the following two options: [LCN (Logical Channel Number) from backend] The channel numbers as set on the backend; [Channel index in backend] Starting from 1 number the channels as per the order they appear on the backend."
+msgstr ""
+
+msgctxt "#30622"
+msgid "The amount of time in minutes prior to a programme start that a reminder should pop up."
+msgstr ""
+
+msgctxt "#30623"
+msgid "Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec."
+msgstr ""
+
+# empty strings from id 30624 to 30639
+msgctxt "#30640"
+msgid "Settings related to the timeshift."
+msgstr ""
+
+msgctxt "#30641"
+msgid "If enabled allows pause, rewind and fast-forward of live TV."
+msgstr ""
+
+msgctxt "#30642"
+msgid "The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels."
+msgstr ""

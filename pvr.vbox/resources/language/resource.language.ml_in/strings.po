@@ -8,17 +8,19 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/xbmc/xbmc/issues/\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Kodi Translation Team\n"
-"Language-Team: Armenian (Armenia) (http://www.transifex.com/projects/p/kodi-main/language/hy_AM/)\n"
-"Language: hy_AM\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ml_in\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
+###################
+###################
 msgctxt "#30000"
 msgid "Local network"
-msgstr "Լոկալ ցանց"
+msgstr ""
 
 msgctxt "#30001"
 msgid "Hostname or IP address"
@@ -46,9 +48,9 @@ msgstr ""
 
 msgctxt "#30007"
 msgid "Internet"
-msgstr "Համացանց"
+msgstr ""
 
-# empty strings from id 30008 to 30019
+#empty strings from id 30008 to 30019
 msgctxt "#30020"
 msgid "Channel & EPG"
 msgstr ""
@@ -81,7 +83,7 @@ msgctxt "#30027"
 msgid "Skip initial EPG load"
 msgstr ""
 
-# empty strings from id 30028 to 30039
+#empty strings from id 30028 to 30039
 msgctxt "#30040"
 msgid "Timeshift"
 msgstr ""
@@ -94,9 +96,9 @@ msgctxt "#30042"
 msgid "Timeshift buffer path"
 msgstr ""
 
-# empty strings from id 30043 to 30105
-# ############
-# ############
+#empty strings from id 30043 to 30105
+#############
+#############
 msgctxt "#30106"
 msgid "VBox device rescan of EPG (will take a while)"
 msgstr ""
@@ -105,7 +107,7 @@ msgctxt "#30107"
 msgid "Sync EPG"
 msgstr ""
 
-# empty strings from id 30108 to 30109
+#empty strings from id 30108 to 30109
 msgctxt "#30110"
 msgid "Remind me"
 msgstr ""
@@ -122,8 +124,8 @@ msgctxt "#30113"
 msgid "Cancel all the channel's reminders"
 msgstr ""
 
-# empty strings from id 30114 to 30599
-# help info - Connection
+#empty strings from id 30114 to 30599
+#help info - Connection
 msgctxt "#30600"
 msgid "Contains settings for connecting to the VBox device from both your local network and from the internet. A local connection will be attempted first and if unsuccessful the internet settings will be used."
 msgstr ""
@@ -168,7 +170,7 @@ msgctxt "#30610"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`."
 msgstr ""
 
-# empty strings from id 30611 to 30619
+#empty strings from id 30611 to 30619
 msgctxt "#30620"
 msgid "Settings related to Channels & EPG."
 msgstr ""
@@ -185,7 +187,7 @@ msgctxt "#30623"
 msgid "Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec."
 msgstr ""
 
-# empty strings from id 30624 to 30639
+#empty strings from id 30624 to 30639
 msgctxt "#30640"
 msgid "Settings related to the timeshift."
 msgstr ""
