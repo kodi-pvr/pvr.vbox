@@ -17,6 +17,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.7\n"
 
+msgctxt "Addon Summary"
+msgid "PVR addon for VBox Home TV Gateways"
+msgstr "Extension enregistreur vidéo (PVR) pour les passerelles de TV domestique VBox"
+
+msgctxt "Addon Description"
+msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
+msgstr "Ceci est une extension d'enregistreur vidéo (PVR) s'interfaçant avec les passerelles TV XTi de VBox Communications. L'extension permet les fonctionnalités attendues de base, comme le visionnage, l'enregistrement et le différé. De plus, elle propose d'ajouter des données externes XMLTV au guide électronique des programmes TV diffusé."
+
 msgctxt "#30000"
 msgid "Local network"
 msgstr "Réseau local"

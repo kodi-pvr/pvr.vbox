@@ -17,6 +17,14 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.7\n"
 
+msgctxt "Addon Summary"
+msgid "PVR addon for VBox Home TV Gateways"
+msgstr "Addon PVR untuk VBox Depan TV Gateways"
+
+msgctxt "Addon Description"
+msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
+msgstr "Ini adalah addon PVR untuk berinteraksi dengan VBox Communications 'XTi TV Gateway. Mendukung semua fungsi dasar yang Anda harapkan, seperti menonton, merekam dan timeshifting. Selain itu, menambah dukungan panduan data melalui-the-air dengan data XMLTV eksternal."
+
 msgctxt "#30000"
 msgid "Local network"
 msgstr "LAN"
