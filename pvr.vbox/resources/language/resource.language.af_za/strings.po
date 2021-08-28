@@ -16,6 +16,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgctxt "Addon Summary"
+msgid "PVR addon for VBox Home TV Gateways"
+msgstr "PVR byvoegsel vir VBox Home TV Gateways"
+
+msgctxt "Addon Description"
+msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
+msgstr "Hierdie is 'n PVR byvoegsel om met VBox Communications' XTi TV Gateways te koppel. Dit ondersteun al die basiese funksionaliteit wat jy sal verwag, soos kyk, opneem en tydskuif. Addisioneel ondersteun dit die aanvul van die oor-die-lug gids data met eksterne XMLTV data."
+
 msgctxt "#30000"
 msgid "Local network"
 msgstr "Lokale netwerk"
