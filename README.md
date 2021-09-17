@@ -12,8 +12,8 @@ This repository provides a [Kodi](http://kodi.tv) PVR addon for interfacing with
 
 ### Linux
 
-1. `git clone --branch master https://github.com/xbmc/xbmc.git`
-2. `git clone https://github.com/kodi-pvr/pvr.vbox.git`
+1. `git clone --branch Matrix https://github.com/xbmc/xbmc.git`
+2. `git clone --branch Matrix https://github.com/kodi-pvr/pvr.vbox.git`
 3. `cd pvr.vbox && mkdir build && cd build`
 4. `cmake -DADDONS_TO_BUILD=pvr.vbox -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/kodi-build/addons -DPACKAGE_ZIP=1 ../../xbmc/cmake/addons`
 5. `make`
