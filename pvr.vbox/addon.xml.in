@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="pvr.vbox"
-  version="20.0.0"
+  version="20.1.0"
   name="VBox TV Gateway PVR Client"
   provider-name="Sam Stenvall">
   <requires>@ADDON_DEPENDS@</requires>
@@ -17,6 +17,9 @@
       <icon>icon.png</icon>
     </assets>
     <news>
+v20.1.0
+- Kodi PVR API to 8.0.0
+
 v20.0.0
 - Changed test builds to 'Kodi 20 Nexus'
 - Increased version to 20.0.0

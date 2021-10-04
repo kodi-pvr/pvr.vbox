@@ -120,6 +120,7 @@ PVR_ERROR CVBoxInstance::GetCapabilities(kodi::addon::PVRCapabilities& capabilit
   if (VBox::GetStateHandler().WaitForState(StartupState::INITIALIZED) && VBox::SupportsRecordings())
   {
     capabilities.SetSupportsRecordings(true);
+    capabilities.SetSupportsRecordingsDelete(true);
     capabilities.SetSupportsTimers(true);
   }
 

@@ -1,3 +1,6 @@
+v20.1.0
+- Kodi PVR API to 8.0.0
+
 v20.0.0
 - Changed test builds to 'Kodi 20 Nexus'
 - Increased version to 20.0.0
