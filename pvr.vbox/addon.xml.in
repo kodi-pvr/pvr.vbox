@@ -26,7 +26,7 @@ v19.0.0
     <summary lang="af_ZA">PVR byvoegsel vir VBox Home TV Gateways</summary>
     <summary lang="bg_BG">Клиент за ПВР за „VBox Home TV Gateways“</summary>
     <summary lang="cs_CZ">Doplněk PVR pro VBox Home TV Gateways</summary>
-    <summary lang="da_DK">PVR addon for VBOX Home Tv Gateways</summary>
+    <summary lang="da_DK">PVR addon til VBOX Home TV Gateways</summary>
     <summary lang="de_DE">PVR Addon für VBox Home TV Zugang</summary>
     <summary lang="el_GR">Πρόσθετο PVR για VBox Home TV Gateways</summary>
     <summary lang="en_GB">PVR addon for VBox Home TV Gateways</summary>
@@ -49,10 +49,10 @@ v19.0.0
     <summary lang="ko_KR">VBox 홈 TV 게이트웨이용 PVR 애드온</summary>
     <summary lang="lt_LT">PVR priedas skirtas VBox namų televizijos tinklų sietuvams</summary>
     <summary lang="lv_LV">PVR pielikums uz VBox Home TV Gateway</summary>
-    <summary lang="ms_MY">Tambahan PVR untuk </summary>
+    <summary lang="ms_MY">Tambahan PVR untuk</summary>
     <summary lang="nb_NO">PRV utvidelse til VBox Hjemme-TV Gateways</summary>
     <summary lang="nl_NL">PVR-add-on voor VBox Home TV Gateways</summary>
-    <summary lang="pl_PL">Klient telewizji dla bramek VBox Home TV </summary>
+    <summary lang="pl_PL">Klient telewizji dla bramek VBox Home TV</summary>
     <summary lang="pt_BR">Addon de PVR para VBox Home TV Gateways</summary>
     <summary lang="pt_PT">Add-on PVR para Acessos de TV VBox</summary>
     <summary lang="ro_RO">Supliment PVR pentru receptoarele VBox Home</summary>
@@ -69,7 +69,7 @@ v19.0.0
     <description lang="af_ZA">Hierdie is 'n PVR byvoegsel om met VBox Communications' XTi TV Gateways te koppel. Dit ondersteun al die basiese funksionaliteit wat jy sal verwag, soos kyk, opneem en tydskuif. Addisioneel ondersteun dit die aanvul van die oor-die-lug gids data met eksterne XMLTV data.</description>
     <description lang="bg_BG">Това е добавка за ПВР за връзка с устройствата „XTi TV Gateway“ на „VBox Communications“. Тя поддържа цялата основна функционалност, която може да се очаква, като: гледане, записване и отместване във времето. Освен това, тя поддържа и обогатяване на справочника, достъпен чрез телевизионния сигнал, с данни от външен източник, използващ формата XMLTV.</description>
     <description lang="cs_CZ">Toto je doplněk PVR addon pro propojení s VBox Communications' XTi TV Gateways. Podporuje všechny základní funkce, které byste očekávali, jako je sledování, nahrávání a časový posun. Navíc podporuje rozšíření vzduchem šířených dat televizního programu o externí data XMLTV.</description>
-    <description lang="da_DK">Dette er et PVR addon, der kommunikerer med VBox Communications' XTi TV Gateways. Det understøtter alle simple funktioner, så som at se, optage og tidsforskydelse. Derudover, understøtter det over-the-air tv-guide data med eksternt XMLTV data.</description>
+    <description lang="da_DK">Dette er et PVR add-on, der kommunikerer med VBox Communications XTi TV Gateways. Det understøtter alle grundlæggende funktioner, som f.eks. visning, optagelse og tidsforskydning. Derudover understøtter det luftbåret guidedata med eksterne XMLTV data.</description>
     <description lang="de_DE">Mit diesem Addon ist es möglich sich mit VBox Kommunikation XTiTv Zugängen zu verbinden. Es unterstützt dabei die Grundeinstellungen, wie anschauen, Aufnahme und Timeshift. Zusätzlich wird das vergrößern der Over the air Programmdaten mit externen XMLTV Daten unterstützt.</description>
     <description lang="el_GR">Αυτό είναι ένα πρόσθετο του PVR για τη διασύνδεση με VBox Επικοινωνιών' XTi TV Gateways . Υποστηρίζει όλες τις βασικές λειτουργίες που θα περιμένατε , όπως η παρακολούθηση, καταγραφή και timeshifting . Επιπλέον, υποστηρίζει τα αυξητικά δεδομένα over-the-air οδηγού με τα εξωτερικά δεδομένα XMLTV .</description>
     <description lang="en_GB">This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data.</description>
