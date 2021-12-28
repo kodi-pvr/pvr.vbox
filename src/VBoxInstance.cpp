@@ -24,8 +24,8 @@ using namespace vbox;
 unsigned int MENUHOOK_ID_RESCAN_EPG = 1;
 unsigned int MENUHOOK_ID_SYNC_EPG = 2;
 
-CVBoxInstance::CVBoxInstance(const Settings& settings, KODI_HANDLE instance, const std::string& version)
-  : kodi::addon::CInstancePVRClient(instance, version),
+CVBoxInstance::CVBoxInstance(const Settings& settings, const kodi::addon::IInstanceInfo& instance)
+  : kodi::addon::CInstancePVRClient(instance),
     VBox(settings)
 {
 

@@ -22,10 +22,10 @@ namespace vbox
 class RecordingReader;
 }
 
-class ATTRIBUTE_HIDDEN CVBoxInstance : public kodi::addon::CInstancePVRClient, private vbox::VBox
+class ATTR_DLL_LOCAL CVBoxInstance : public kodi::addon::CInstancePVRClient, private vbox::VBox
 {
 public:
-  CVBoxInstance(const vbox::Settings& settings, KODI_HANDLE instance, const std::string& version);
+  CVBoxInstance(const vbox::Settings& settings, const kodi::addon::IInstanceInfo& instance);
   ~CVBoxInstance();
 
   ADDON_STATUS Initialize();

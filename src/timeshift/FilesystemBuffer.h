@@ -23,7 +23,7 @@ namespace timeshift
   /**
    * Timeshift buffer which buffers into a file
    */
-  class ATTRIBUTE_HIDDEN FilesystemBuffer : public Buffer
+  class ATTR_DLL_LOCAL FilesystemBuffer : public Buffer
   {
   public:
     /**
