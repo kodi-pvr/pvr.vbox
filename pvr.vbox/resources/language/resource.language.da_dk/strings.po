@@ -5,9 +5,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: KODI Main\n"
-"Report-Msgid-Bugs-To: https://github.com/xbmc/xbmc/issues/\n"
+"Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2021-08-27 01:29+0000\n"
+"PO-Revision-Date: 2021-10-31 07:09+0000\n"
 "Last-Translator: Christian Gade <gade@kodi.tv>\n"
 "Language-Team: Danish <https://kodi.weblate.cloud/projects/kodi-add-ons-pvr-clients/pvr-vbox/da_dk/>\n"
 "Language: da_dk\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 msgctxt "Addon Summary"
 msgid "PVR addon for VBox Home TV Gateways"
-msgstr "PVR addon for VBOX Home Tv Gateways"
+msgstr "PVR addon til VBOX Home TV Gateways"
 
 msgctxt "Addon Description"
 msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
-msgstr "Dette er et PVR addon, der kommunikerer med VBox Communications' XTi TV Gateways. Det understøtter alle simple funktioner, så som at se, optage og tidsforskydelse. Derudover, understøtter det over-the-air tv-guide data med eksternt XMLTV data."
+msgstr "Dette er et PVR add-on, der kommunikerer med VBox Communications XTi TV Gateways. Det understøtter alle grundlæggende funktioner, som f.eks. visning, optagelse og tidsforskydning. Derudover understøtter det luftbåret guidedata med eksterne XMLTV data."
 
 msgctxt "#30000"
 msgid "Local network"
@@ -138,66 +138,66 @@ msgstr "IP-adressen eller værtsnavnet på din VBox ved tilgang fra det lokale n
 
 msgctxt "#30602"
 msgid "The port used to connect to your VBox when accessed from the local network. Default value is `80`."
-msgstr ""
+msgstr "Porten brugt til at oprette forbindelse til din VBox ved tilgang fra det lokale netværk. Standardværdien er '80'."
 
 msgctxt "#30603"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the local network. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Porten brugt til at oprette forbindelse til din VBox, hvis du bruger HTTPS ved tilgang fra det lokale netværk. Standard '0' betyder, at dette er deaktiveret, og HTTP vil blive brugt i stedet."
 
 msgctxt "#30604"
 msgid "The port used to connect to your VBox via UPnP when accessed from the local network. Default value is `55555`."
-msgstr ""
+msgstr "Porten brugt til at oprette forbindelse til din VBox via UPnP ved tilgang fra det lokale netværk. Standardværdien er '55555'."
 
 msgctxt "#30605"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the local network. Default value is `3`."
-msgstr ""
+msgstr "Værdien der bruges (i sekunder) til at angive, når et forbindelsesforsøg er mislykket ved adgang fra det lokale netværk. Standardværdien er '3'."
 
 msgctxt "#30606"
 msgid "The IP address or hostname of your VBox when accessed from the internet."
-msgstr ""
+msgstr "IP-adressen eller værtsnavnet på din VBox ved tilgang fra internettet."
 
 msgctxt "#30607"
 msgid "The port used to connect to your VBox when accessed from the internet."
-msgstr ""
+msgstr "Porten brugt til at oprette forbindelse til din VBox ved tilgang fra internettet."
 
 msgctxt "#30608"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the internet. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Porten brugt til at oprette forbindelse til din VBox, hvis du bruger HTTPS ved tilgang fra internettet. Standard '0' betyder, at dette er deaktiveret, og HTTP vil blive brugt i stedet."
 
 msgctxt "#30609"
 msgid "The port used to connect to your VBox via UPnP when accessed from the internet. Default value is `55555`."
-msgstr ""
+msgstr "Porten brugt til at oprette forbindelse til din VBox via UPnP ved tilgang fra internettet. Standardværdien er '55555'."
 
 msgctxt "#30610"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`."
-msgstr ""
+msgstr "Værdien brugt (i sekunder) til at angive, når et forbindelsesforsøg er mislykket ved adgang fra internettet. Standardværdien er '10'."
 
 # empty strings from id 30611 to 30619
 msgctxt "#30620"
 msgid "Settings related to Channels & EPG."
-msgstr ""
+msgstr "Indstillinger relateret til kanaler og EPG."
 
 msgctxt "#30621"
 msgid "Channel numbers can be set via either of the following two options: [LCN (Logical Channel Number) from backend] The channel numbers as set on the backend; [Channel index in backend] Starting from 1 number the channels as per the order they appear on the backend."
-msgstr ""
+msgstr "Kanalnumre kan indstilles via en af følgende to muligheder: [LCN (Logical Channel Number) fra backend] Kanalnumrene som indstillet på backend; [Kanalindeks i backend] Startende fra 1 bliver kanalerne nummereret i den rækkefølge, de vises på backend."
 
 msgctxt "#30622"
 msgid "The amount of time in minutes prior to a programme start that a reminder should pop up."
-msgstr ""
+msgstr "Tiden i minutter før en programstart, hvor en påmindelse skal dukke op."
 
 msgctxt "#30623"
 msgid "Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec."
-msgstr ""
+msgstr "Ignorer den indledende EPG-belastning. Aktiveret som standard for at forhindre nedbrudsproblemer på LibreElec/CoreElec."
 
 # empty strings from id 30624 to 30639
 msgctxt "#30640"
 msgid "Settings related to the timeshift."
-msgstr ""
+msgstr "Indstillinger relateret til tidsforskydning."
 
 msgctxt "#30641"
 msgid "If enabled allows pause, rewind and fast-forward of live TV."
-msgstr ""
+msgstr "Ved aktivering tillades pause, tilbage- og fremspoling i direkte tv."
 
 msgctxt "#30642"
 msgid "The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels."
-msgstr ""
+msgstr "Stien, hvor tidsforskydnings-bufferfilerne skal gemmes, når tidsforskydning er aktiveret. Sørg for, at du har en rimelig mængde ledig diskplads, da bufferen vil vokse uendeligt, indtil du stopper med at se eller skifter kanal."
