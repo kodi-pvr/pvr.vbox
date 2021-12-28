@@ -16,16 +16,6 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
-    <news>
-v20.1.0
-- Kodi PVR API to 8.0.0
-
-v20.0.0
-- Changed test builds to 'Kodi 20 Nexus'
-- Increased version to 20.0.0
-  - With start of Kodi 20 Nexus, takes addon as major the same version number as Kodi.
-    This done to know easier to which Kodi the addon works.
-    </news>
     <summary lang="af_ZA">PVR byvoegsel vir VBox Home TV Gateways</summary>
     <summary lang="bg_BG">Клиент за ПВР за „VBox Home TV Gateways“</summary>
     <summary lang="cs_CZ">Doplněk PVR pro VBox Home TV Gateways</summary>
