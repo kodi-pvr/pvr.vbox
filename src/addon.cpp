@@ -11,19 +11,19 @@
 
 using namespace vbox;
 
-ADDON_STATUS CVBoxAddon::CreateInstance(int instanceType, const std::string& instanceID, KODI_HANDLE instance, const std::string& version, KODI_HANDLE& addonInstance)
+ADDON_STATUS CVBoxAddon::CreateInstance(const kodi::addon::IInstanceInfo& instance, KODI_ADDON_INSTANCE_HDL& hdl)
 {
-  if (instanceType == ADDON_INSTANCE_PVR)
+  if (instance.IsType(ADDON_INSTANCE_PVR))
   {
     kodi::Log(ADDON_LOG_DEBUG, "creating VBox Gateway PVR addon");
 
     Settings settings;
     ReadSettings(settings);
 
-    m_vbox = new CVBoxInstance(settings, instance, version);
+    m_vbox = new CVBoxInstance(settings, instance);
     ADDON_STATUS status = m_vbox->Initialize();
 
-    addonInstance = m_vbox;
+    hdl = m_vbox;
 
     return status;
   }
@@ -31,9 +31,9 @@ ADDON_STATUS CVBoxAddon::CreateInstance(int instanceType, const std::string& ins
   return ADDON_STATUS_UNKNOWN;
 }
 
-void CVBoxAddon::DestroyInstance(int instanceType, const std::string& instanceID, KODI_HANDLE addonInstance)
+void CVBoxAddon::DestroyInstance(const kodi::addon::IInstanceInfo& instance, const KODI_ADDON_INSTANCE_HDL hdl)
 {
-  if (instanceType == ADDON_INSTANCE_PVR)
+  if (instance.IsType(ADDON_INSTANCE_PVR))
   {
     m_vbox = nullptr;
   }
@@ -41,25 +41,25 @@ void CVBoxAddon::DestroyInstance(int instanceType, const std::string& instanceID
 
 void CVBoxAddon::ReadSettings(Settings& settings)
 {
-  settings.m_internalConnectionParams.hostname = kodi::GetSettingString("hostname", "");
-  settings.m_internalConnectionParams.httpPort = kodi::GetSettingInt("http_port", 80);
-  settings.m_internalConnectionParams.httpsPort = kodi::GetSettingInt("https_port", 0);
-  settings.m_internalConnectionParams.upnpPort = kodi::GetSettingInt("upnp_port", 55555);
-  settings.m_internalConnectionParams.timeout = kodi::GetSettingInt("connection_timeout", 3);
+  settings.m_internalConnectionParams.hostname = kodi::addon::GetSettingString("hostname", "");
+  settings.m_internalConnectionParams.httpPort = kodi::addon::GetSettingInt("http_port", 80);
+  settings.m_internalConnectionParams.httpsPort = kodi::addon::GetSettingInt("https_port", 0);
+  settings.m_internalConnectionParams.upnpPort = kodi::addon::GetSettingInt("upnp_port", 55555);
+  settings.m_internalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 3);
 
-  settings.m_externalConnectionParams.hostname = kodi::GetSettingString("external_hostname", "");
-  settings.m_externalConnectionParams.httpPort = kodi::GetSettingInt("external_http_port", 19999);
-  settings.m_externalConnectionParams.httpsPort = kodi::GetSettingInt("external_https_port", 0);
-  settings.m_externalConnectionParams.upnpPort = kodi::GetSettingInt("external_upnp_port", 55555);
-  settings.m_externalConnectionParams.timeout = kodi::GetSettingInt("connection_timeout", 10);
+  settings.m_externalConnectionParams.hostname = kodi::addon::GetSettingString("external_hostname", "");
+  settings.m_externalConnectionParams.httpPort = kodi::addon::GetSettingInt("external_http_port", 19999);
+  settings.m_externalConnectionParams.httpsPort = kodi::addon::GetSettingInt("external_https_port", 0);
+  settings.m_externalConnectionParams.upnpPort = kodi::addon::GetSettingInt("external_upnp_port", 55555);
+  settings.m_externalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 10);
 
-  settings.m_setChannelIdUsingOrder = kodi::GetSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", CH_ORDER_BY_LCN);
-  settings.m_skipInitialEpgLoad = kodi::GetSettingBoolean("skip_initial_epg_load", true);
-  settings.m_timeshiftEnabled = kodi::GetSettingBoolean("timeshift_enabled", false);
-  settings.m_timeshiftBufferPath = kodi::GetSettingString("timeshift_path", "");
+  settings.m_setChannelIdUsingOrder = kodi::addon::GetSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", CH_ORDER_BY_LCN);
+  settings.m_skipInitialEpgLoad = kodi::addon::GetSettingBoolean("skip_initial_epg_load", true);
+  settings.m_timeshiftEnabled = kodi::addon::GetSettingBoolean("timeshift_enabled", false);
+  settings.m_timeshiftBufferPath = kodi::addon::GetSettingString("timeshift_path", "");
 }
 
-ADDON_STATUS CVBoxAddon::SetSetting(const std::string& settingName, const kodi::CSettingValue& settingValue)
+ADDON_STATUS CVBoxAddon::SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue)
 {
 #define UPDATE_STR(key, var) \
   if (settingName == key) \
