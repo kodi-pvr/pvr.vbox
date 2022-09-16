@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 
-#include <lib/tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 namespace vbox
 {

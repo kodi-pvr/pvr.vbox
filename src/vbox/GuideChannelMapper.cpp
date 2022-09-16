@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include <lib/tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 using namespace vbox;
 using namespace tinyxml2;
@@ -74,7 +74,7 @@ void GuideChannelMapper::Load()
     std::unique_ptr<std::string> contents = utilities::ReadFileContents(fileHandle);
 
     // Try to parse the document
-    if (document.Parse(contents->c_str(), contents->size()) != XML_NO_ERROR)
+    if (document.Parse(contents->c_str(), contents->size()) != XML_SUCCESS)
       throw vbox::InvalidXMLException("XML parsing failed: " + std::string(document.ErrorName()));
 
     // Create mappings

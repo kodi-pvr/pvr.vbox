@@ -13,7 +13,7 @@
 #include "../../xmltv/Utilities.h"
 #include "../Channel.h"
 
-#include <lib/tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 using namespace tinyxml2;
 using namespace vbox;

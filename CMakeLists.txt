@@ -4,9 +4,13 @@ project(pvr.vbox)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 
 find_package(Kodi REQUIRED)
+find_package(TinyXML2 REQUIRED)
 
 include_directories(${KODI_INCLUDE_DIR}/.. # Hack way with "/..", need bigger Kodi cmake rework to match right include ways
+                    ${TINYXML2_INCLUDE_DIRS}
                     ${PROJECT_SOURCE_DIR})
+
+set(DEPLIBS ${TINYXML2_LIBRARIES})
 
 # Sources and headers
 set(VBOX_SOURCES
@@ -79,13 +83,6 @@ source_group("Source Files\\vbox\\response" FILES ${VBOX_SOURCES_VBOX_RESPONSE})
 source_group("Source Files\\timeshift" FILES ${VBOX_SOURCES_TIMESHIFT})
 source_group("Source Files\\xmltv" FILES ${VBOX_SOURCES_XMLTV})
 
-# Library files
-set(VBOX_LIBRARIES_TINYXML2
-                lib/tinyxml2/tinyxml2.h
-                lib/tinyxml2/tinyxml2.cpp)
-
-source_group("Library Files\\tinyxml2" FILES ${VBOX_LIBRARIES_TINYXML2})
-
 # Resource files
 set(VBOX_RESOURCES
                 README.md
@@ -105,8 +102,7 @@ list(APPEND VBOX_SOURCES
                 ${VBOX_SOURCES_VBOX_RESPONSE}
                 ${VBOX_SOURCES_TIMESHIFT}
                 ${VBOX_SOURCES_XMLTV}
-                ${VBOX_RESOURCES}
-                ${VBOX_LIBRARIES_TINYXML2})
+                ${VBOX_RESOURCES})
 
 build_addon(pvr.vbox VBOX DEPLIBS)
 
