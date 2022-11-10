@@ -15,7 +15,7 @@
 #include <algorithm>
 
 #include <kodi/tools/StringUtils.h>
-#include <lib/tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 using namespace kodi::tools;
 using namespace xmltv;

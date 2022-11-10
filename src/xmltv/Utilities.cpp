@@ -14,7 +14,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <lib/tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 using namespace xmltv;
 

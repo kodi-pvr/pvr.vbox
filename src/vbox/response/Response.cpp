@@ -31,7 +31,7 @@ Response::~Response()
 void Response::ParseRawResponse(const std::string& rawResponse)
 {
   // Try to parse the response as XML
-  if (m_document->Parse(rawResponse.c_str(), rawResponse.size()) != XML_NO_ERROR)
+  if (m_document->Parse(rawResponse.c_str(), rawResponse.size()) != XML_SUCCESS)
     throw vbox::InvalidXMLException("XML parsing failed: " + std::string(m_document->ErrorName()));
 
   // Parse the response status

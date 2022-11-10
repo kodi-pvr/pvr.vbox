@@ -16,7 +16,7 @@
 #include <kodi/General.h>
 #include <kodi/addon-instance/pvr/EPG.h>
 #include <kodi/tools/StringUtils.h>
-#include <lib/tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 // using namespace xmltv;
 using namespace kodi::tools;
@@ -68,7 +68,7 @@ bool CategoryGenreMapper::LoadCategoryToGenreXML(const std::string& xmlFileName)
     std::unique_ptr<std::string> contents = utilities::ReadFileContents(fileHandle);
 
     // Try to parse the document
-    if (document.Parse(contents->c_str(), contents->size()) != XML_NO_ERROR)
+    if (document.Parse(contents->c_str(), contents->size()) != XML_SUCCESS)
       throw vbox::InvalidXMLException("XML parsing failed: " + std::string(document.ErrorName()));
 
     // Create mappings
