@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: KODI Main\n"
 "Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2022-08-12 22:30+0000\n"
+"PO-Revision-Date: 2023-01-22 18:15+0000\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language-Team: Italian <https://kodi.weblate.cloud/projects/kodi-add-ons-pvr-clients/pvr-vbox/it_it/>\n"
 "Language: it_it\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 4.15.1\n"
 
 msgctxt "Addon Summary"
 msgid "PVR addon for VBox Home TV Gateways"
@@ -23,7 +23,7 @@ msgstr "Add-on PVR per Gateway VBox Home TV"
 
 msgctxt "Addon Description"
 msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
-msgstr "Questo è un Add-on PVR per interfacciarsi con i Gateway XTi TV di VBox Communications. Supporta tutte le funzionalità base che ti aspetti, come guardare, registrare e mettere in pausa. In più, supporta l'integrazione dei dati della guida via radio con dati esterni XMLTV."
+msgstr "Questo è un add-on PVR per l'interfacciamento con i gateway TV XTi di VBox Communications. Supporta tutte le funzionalità di base che ti aspetteresti, come la visione, la registrazione e il timeshift. Inoltre, supporta l'aumento dei dati della guida over-the-air con dati XMLTV esterni."
 
 msgctxt "#30000"
 msgid "Local network"
@@ -31,7 +31,7 @@ msgstr "Rete locale"
 
 msgctxt "#30001"
 msgid "Hostname or IP address"
-msgstr "Hostname o indirizzo IP"
+msgstr "Nome host o indirizzo IP"
 
 msgctxt "#30002"
 msgid "HTTP port"
@@ -134,7 +134,7 @@ msgstr "Contiene le impostazioni per la connessione al dispositivo VBox sia dall
 
 msgctxt "#30601"
 msgid "The IP address or hostname of your VBox when accessed from the local network."
-msgstr "L'indirizzo IP o il nome host del tuo VBox quando si accede dalla rete locale."
+msgstr "L'indirizzo IP o il nome host del tuo VBox quando accedi dalla rete locale."
 
 msgctxt "#30602"
 msgid "The port used to connect to your VBox when accessed from the local network. Default value is `80`."
@@ -154,7 +154,7 @@ msgstr "Il valore utilizzato (in secondi) per indicare quando un tentativo di co
 
 msgctxt "#30606"
 msgid "The IP address or hostname of your VBox when accessed from the internet."
-msgstr "L'indirizzo IP o il nome host del tuo VBox quando si accede da Internet."
+msgstr "L'indirizzo IP o il nome host del tuo VBox quando accedi da internet."
 
 msgctxt "#30607"
 msgid "The port used to connect to your VBox when accessed from the internet."
@@ -196,7 +196,7 @@ msgstr "Impostazioni relative al timeshift."
 
 msgctxt "#30641"
 msgid "If enabled allows pause, rewind and fast-forward of live TV."
-msgstr "Se abilitato consente la pausa, il riavvolgimento e l'avanzamento rapido della TV in diretta."
+msgstr "Se abilitato consente la pausa, il riavvolgimento e l'avanzamento rapido della Live TV."
 
 msgctxt "#30642"
 msgid "The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels."
