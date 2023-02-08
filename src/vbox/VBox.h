@@ -191,8 +191,6 @@ namespace vbox
     void StartEPGScan();
     void SyncEPGNow();
     void TriggerEpgUpdatesForChannels();
-    bool IsInitialEpgSkippingCompleted();
-    void MarkChannelAsInitialEpgSkipped(unsigned int channelUid);
 
     // Helpers
     static void LogException(VBoxException& e);
@@ -202,9 +200,6 @@ namespace vbox
     std::function<void()> OnRecordingsUpdated;
     std::function<void()> OnTimersUpdated;
     std::function<void()> OnGuideUpdated;
-
-  protected:
-    bool m_skippingInitialEpgLoad = false;
 
   private:
     static const int INITIAL_EPG_WAIT_SECS = 60;
@@ -323,11 +318,6 @@ namespace vbox
      * channel is playing
      */
     ChannelPtr m_currentChannel;
-
-    /**
-     * Map of channels to be skipped on inital EPG load
-     */
-    std::map<std::string, std::string> m_unskippedInitialEpgChannelsMap;
 
     /**
      * Mutex for protecting access to m_channels and m_recordings

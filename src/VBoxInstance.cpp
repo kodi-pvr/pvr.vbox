@@ -665,13 +665,6 @@ PVR_ERROR CVBoxInstance::GetEPGForChannel(int channelUid, time_t start, time_t e
   if (!channelPtr)
     return PVR_ERROR_INVALID_PARAMETERS;
 
-  if (m_skippingInitialEpgLoad)
-  {
-    kodi::Log(ADDON_LOG_DEBUG, "%s Skipping Initial EPG for channel: %s", __FUNCTION__, channelPtr->m_name.c_str());
-    VBox::MarkChannelAsInitialEpgSkipped(channelUid);
-    return PVR_ERROR_NO_ERROR;
-  }
-
   // Retrieve the schedule
   const auto schedule = VBox::GetSchedule(channelPtr);
 

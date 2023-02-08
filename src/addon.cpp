@@ -54,7 +54,6 @@ void CVBoxAddon::ReadSettings(Settings& settings)
   settings.m_externalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 10);
 
   settings.m_setChannelIdUsingOrder = kodi::addon::GetSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", CH_ORDER_BY_LCN);
-  settings.m_skipInitialEpgLoad = kodi::addon::GetSettingBoolean("skip_initial_epg_load", true);
   settings.m_timeshiftEnabled = kodi::addon::GetSettingBoolean("timeshift_enabled", false);
   settings.m_timeshiftBufferPath = kodi::addon::GetSettingString("timeshift_path", "");
 }
@@ -109,7 +108,6 @@ ADDON_STATUS CVBoxAddon::SetSetting(const std::string& settingName, const kodi::
     UPDATE_INT("external_upnp_port", settings.m_externalConnectionParams.upnpPort);
     UPDATE_INT("external_connection_timeout", settings.m_externalConnectionParams.timeout);
     UPDATE_INT("set_channelid_using_order", settings.m_setChannelIdUsingOrder);
-    UPDATE_BOOL("skip_initial_epg_load", settings.m_skipInitialEpgLoad);
     UPDATE_BOOL("timeshift_enabled", settings.m_timeshiftEnabled);
     UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
   }
