@@ -18,7 +18,7 @@
 #include "GuideChannelMapper.h"
 #include "Recording.h"
 #include "SeriesRecording.h"
-#include "Settings.h"
+#include "InstanceSettings.h"
 #include "SoftwareVersion.h"
 #include "StartupStateHandler.h"
 #include "request/ApiRequest.h"
@@ -28,6 +28,7 @@
 #include <atomic>
 #include <functional>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -124,7 +125,7 @@ namespace vbox
      */
     static const char* MINIMUM_SOFTWARE_VERSION;
 
-    VBox(const Settings& settings);
+    VBox();
     ~VBox();
 
     /**
@@ -133,7 +134,7 @@ namespace vbox
     void Initialize();
     void DetermineConnectionParams();
     bool ValidateSettings() const;
-    const Settings& GetSettings() const;
+    InstanceSettings& GetSettings() const;
     const ConnectionParameters& GetConnectionParams() const;
     StartupStateHandler& GetStateHandler();
     std::string GetApiBaseUrl() const;
@@ -201,6 +202,12 @@ namespace vbox
     std::function<void()> OnTimersUpdated;
     std::function<void()> OnGuideUpdated;
 
+  protected:
+    /**
+     * The addons settings
+     */
+    std::shared_ptr<vbox::InstanceSettings> m_settings;
+
   private:
     static const int INITIAL_EPG_WAIT_SECS = 60;
     static const int INITIAL_EPG_STEP_SECS = 5;
@@ -221,11 +228,6 @@ namespace vbox
 
     void LogGuideStatistics(const ::xmltv::Guide& guide) const;
     response::ResponsePtr PerformRequest(const request::Request& request) const;
-
-    /**
-     * The addons settings
-     */
-    const Settings m_settings;
 
     /**
      * The connection parameters to use for requests

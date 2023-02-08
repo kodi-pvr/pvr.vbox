@@ -201,7 +201,7 @@ msgstr ""
 #empty strings from id 30624 to 30639
 
 msgctxt "#30640"
-msgid "Settings related to the timeshift."
+msgid "Settings related to timeshift."
 msgstr ""
 
 msgctxt "#30641"

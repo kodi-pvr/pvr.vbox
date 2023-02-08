@@ -12,7 +12,7 @@
 #include "timeshift/FilesystemBuffer.h"
 #include "vbox/ContentIdentifier.h"
 #include "vbox/RecordingReader.h"
-#include "vbox/Settings.h"
+#include "vbox/InstanceSettings.h"
 
 #include <algorithm>
 
@@ -24,16 +24,21 @@ using namespace vbox;
 unsigned int MENUHOOK_ID_RESCAN_EPG = 1;
 unsigned int MENUHOOK_ID_SYNC_EPG = 2;
 
-CVBoxInstance::CVBoxInstance(const Settings& settings, const kodi::addon::IInstanceInfo& instance)
-  : kodi::addon::CInstancePVRClient(instance),
-    VBox(settings)
+CVBoxInstance::CVBoxInstance(const kodi::addon::IInstanceInfo& instance)
+  : kodi::addon::CInstancePVRClient(instance), VBox()
 {
-
+  m_settings = std::make_shared<InstanceSettings>(*this);
 }
 
 CVBoxInstance::~CVBoxInstance()
 {
   delete m_timeshiftBuffer;
+}
+
+ADDON_STATUS CVBoxInstance::SetInstanceSetting(const std::string& settingName,
+                                               const kodi::addon::CSettingValue& settingValue)
+{
+  return m_settings->SetSetting(settingName, settingValue);
 }
 
 ADDON_STATUS CVBoxInstance::Initialize()
@@ -62,8 +67,8 @@ ADDON_STATUS CVBoxInstance::Initialize()
       };
 
       // Create the timeshift buffer
-      if (VBox::GetSettings().m_timeshiftEnabled)
-        m_timeshiftBuffer = new timeshift::FilesystemBuffer(VBox::GetSettings().m_timeshiftBufferPath);
+      if (m_settings->m_timeshiftEnabled)
+        m_timeshiftBuffer = new timeshift::FilesystemBuffer(m_settings->m_timeshiftBufferPath);
       else
         m_timeshiftBuffer = new timeshift::DummyBuffer();
 
@@ -211,7 +216,7 @@ PVR_ERROR CVBoxInstance::GetChannels(bool radio, kodi::addon::PVRChannelsResultS
 
     // Override LCN if backend channel order should be forced
     ++i;
-    if (VBox::GetSettings().m_setChannelIdUsingOrder == CH_ORDER_BY_INDEX)
+    if (m_settings->m_setChannelIdUsingOrder == CH_ORDER_BY_INDEX)
       channel.SetChannelNumber(i);
     // default - CH_ORDER_BY_LCN
     else
@@ -770,12 +775,12 @@ int64_t CVBoxInstance::SeekLiveStream(int64_t iPosition, int iWhence /* = SEEK_S
 
 bool CVBoxInstance::CanPauseStream()
 {
-  return VBox::GetSettings().m_timeshiftEnabled;
+  return m_settings->m_timeshiftEnabled;
 }
 
 bool CVBoxInstance::CanSeekStream()
 {
-  return VBox::GetSettings().m_timeshiftEnabled;
+  return m_settings->m_timeshiftEnabled;
 }
 
 bool CVBoxInstance::IsRealTimeStream()
@@ -789,7 +794,7 @@ bool CVBoxInstance::IsRealTimeStream()
 PVR_ERROR CVBoxInstance::GetStreamTimes(kodi::addon::PVRStreamTimes& times)
 {
   // Addon API 5.8.0
-  if (IsRealTimeStream() && m_timeshiftBuffer && VBox::GetSettings().m_timeshiftEnabled)
+  if (IsRealTimeStream() && m_timeshiftBuffer && m_settings->m_timeshiftEnabled)
   {
     times.SetStartTime(m_timeshiftBuffer->GetStartTime());
     times.SetPTSStart(0);
