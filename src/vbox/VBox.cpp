@@ -124,14 +124,7 @@ void VBox::Initialize()
   // Consider the addon initialized
   m_stateHandler.EnterState(StartupState::INITIALIZED);
 
-  m_skippingInitialEpgLoad = m_settings.m_skipInitialEpgLoad;
-
   RetrieveChannels(false);
-  {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    for (auto channel : m_channels)
-      m_unskippedInitialEpgChannelsMap.insert({channel->m_uniqueId, channel->m_uniqueId});
-  }
 
   // Start the background updater thread
   m_active = true;
@@ -242,18 +235,6 @@ void VBox::BackgroundUpdater()
   RetrieveRecordings(false);
   RetrieveGuide(false);
 
-  // Wait for the initial EPG update to complete
-  int totalWaitSecs = 0;
-  while (m_active && totalWaitSecs < INITIAL_EPG_WAIT_SECS)
-  {
-    totalWaitSecs += INITIAL_EPG_STEP_SECS;
-
-    if (!IsInitialEpgSkippingCompleted())
-      std::this_thread::sleep_for(std::chrono::milliseconds(INITIAL_EPG_STEP_SECS * 1000));
-  }
-
-  m_skippingInitialEpgLoad = false;
-
   // Whether or not initial EPG updates occurred now Trigger "Real" EPG updates
   // This will regard Initial EPG as completed anyway.
   TriggerEpgUpdatesForChannels();
@@ -286,36 +267,18 @@ void VBox::BackgroundUpdater()
   }
 }
 
-bool VBox::IsInitialEpgSkippingCompleted()
-{
-  kodi::Log(ADDON_LOG_DEBUG, "%s Waiting to Get Initial EPG for %d remaining channels", __FUNCTION__,
-      m_unskippedInitialEpgChannelsMap.size());
-
-  return m_unskippedInitialEpgChannelsMap.size() == 0;
-}
-
 void VBox::TriggerEpgUpdatesForChannels()
 {
   {
     std::unique_lock<std::mutex> lock(m_mutex);
     for (auto& channel : m_channels)
     {
-      //We want to trigger full updates only so let's make sure it's not an initialEpg
-      m_unskippedInitialEpgChannelsMap.erase(channel->m_uniqueId);
-
       kodi::Log(ADDON_LOG_DEBUG, "%s - Trigger EPG update for channel: %s (%s)", __FUNCTION__, channel->m_name.c_str(),
           channel->m_uniqueId.c_str());
     }
   }
 
   OnGuideUpdated();
-}
-
-void VBox::MarkChannelAsInitialEpgSkipped(unsigned int channelUid)
-{
-  const ChannelPtr channelPtr = GetChannel(channelUid);
-
-  m_unskippedInitialEpgChannelsMap.erase(channelPtr->m_uniqueId);
 }
 
 bool VBox::ValidateSettings() const

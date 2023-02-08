@@ -127,13 +127,6 @@
           <control type="list" format="integer" />
         </setting>
       </group>
-      <group id="2" label="30022">
-        <setting id="skip_initial_epg_load" type="boolean" label="30027" help="30623">
-          <level>2</level>
-          <default>true</default>
-          <control type="toggle" />
-        </setting>
-      </group>
     </category>
 
     <!-- Timeshift -->
