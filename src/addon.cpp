@@ -11,16 +11,23 @@
 
 using namespace vbox;
 
+ADDON_STATUS CVBoxAddon::Create()
+{
+  /* Init settings */
+  m_settings.reset(new AddonSettings());
+
+  kodi::Log(ADDON_LOG_DEBUG,  "%s starting PVR client...", __func__);
+
+  return ADDON_STATUS_OK;
+}
+
 ADDON_STATUS CVBoxAddon::CreateInstance(const kodi::addon::IInstanceInfo& instance, KODI_ADDON_INSTANCE_HDL& hdl)
 {
   if (instance.IsType(ADDON_INSTANCE_PVR))
   {
     kodi::Log(ADDON_LOG_DEBUG, "creating VBox Gateway PVR addon");
 
-    Settings settings;
-    ReadSettings(settings);
-
-    m_vbox = new CVBoxInstance(settings, instance);
+    m_vbox = new CVBoxInstance(instance);
     ADDON_STATUS status = m_vbox->Initialize();
 
     hdl = m_vbox;
@@ -31,91 +38,17 @@ ADDON_STATUS CVBoxAddon::CreateInstance(const kodi::addon::IInstanceInfo& instan
   return ADDON_STATUS_UNKNOWN;
 }
 
+ADDON_STATUS CVBoxAddon::SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue)
+{
+  return m_settings->SetSetting(settingName, settingValue);
+}
+
 void CVBoxAddon::DestroyInstance(const kodi::addon::IInstanceInfo& instance, const KODI_ADDON_INSTANCE_HDL hdl)
 {
   if (instance.IsType(ADDON_INSTANCE_PVR))
   {
     m_vbox = nullptr;
   }
-}
-
-void CVBoxAddon::ReadSettings(Settings& settings)
-{
-  settings.m_internalConnectionParams.hostname = kodi::addon::GetSettingString("hostname", "");
-  settings.m_internalConnectionParams.httpPort = kodi::addon::GetSettingInt("http_port", 80);
-  settings.m_internalConnectionParams.httpsPort = kodi::addon::GetSettingInt("https_port", 0);
-  settings.m_internalConnectionParams.upnpPort = kodi::addon::GetSettingInt("upnp_port", 55555);
-  settings.m_internalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 3);
-
-  settings.m_externalConnectionParams.hostname = kodi::addon::GetSettingString("external_hostname", "");
-  settings.m_externalConnectionParams.httpPort = kodi::addon::GetSettingInt("external_http_port", 19999);
-  settings.m_externalConnectionParams.httpsPort = kodi::addon::GetSettingInt("external_https_port", 0);
-  settings.m_externalConnectionParams.upnpPort = kodi::addon::GetSettingInt("external_upnp_port", 55555);
-  settings.m_externalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 10);
-
-  settings.m_setChannelIdUsingOrder = kodi::addon::GetSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", CH_ORDER_BY_LCN);
-  settings.m_timeshiftEnabled = kodi::addon::GetSettingBoolean("timeshift_enabled", false);
-  settings.m_timeshiftBufferPath = kodi::addon::GetSettingString("timeshift_path", "");
-}
-
-ADDON_STATUS CVBoxAddon::SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue)
-{
-#define UPDATE_STR(key, var) \
-  if (settingName == key) \
-  { \
-    if (var != settingValue.GetString()) \
-    { \
-      kodi::Log(ADDON_LOG_INFO, "updated setting %s from '%s' to '%s'", settingName.c_str(), var.c_str(), settingValue.GetString().c_str()); \
-      return ADDON_STATUS_NEED_RESTART; \
-    } \
-    return ADDON_STATUS_OK; \
-  }
-
-#define UPDATE_INT(key, var) \
-  if (settingName == key) \
-  { \
-    if (var != settingValue.GetInt()) \
-    { \
-      kodi::Log(ADDON_LOG_INFO, "updated setting %s from '%d' to '%d'", settingName.c_str(), var, settingValue.GetInt()); \
-      return ADDON_STATUS_NEED_RESTART; \
-    } \
-    return ADDON_STATUS_OK; \
-  }
-
-#define UPDATE_BOOL(key, var) \
-  if (settingName == key) \
-  { \
-    if (var != settingValue.GetBoolean()) \
-    { \
-      kodi::Log(ADDON_LOG_INFO, "updated setting %s from '%d' to '%d'", settingName.c_str(), var, settingValue.GetBoolean()); \
-      return ADDON_STATUS_NEED_RESTART; \
-    } \
-    return ADDON_STATUS_OK; \
-  }
-
-  if (m_vbox)
-  {
-    const vbox::Settings& settings = m_vbox->GetSettings();
-
-    UPDATE_STR("hostname", settings.m_internalConnectionParams.hostname);
-    UPDATE_INT("http_port", settings.m_internalConnectionParams.httpPort);
-    UPDATE_INT("https_port", settings.m_internalConnectionParams.httpsPort);
-    UPDATE_INT("upnp_port", settings.m_internalConnectionParams.upnpPort);
-    UPDATE_INT("connection_timeout", settings.m_internalConnectionParams.timeout);
-    UPDATE_STR("external_hostname", settings.m_externalConnectionParams.hostname);
-    UPDATE_INT("external_http_port", settings.m_externalConnectionParams.httpPort);
-    UPDATE_INT("external_https_port", settings.m_externalConnectionParams.httpsPort);
-    UPDATE_INT("external_upnp_port", settings.m_externalConnectionParams.upnpPort);
-    UPDATE_INT("external_connection_timeout", settings.m_externalConnectionParams.timeout);
-    UPDATE_INT("set_channelid_using_order", settings.m_setChannelIdUsingOrder);
-    UPDATE_BOOL("timeshift_enabled", settings.m_timeshiftEnabled);
-    UPDATE_STR("timeshift_path", settings.m_timeshiftBufferPath);
-  }
-
-  return ADDON_STATUS_OK;
-#undef UPDATE_BOOL
-#undef UPDATE_INT
-#undef UPDATE_STR
 }
 
 ADDONCREATOR(CVBoxAddon)

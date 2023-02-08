@@ -25,11 +25,15 @@ class RecordingReader;
 class ATTR_DLL_LOCAL CVBoxInstance : public kodi::addon::CInstancePVRClient, private vbox::VBox
 {
 public:
-  CVBoxInstance(const vbox::Settings& settings, const kodi::addon::IInstanceInfo& instance);
+  CVBoxInstance(const kodi::addon::IInstanceInfo& instance);
   ~CVBoxInstance();
 
+  // kodi::addon::CInstancePVRClient -> kodi::addon::IAddonInstance overrides
+  ADDON_STATUS SetInstanceSetting(const std::string& settingName,
+                                  const kodi::addon::CSettingValue& settingValue) override;
+
   ADDON_STATUS Initialize();
-  const vbox::Settings& GetSettings() const { return vbox::VBox::GetSettings(); }
+  const vbox::InstanceSettings& GetSettings() const { return vbox::VBox::GetSettings(); }
 
   PVR_ERROR GetCapabilities(kodi::addon::PVRCapabilities& capabilities) override;
   PVR_ERROR GetBackendName(std::string& name) override;

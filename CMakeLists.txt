@@ -20,6 +20,8 @@ set(VBOX_SOURCES
                 src/VBoxInstance.cpp)
 
 set(VBOX_SOURCES_VBOX
+                src/vbox/AddonSettings.h
+                src/vbox/AddonSettings.cpp
                 src/vbox/CategoryGenreMapper.h
                 src/vbox/CategoryGenreMapper.cpp
                 src/vbox/Channel.h
@@ -29,13 +31,14 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/Exceptions.h
                 src/vbox/GuideChannelMapper.h
                 src/vbox/GuideChannelMapper.cpp
+                src/vbox/InstanceSettings.h
+                src/vbox/InstanceSettings.cpp
                 src/vbox/Recording.h
                 src/vbox/Recording.cpp
                 src/vbox/RecordingReader.cpp
                 src/vbox/RecordingReader.h
                 src/vbox/SeriesRecording.h
                 src/vbox/SeriesRecording.cpp
-                src/vbox/Settings.h
                 src/vbox/SoftwareVersion.h
                 src/vbox/SoftwareVersion.cpp
                 src/vbox/StartupStateHandler.h

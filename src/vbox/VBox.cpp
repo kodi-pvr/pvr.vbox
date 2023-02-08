@@ -33,9 +33,8 @@ const int CHANNELS_PER_CHANNELBATCH = 100;
 const int CHANNELS_PER_EPGBATCH = 10;
 const size_t VBOX_LOG_BUFFER = 16384;
 
-VBox::VBox(const Settings& settings)
-  : m_settings(settings),
-    m_currentChannel(nullptr),
+VBox::VBox()
+  : m_currentChannel(nullptr),
     m_categoryGenreMapper(nullptr),
     m_shouldSyncEpg(false),
     m_lastStreamStatus({ChannelStreamingStatus(), time(nullptr)})
@@ -137,7 +136,7 @@ void VBox::Initialize()
 void VBox::DetermineConnectionParams()
 {
   // Attempt to perform a request using the internal connection parameters
-  m_currentConnectionParameters = m_settings.m_internalConnectionParams;
+  m_currentConnectionParameters = m_settings->m_internalConnectionParams;
 
   try
   {
@@ -148,10 +147,10 @@ void VBox::DetermineConnectionParams()
   catch (VBoxException&)
   {
     // Retry the request with the external parameters
-    if (m_settings.m_externalConnectionParams.AreValid())
+    if (m_settings->m_externalConnectionParams.AreValid())
     {
       kodi::Log(ADDON_LOG_INFO, "Unable to connect using internal connection settings, trying with external");
-      m_currentConnectionParameters = m_settings.m_externalConnectionParams;
+      m_currentConnectionParameters = m_settings->m_externalConnectionParams;
 
       request::ApiRequest request("QuerySwVersion", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
       request.SetTimeout(m_currentConnectionParameters.timeout);
@@ -284,20 +283,15 @@ void VBox::TriggerEpgUpdatesForChannels()
 bool VBox::ValidateSettings() const
 {
   // Check connection settings
-  if (!m_settings.m_internalConnectionParams.AreValid())
+  if (!m_settings->m_internalConnectionParams.AreValid())
     return false;
 
   // Check timeshift settings
   std::vector<kodi::vfs::CDirEntry> items;
-  if (m_settings.m_timeshiftEnabled && !kodi::vfs::GetDirectory(m_settings.m_timeshiftBufferPath, "", items))
+  if (m_settings->m_timeshiftEnabled && !kodi::vfs::GetDirectory(m_settings->m_timeshiftBufferPath, "", items))
     return false;
 
   return true;
-}
-
-const Settings& VBox::GetSettings() const
-{
-  return m_settings;
 }
 
 const ConnectionParameters& VBox::GetConnectionParams() const
