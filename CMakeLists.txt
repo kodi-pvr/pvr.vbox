@@ -39,6 +39,8 @@ set(VBOX_SOURCES_VBOX
                 src/vbox/RecordingReader.h
                 src/vbox/SeriesRecording.h
                 src/vbox/SeriesRecording.cpp
+                src/vbox/SettingsMigration.h
+                src/vbox/SettingsMigration.cpp
                 src/vbox/SoftwareVersion.h
                 src/vbox/SoftwareVersion.cpp
                 src/vbox/StartupStateHandler.h
