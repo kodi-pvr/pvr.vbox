@@ -8,6 +8,7 @@
 
 #include "addon.h"
 #include "VBoxInstance.h"
+#include "vbox/SettingsMigration.h"
 
 using namespace vbox;
 
@@ -29,6 +30,14 @@ ADDON_STATUS CVBoxAddon::CreateInstance(const kodi::addon::IInstanceInfo& instan
 
     m_vbox = new CVBoxInstance(instance);
     ADDON_STATUS status = m_vbox->Initialize();
+
+    // Try to migrate settings from a pre-multi-instance setup
+    if (SettingsMigration::MigrateSettings(*m_vbox))
+    {
+      // Initial client operated on old/incomplete settings
+      delete m_vbox;
+      m_vbox = new CVBoxInstance(instance);
+    }
 
     hdl = m_vbox;
 
