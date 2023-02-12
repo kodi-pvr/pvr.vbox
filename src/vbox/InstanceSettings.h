@@ -11,6 +11,8 @@
 #include <sstream>
 #include <string>
 
+#include <kodi/AddonBase.h>
+
 namespace vbox
 {
 
@@ -23,7 +25,7 @@ namespace vbox
   /**
    * Represents a set of parameters required to make a connection
    */
-  class ConnectionParameters
+  class ATTR_DLL_LOCAL ConnectionParameters
   {
   public:
     std::string hostname;
@@ -69,14 +71,24 @@ namespace vbox
   /**
    * Represents the settings for this addon
    */
-  class Settings
+  class ATTR_DLL_LOCAL InstanceSettings
   {
   public:
+    explicit InstanceSettings(kodi::addon::IAddonInstance& instance);
+    ADDON_STATUS SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue);
+
     ConnectionParameters m_internalConnectionParams;
     ConnectionParameters m_externalConnectionParams;
     ChannelOrder m_setChannelIdUsingOrder;
-    bool m_skipInitialEpgLoad;
     bool m_timeshiftEnabled;
     std::string m_timeshiftBufferPath;
+
+  private:
+    InstanceSettings(const InstanceSettings&) = delete;
+    void operator=(const InstanceSettings&) = delete;
+
+    void ReadSettings();
+
+    kodi::addon::IAddonInstance& m_instance;
   };
 } // namespace vbox

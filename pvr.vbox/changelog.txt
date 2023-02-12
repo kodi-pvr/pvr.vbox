@@ -1,3 +1,7 @@
+v20.4.0
+- Add support for multiple backends
+- Remove skip intial EPG, no longer required in Kodi Nexus
+
 v20.3.0
 - Kodi inputstream API update to version 3.2.0
 - Kodi PVR API update to version 8.0.2
