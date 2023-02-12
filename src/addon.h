@@ -10,9 +10,13 @@
 
 #include <kodi/AddonBase.h>
 
+#include <memory>
+
+#include "vbox/AddonSettings.h"
+
 namespace vbox
 {
-class Settings;
+class InstanceSettings;
 }
 
 class CVBoxInstance;
@@ -22,12 +26,13 @@ class ATTR_DLL_LOCAL CVBoxAddon : public kodi::addon::CAddonBase
 public:
   CVBoxAddon() = default;
 
+  ADDON_STATUS Create() override;
   ADDON_STATUS CreateInstance(const kodi::addon::IInstanceInfo& instance, KODI_ADDON_INSTANCE_HDL& hdl) override;
-  void DestroyInstance(const kodi::addon::IInstanceInfo& instance, const KODI_ADDON_INSTANCE_HDL hdl) override;
   ADDON_STATUS SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue) override;
+  void DestroyInstance(const kodi::addon::IInstanceInfo& instance, const KODI_ADDON_INSTANCE_HDL hdl) override;
 
 private:
-  void ReadSettings(vbox::Settings& settings);
 
   CVBoxInstance* m_vbox = nullptr;
+  std::shared_ptr<vbox::AddonSettings> m_settings;
 };

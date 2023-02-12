@@ -33,9 +33,8 @@ const int CHANNELS_PER_CHANNELBATCH = 100;
 const int CHANNELS_PER_EPGBATCH = 10;
 const size_t VBOX_LOG_BUFFER = 16384;
 
-VBox::VBox(const Settings& settings)
-  : m_settings(settings),
-    m_currentChannel(nullptr),
+VBox::VBox()
+  : m_currentChannel(nullptr),
     m_categoryGenreMapper(nullptr),
     m_shouldSyncEpg(false),
     m_lastStreamStatus({ChannelStreamingStatus(), time(nullptr)})
@@ -124,14 +123,7 @@ void VBox::Initialize()
   // Consider the addon initialized
   m_stateHandler.EnterState(StartupState::INITIALIZED);
 
-  m_skippingInitialEpgLoad = m_settings.m_skipInitialEpgLoad;
-
   RetrieveChannels(false);
-  {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    for (auto channel : m_channels)
-      m_unskippedInitialEpgChannelsMap.insert({channel->m_uniqueId, channel->m_uniqueId});
-  }
 
   // Start the background updater thread
   m_active = true;
@@ -144,7 +136,7 @@ void VBox::Initialize()
 void VBox::DetermineConnectionParams()
 {
   // Attempt to perform a request using the internal connection parameters
-  m_currentConnectionParameters = m_settings.m_internalConnectionParams;
+  m_currentConnectionParameters = m_settings->m_internalConnectionParams;
 
   try
   {
@@ -155,10 +147,10 @@ void VBox::DetermineConnectionParams()
   catch (VBoxException&)
   {
     // Retry the request with the external parameters
-    if (m_settings.m_externalConnectionParams.AreValid())
+    if (m_settings->m_externalConnectionParams.AreValid())
     {
       kodi::Log(ADDON_LOG_INFO, "Unable to connect using internal connection settings, trying with external");
-      m_currentConnectionParameters = m_settings.m_externalConnectionParams;
+      m_currentConnectionParameters = m_settings->m_externalConnectionParams;
 
       request::ApiRequest request("QuerySwVersion", GetConnectionParams().hostname, GetConnectionParams().upnpPort);
       request.SetTimeout(m_currentConnectionParameters.timeout);
@@ -242,18 +234,6 @@ void VBox::BackgroundUpdater()
   RetrieveRecordings(false);
   RetrieveGuide(false);
 
-  // Wait for the initial EPG update to complete
-  int totalWaitSecs = 0;
-  while (m_active && totalWaitSecs < INITIAL_EPG_WAIT_SECS)
-  {
-    totalWaitSecs += INITIAL_EPG_STEP_SECS;
-
-    if (!IsInitialEpgSkippingCompleted())
-      std::this_thread::sleep_for(std::chrono::milliseconds(INITIAL_EPG_STEP_SECS * 1000));
-  }
-
-  m_skippingInitialEpgLoad = false;
-
   // Whether or not initial EPG updates occurred now Trigger "Real" EPG updates
   // This will regard Initial EPG as completed anyway.
   TriggerEpgUpdatesForChannels();
@@ -286,23 +266,12 @@ void VBox::BackgroundUpdater()
   }
 }
 
-bool VBox::IsInitialEpgSkippingCompleted()
-{
-  kodi::Log(ADDON_LOG_DEBUG, "%s Waiting to Get Initial EPG for %d remaining channels", __FUNCTION__,
-      m_unskippedInitialEpgChannelsMap.size());
-
-  return m_unskippedInitialEpgChannelsMap.size() == 0;
-}
-
 void VBox::TriggerEpgUpdatesForChannels()
 {
   {
     std::unique_lock<std::mutex> lock(m_mutex);
     for (auto& channel : m_channels)
     {
-      //We want to trigger full updates only so let's make sure it's not an initialEpg
-      m_unskippedInitialEpgChannelsMap.erase(channel->m_uniqueId);
-
       kodi::Log(ADDON_LOG_DEBUG, "%s - Trigger EPG update for channel: %s (%s)", __FUNCTION__, channel->m_name.c_str(),
           channel->m_uniqueId.c_str());
     }
@@ -311,30 +280,18 @@ void VBox::TriggerEpgUpdatesForChannels()
   OnGuideUpdated();
 }
 
-void VBox::MarkChannelAsInitialEpgSkipped(unsigned int channelUid)
-{
-  const ChannelPtr channelPtr = GetChannel(channelUid);
-
-  m_unskippedInitialEpgChannelsMap.erase(channelPtr->m_uniqueId);
-}
-
 bool VBox::ValidateSettings() const
 {
   // Check connection settings
-  if (!m_settings.m_internalConnectionParams.AreValid())
+  if (!m_settings->m_internalConnectionParams.AreValid())
     return false;
 
   // Check timeshift settings
   std::vector<kodi::vfs::CDirEntry> items;
-  if (m_settings.m_timeshiftEnabled && !kodi::vfs::GetDirectory(m_settings.m_timeshiftBufferPath, "", items))
+  if (m_settings->m_timeshiftEnabled && !kodi::vfs::GetDirectory(m_settings->m_timeshiftBufferPath, "", items))
     return false;
 
   return true;
-}
-
-const Settings& VBox::GetSettings() const
-{
-  return m_settings;
 }
 
 const ConnectionParameters& VBox::GetConnectionParams() const
