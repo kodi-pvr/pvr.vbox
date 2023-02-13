@@ -1,3 +1,6 @@
+v20.4.1
+- Set default timeshift path correctly
+
 v20.4.0
 - Add support for multiple backends
 - Remove skip intial EPG, no longer required in Kodi Nexus
