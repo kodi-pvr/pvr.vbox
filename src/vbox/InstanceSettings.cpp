@@ -31,7 +31,7 @@ void InstanceSettings::ReadSettings()
 
   m_setChannelIdUsingOrder = kodi::addon::GetSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", CH_ORDER_BY_LCN);
   m_timeshiftEnabled = kodi::addon::GetSettingBoolean("timeshift_enabled", false);
-  m_timeshiftBufferPath = kodi::addon::GetSettingString("timeshift_path", "");
+  m_timeshiftBufferPath = kodi::addon::GetSettingString("timeshift_path", "special://userdata/addon_data/pvr.vbox");
 }
 
 ADDON_STATUS InstanceSettings::SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue)

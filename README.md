@@ -8,6 +8,8 @@
 
 This repository provides a [Kodi](http://kodi.tv) PVR addon for interfacing with the VBox Communications XTi TV Gateway devices. This README serves as a quick overview of the functionality and architecture of the addon, to make it easier for others to possible contribute.
 
+Multiple VBox devices can be configured via Kodi PVR since Kodi 20 (Nexus). To setup multiple devices simply visit the add-ons settings under `Configure`, and choose new `Add add-on configuration`.
+
 ## Build instructions
 
 ### Linux
