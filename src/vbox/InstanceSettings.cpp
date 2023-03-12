@@ -17,21 +17,34 @@ InstanceSettings::InstanceSettings(kodi::addon::IAddonInstance& instance)
 
 void InstanceSettings::ReadSettings()
 {
-  m_internalConnectionParams.hostname = kodi::addon::GetSettingString("hostname", "");
-  m_internalConnectionParams.httpPort = kodi::addon::GetSettingInt("http_port", 80);
-  m_internalConnectionParams.httpsPort = kodi::addon::GetSettingInt("https_port", 0);
-  m_internalConnectionParams.upnpPort = kodi::addon::GetSettingInt("upnp_port", 55555);
-  m_internalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 3);
+  if (!m_instance.CheckInstanceSettingString("hostname", m_internalConnectionParams.hostname))
+    m_internalConnectionParams.hostname = "";
+  if (!m_instance.CheckInstanceSettingInt("http_port", m_internalConnectionParams.httpPort))
+    m_internalConnectionParams.httpPort = 80;
+  if (!m_instance.CheckInstanceSettingInt("https_port", m_internalConnectionParams.httpsPort))
+    m_internalConnectionParams.httpsPort = 0;
+  if (!m_instance.CheckInstanceSettingInt("upnp_port", m_internalConnectionParams.upnpPort))
+    m_internalConnectionParams.upnpPort = 55555;
+  if (!m_instance.CheckInstanceSettingInt("connection_timeout", m_internalConnectionParams.timeout))
+    m_internalConnectionParams.timeout = 3;
 
-  m_externalConnectionParams.hostname = kodi::addon::GetSettingString("external_hostname", "");
-  m_externalConnectionParams.httpPort = kodi::addon::GetSettingInt("external_http_port", 19999);
-  m_externalConnectionParams.httpsPort = kodi::addon::GetSettingInt("external_https_port", 0);
-  m_externalConnectionParams.upnpPort = kodi::addon::GetSettingInt("external_upnp_port", 55555);
-  m_externalConnectionParams.timeout = kodi::addon::GetSettingInt("connection_timeout", 10);
+  if (!m_instance.CheckInstanceSettingString("external_hostname", m_externalConnectionParams.hostname))
+    m_externalConnectionParams.hostname = "";
+  if (!m_instance.CheckInstanceSettingInt("external_http_port", m_externalConnectionParams.httpPort))
+    m_externalConnectionParams.httpPort = 19999;
+  if (!m_instance.CheckInstanceSettingInt("external_https_port", m_externalConnectionParams.httpsPort))
+    m_externalConnectionParams.httpsPort = 0;
+  if (!m_instance.CheckInstanceSettingInt("external_upnp_port", m_externalConnectionParams.upnpPort))
+    m_externalConnectionParams.upnpPort = 55555;
+  if (!m_instance.CheckInstanceSettingInt("external_connection_timeout", m_externalConnectionParams.timeout))
+    m_externalConnectionParams.timeout = 10;
 
-  m_setChannelIdUsingOrder = kodi::addon::GetSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", CH_ORDER_BY_LCN);
-  m_timeshiftEnabled = kodi::addon::GetSettingBoolean("timeshift_enabled", false);
-  m_timeshiftBufferPath = kodi::addon::GetSettingString("timeshift_path", "special://userdata/addon_data/pvr.vbox");
+  if (!m_instance.CheckInstanceSettingEnum<vbox::ChannelOrder>("set_channelid_using_order", m_setChannelIdUsingOrder))
+    m_setChannelIdUsingOrder = CH_ORDER_BY_LCN;
+  if (!m_instance.CheckInstanceSettingBoolean("timeshift_enabled", m_timeshiftEnabled))
+    m_timeshiftEnabled = false;
+  if (!m_instance.CheckInstanceSettingString("timeshift_path", m_timeshiftBufferPath))
+    m_timeshiftBufferPath = "special://userdata/addon_data/pvr.vbox";
 }
 
 ADDON_STATUS InstanceSettings::SetSetting(const std::string& settingName, const kodi::addon::CSettingValue& settingValue)
