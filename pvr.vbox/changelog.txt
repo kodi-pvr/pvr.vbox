@@ -1,3 +1,6 @@
+v21.1.2
+- Read from instance settings instead of old settings
+
 v21.1.1
 - Set default timeshift path correctly
 
