@@ -823,9 +823,9 @@ void PauseStream(bool bPaused)
 }
 
 // Recording stream methods
-bool CVBoxInstance::OpenRecordedStream(const kodi::addon::PVRRecording & recording)
+bool CVBoxInstance::OpenRecordedStream(const kodi::addon::PVRRecording & recording, int64_t& streamId)
 {
-  CloseRecordedStream();
+  CloseRecordedStream(streamId);
 
   unsigned int id = static_cast<unsigned int>(std::stoi(recording.GetRecordingId()));
   auto& recordings = VBox::GetRecordingsAndTimers();
@@ -858,13 +858,13 @@ bool CVBoxInstance::OpenRecordedStream(const kodi::addon::PVRRecording & recordi
   return m_recordingReader->Start();
 }
 
-void CVBoxInstance::CloseRecordedStream()
+void CVBoxInstance::CloseRecordedStream(int64_t streamId)
 {
   delete m_recordingReader;
   m_recordingReader = nullptr;
 }
 
-int CVBoxInstance::ReadRecordedStream(unsigned char* buffer, unsigned int size)
+int CVBoxInstance::ReadRecordedStream(int64_t streamId, unsigned char* buffer, unsigned int size)
 {
   if (!m_recordingReader)
     return 0;
@@ -872,7 +872,7 @@ int CVBoxInstance::ReadRecordedStream(unsigned char* buffer, unsigned int size)
   return m_recordingReader->ReadData(buffer, size);
 }
 
-int64_t CVBoxInstance::SeekRecordedStream(int64_t position, int whence)
+int64_t CVBoxInstance::SeekRecordedStream(int64_t streamId, int64_t position, int whence)
 {
   if (!m_recordingReader)
     return 0;
@@ -880,7 +880,7 @@ int64_t CVBoxInstance::SeekRecordedStream(int64_t position, int whence)
   return m_recordingReader->Seek(position, whence);
 }
 
-int64_t CVBoxInstance::LengthRecordedStream()
+int64_t CVBoxInstance::LengthRecordedStream(int64_t streamId)
 {
   if (!m_recordingReader)
     return -1;
