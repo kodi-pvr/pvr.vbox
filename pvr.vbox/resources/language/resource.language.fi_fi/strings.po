@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: KODI Main\n"
 "Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2022-07-10 15:14+0000\n"
+"PO-Revision-Date: 2025-01-31 09:27+0000\n"
 "Last-Translator: Oskari Lavinto <olavinto@protonmail.com>\n"
 "Language-Team: Finnish <https://kodi.weblate.cloud/projects/kodi-add-ons-pvr-clients/pvr-vbox/fi_fi/>\n"
 "Language: fi_fi\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 5.9.2\n"
 
 msgctxt "Addon Summary"
 msgid "PVR addon for VBox Home TV Gateways"
@@ -43,11 +43,11 @@ msgstr "UPnP-portti"
 
 msgctxt "#30004"
 msgid "Connection timeout"
-msgstr ""
+msgstr "Yhteyden aikakatkaisu"
 
 msgctxt "#30005"
 msgid "HTTPS port (set to 0 to use plain HTTP)"
-msgstr ""
+msgstr "HTTPS-portti (käytä salaamatonta HTTP-yhteyttä asettamalla arvoksi \"0\")"
 
 msgctxt "#30006"
 msgid "Connection"
@@ -60,7 +60,7 @@ msgstr "Internetistä"
 # empty strings from id 30008 to 30019
 msgctxt "#30020"
 msgid "Channel & EPG"
-msgstr ""
+msgstr "Kanava ja ohjelmaopas"
 
 msgctxt "#30021"
 msgid "Channels"
@@ -88,7 +88,7 @@ msgstr "Muistutuksen aika (minuuttia ennen ohjelman alkua)"
 
 msgctxt "#30027"
 msgid "Skip initial EPG load"
-msgstr ""
+msgstr "Älä lataa ohjelmaopasta käynnistettäessä"
 
 msgctxt "#30040"
 msgid "Timeshift"
@@ -130,52 +130,52 @@ msgstr "Peruuta kaikki kanavan muistutukset"
 # help info - Connection
 msgctxt "#30600"
 msgid "Contains settings for connecting to the VBox device from both your local network and from the internet. A local connection will be attempted first and if unsuccessful the internet settings will be used."
-msgstr ""
+msgstr "Sisältää asetukset VBox-laitteen yhdistämiseen lähiverkossa ja Internetissä. Ensisijaisesti käytetään paikallista yhteyttä ja sen epäonnistuessa Internet-yhteyttä."
 
 msgctxt "#30601"
 msgid "The IP address or hostname of your VBox when accessed from the local network."
-msgstr ""
+msgstr "VBox-laitteen isäntänimi tai IP-osoite lähiverkossa."
 
 msgctxt "#30602"
 msgid "The port used to connect to your VBox when accessed from the local network. Default value is `80`."
-msgstr ""
+msgstr "Portti, jonka kautta VBox-laitteeseen muodostetaan yhteys lähiverkossa. Oletusarvo on \"80\"."
 
 msgctxt "#30603"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the local network. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Portti, jonka kautta VBox-laitteeseen muodostetaan salattu HTTPS-yhteys lähiverkossa. Oletusarvo \"0\" käyttää salaamatonta HTTP-yhteyttä."
 
 msgctxt "#30604"
 msgid "The port used to connect to your VBox via UPnP when accessed from the local network. Default value is `55555`."
-msgstr ""
+msgstr "Portti, jonka kautta VBox-laitteeseen muodostetaan UPnP-yhteys lähiverkossa. Oletusarvo on \"55555\"."
 
 msgctxt "#30605"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the local network. Default value is `3`."
-msgstr ""
+msgstr "Aika sekunteina, jonka kuluttua yhteydenmuodostuksen todetaan epäonnistuneen lähiverkossa. Oletusarvo on \"3\"."
 
 msgctxt "#30606"
 msgid "The IP address or hostname of your VBox when accessed from the internet."
-msgstr ""
+msgstr "VBox-laitteen isäntänimi tai IP-osoite Internetissä."
 
 msgctxt "#30607"
 msgid "The port used to connect to your VBox when accessed from the internet."
-msgstr ""
+msgstr "Portti, jonka kautta VBox-laitteeseen muodostetaan yhteys Internetissä."
 
 msgctxt "#30608"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the internet. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Portti, jonka kautta VBox-laitteeseen muodostetaan salattu HTTPS-yhteys Internetissä. Oletusarvo \"0\" käyttää salaamatonta HTTP-yhteyttä."
 
 msgctxt "#30609"
 msgid "The port used to connect to your VBox via UPnP when accessed from the internet. Default value is `55555`."
-msgstr ""
+msgstr "Portti, jonka kautta VBox-laitteeseen muodostetaan UPnP-yhteys Internetissä. Oletusarvo on \"55555\"."
 
 msgctxt "#30610"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`."
-msgstr ""
+msgstr "Aika sekunteina, jonka kuluttua yhteydenmuodostuksen todetaan epäonnistuneen Internetissä. Oletusarvo on \"10\"."
 
 # empty strings from id 30611 to 30619
 msgctxt "#30620"
 msgid "Settings related to Channels & EPG."
-msgstr ""
+msgstr "Kanaviin ja ohjelmaoppaaseen liittyvät asetukset."
 
 msgctxt "#30621"
 msgid "Channel numbers can be set via either of the following two options: [LCN (Logical Channel Number) from backend] The channel numbers as set on the backend; [Channel index in backend] Starting from 1 number the channels as per the order they appear on the backend."
@@ -183,11 +183,11 @@ msgstr ""
 
 msgctxt "#30622"
 msgid "The amount of time in minutes prior to a programme start that a reminder should pop up."
-msgstr ""
+msgstr "Näyttää muistutuksen ennen ohjelman alkamista. Määritä muistutusaika minuutteina."
 
 msgctxt "#30623"
 msgid "Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec."
-msgstr ""
+msgstr "Välttää ohjelmatietojen lataamisen aiheuttaman kuormituksen ja estää mahdolliset kaatumiset. Oletuksena käytössä LibreElec/CoreElec-laitteissa."
 
 # empty strings from id 30624 to 30639
 msgctxt "#30640"
@@ -196,7 +196,7 @@ msgstr "Ajansiirtoon liittyviä asetuksia."
 
 msgctxt "#30641"
 msgid "If enabled allows pause, rewind and fast-forward of live TV."
-msgstr ""
+msgstr "Asetus mahdollistaa tv-lähetysten tauottamisen ja kelaamisen."
 
 msgctxt "#30642"
 msgid "The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels."
