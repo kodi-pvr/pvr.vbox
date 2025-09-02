@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: KODI Main\n"
 "Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2025-01-17 23:31+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2025-07-28 19:47+0000\n"
+"Last-Translator: Daniel Nylander <daniel@danielnylander.se>\n"
 "Language-Team: Swedish <https://kodi.weblate.cloud/projects/kodi-add-ons-pvr-clients/pvr-vbox/sv_se/>\n"
 "Language: sv_se\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.12.2\n"
 
 msgctxt "Addon Summary"
 msgid "PVR addon for VBox Home TV Gateways"
@@ -23,7 +23,7 @@ msgstr "PVR-tillägg för VBox Home TV-gateway"
 
 msgctxt "Addon Description"
 msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
-msgstr "Detta är ett PVR-tillägg för kommunikation med XTi TV-gateways från VBox Communications. Det stöder all förväntad grundläggande funktionalitet, som visning, inspelning och timeshift. Det stöder dessutom förbättring av signalburen guidedata via extern XMLTV-data."
+msgstr "Detta är ett PVR-tillägg för kommunikation med XTi TV-gateways från VBox Communications. Det stöder all förväntad grundläggande funktionalitet, som visning, inspelning och tidsförskjutning. Det stöder dessutom förbättring av signalburen tablådata via extern XMLTV-data."
 
 msgctxt "#30000"
 msgid "Local network"
@@ -43,11 +43,11 @@ msgstr "UPnP-port"
 
 msgctxt "#30004"
 msgid "Connection timeout"
-msgstr ""
+msgstr "Tidsgräns för anslutning överstegs"
 
 msgctxt "#30005"
 msgid "HTTPS port (set to 0 to use plain HTTP)"
-msgstr ""
+msgstr "HTTPS-port (ställ in till 0 för att använda vanlig HTTP)"
 
 msgctxt "#30006"
 msgid "Connection"
@@ -60,7 +60,7 @@ msgstr "Internet"
 # empty strings from id 30008 to 30019
 msgctxt "#30020"
 msgid "Channel & EPG"
-msgstr ""
+msgstr "Kanal & EPG"
 
 msgctxt "#30021"
 msgid "Channels"
@@ -88,7 +88,7 @@ msgstr "Påminnelsetid (minuter innan programmet startar)"
 
 msgctxt "#30027"
 msgid "Skip initial EPG load"
-msgstr ""
+msgstr "Hoppa över första EPG-inläsning"
 
 msgctxt "#30040"
 msgid "Timeshift"
@@ -96,11 +96,11 @@ msgstr "Tidsförskjutning"
 
 msgctxt "#30041"
 msgid "Enable timeshifting"
-msgstr "Aktivera tidsskiftande"
+msgstr "Aktivera tidsförskjutning"
 
 msgctxt "#30042"
 msgid "Timeshift buffer path"
-msgstr "Buffertsökväg för Timeshift"
+msgstr "Buffertsökväg för tidsförskjutning"
 
 msgctxt "#30106"
 msgid "VBox device rescan of EPG (will take a while)"
@@ -130,74 +130,74 @@ msgstr "Avbryt alla kanalpåminnelser"
 # help info - Connection
 msgctxt "#30600"
 msgid "Contains settings for connecting to the VBox device from both your local network and from the internet. A local connection will be attempted first and if unsuccessful the internet settings will be used."
-msgstr ""
+msgstr "Innehåller inställningar för anslutning till VBox-enheten från både ditt lokala nätverk och från internet. En lokal anslutning kommer att försökas först och om det inte lyckas kommer internetinställningarna att användas."
 
 msgctxt "#30601"
 msgid "The IP address or hostname of your VBox when accessed from the local network."
-msgstr ""
+msgstr "IP-adressen eller värdnamnet för din VBox när den nås från det lokala nätverket."
 
 msgctxt "#30602"
 msgid "The port used to connect to your VBox when accessed from the local network. Default value is `80`."
-msgstr ""
+msgstr "Den port som används för att ansluta till din VBox när den nås från det lokala nätverket. Standardvärdet är `80`."
 
 msgctxt "#30603"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the local network. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Den port som används för att ansluta till din VBox om HTTPS används vid åtkomst från det lokala nätverket. Standardvärdet \"0\" innebär att detta är inaktiverat och att HTTP används istället."
 
 msgctxt "#30604"
 msgid "The port used to connect to your VBox via UPnP when accessed from the local network. Default value is `55555`."
-msgstr ""
+msgstr "Den port som används för att ansluta till din VBox via UPnP när den nås från det lokala nätverket. Standardvärdet är `55555`."
 
 msgctxt "#30605"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the local network. Default value is `3`."
-msgstr ""
+msgstr "Det värde (i sekunder) som används för att ange när ett anslutningsförsök har misslyckats vid åtkomst från det lokala nätverket. Standardvärdet är `3`."
 
 msgctxt "#30606"
 msgid "The IP address or hostname of your VBox when accessed from the internet."
-msgstr ""
+msgstr "IP-adressen eller värdnamnet för din VBox när den nås från internet."
 
 msgctxt "#30607"
 msgid "The port used to connect to your VBox when accessed from the internet."
-msgstr ""
+msgstr "Den port som används för att ansluta till din VBox när den nås från internet."
 
 msgctxt "#30608"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the internet. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Den port som används för att ansluta till din VBox om HTTPS används vid åtkomst från internet. Standardvärdet \"0\" innebär att detta är inaktiverat och att HTTP används istället."
 
 msgctxt "#30609"
 msgid "The port used to connect to your VBox via UPnP when accessed from the internet. Default value is `55555`."
-msgstr ""
+msgstr "Den port som används för att ansluta till din VBox via UPnP när den nås från internet. Standardvärdet är `55555`."
 
 msgctxt "#30610"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`."
-msgstr ""
+msgstr "Det värde (i sekunder) som används för att ange när ett anslutningsförsök har misslyckats vid åtkomst från Internet. Standardvärdet är `10`."
 
 # empty strings from id 30611 to 30619
 msgctxt "#30620"
 msgid "Settings related to Channels & EPG."
-msgstr ""
+msgstr "Inställningar relaterade till kanaler och EPG."
 
 msgctxt "#30621"
 msgid "Channel numbers can be set via either of the following two options: [LCN (Logical Channel Number) from backend] The channel numbers as set on the backend; [Channel index in backend] Starting from 1 number the channels as per the order they appear on the backend."
-msgstr ""
+msgstr "Kanalnummer kan ställas in via något av följande två alternativ: [LCN (Logical Channel Number) från backend] Kanalnumren som anges i backend; [Kanalindex i backend] Med början från 1 numreras kanalerna i den ordning de visas i backend."
 
 msgctxt "#30622"
 msgid "The amount of time in minutes prior to a programme start that a reminder should pop up."
-msgstr ""
+msgstr "Den tid i minuter före programstart som en påminnelse ska dyka upp."
 
 msgctxt "#30623"
 msgid "Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec."
-msgstr ""
+msgstr "Ignorera den första EPG-inläsningen. Aktiverad som standard för att förhindra kraschproblem på LibreElec/CoreElec."
 
 # empty strings from id 30624 to 30639
 msgctxt "#30640"
 msgid "Settings related to the timeshift."
-msgstr ""
+msgstr "Inställningar relaterade till tidsförskjutningen."
 
 msgctxt "#30641"
 msgid "If enabled allows pause, rewind and fast-forward of live TV."
-msgstr ""
+msgstr "Om den är aktiverad kan du pausa, spola tillbaka och snabbspola framåt på direktsänd TV."
 
 msgctxt "#30642"
 msgid "The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels."
-msgstr ""
+msgstr "Sökvägen där buffertfilerna för tidsförskjutning ska lagras när tidsförskjutningen är aktiverat. Se till att du har en rimlig mängd diskutrymme tillgängligt eftersom bufferten kommer att växa i det oändliga tills du slutar titta eller byter kanal."
