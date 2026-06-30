@@ -145,3 +145,4 @@ or
 
 1. `rm -rf "$HOME/Library/Application Support/Kodi/addons/pvr.vbox"`
 2. `cp -rf $HOME/xbmc-addon/addons/pvr.vbox "$HOME/Library/Application Support/Kodi/addons"`
+https://github.com/jackmac1-cyber/pvr.vbox/blob/Piers/pvr.vbox%2Faddon.xml.in
