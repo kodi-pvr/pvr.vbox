@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: KODI Main\n"
 "Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2025-07-28 01:35+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2026-07-06 15:50+0000\n"
+"Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
 "Language-Team: Czech <https://kodi.weblate.cloud/projects/kodi-add-ons-pvr-clients/pvr-vbox/cs_cz/>\n"
 "Language: cs_cz\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 2026.7\n"
 
 msgctxt "Addon Summary"
 msgid "PVR addon for VBox Home TV Gateways"
@@ -23,7 +23,7 @@ msgstr "Doplněk PVR pro VBox Home TV Gateways"
 
 msgctxt "Addon Description"
 msgid "This is a PVR addon for interfacing with VBox Communications' XTi TV Gateways. It supports all the basic functionality you would expect, such as watching, recording and timeshifting. Additionally, it supports augmenting the over-the-air guide data with external XMLTV data."
-msgstr "Toto je doplněk PVR addon pro propojení s VBox Communications' XTi TV Gateways. Podporuje všechny základní funkce, které byste očekávali, jako je sledování, nahrávání a časový posun. Navíc podporuje rozšíření vzduchem šířených dat televizního programu o externí data XMLTV."
+msgstr "Toto je doplněk PVR pro propojení se zařízeními XTi TV Gateway společnosti VBox Communications. Podporuje všechny základní funkce, které byste očekávali, například sledování, nahrávání a časový posun. Navíc podporuje rozšíření vysílaných dat TV programu o externí data XMLTV."
 
 msgctxt "#30000"
 msgid "Local network"
@@ -43,11 +43,11 @@ msgstr "Port UPnP"
 
 msgctxt "#30004"
 msgid "Connection timeout"
-msgstr ""
+msgstr "Časový limit připojení"
 
 msgctxt "#30005"
 msgid "HTTPS port (set to 0 to use plain HTTP)"
-msgstr ""
+msgstr "Port HTTPS (nastavte 0 pro použití nešifrovaného HTTP)"
 
 msgctxt "#30006"
 msgid "Connection"
@@ -60,7 +60,7 @@ msgstr "Internet"
 # empty strings from id 30008 to 30019
 msgctxt "#30020"
 msgid "Channel & EPG"
-msgstr ""
+msgstr "Kanály a EPG"
 
 msgctxt "#30021"
 msgid "Channels"
@@ -72,11 +72,11 @@ msgstr "Televizní program"
 
 msgctxt "#30023"
 msgid "Channel numbers set by"
-msgstr "Čísla kanálů nastavena pomocí"
+msgstr "Číslování kanálů podle"
 
 msgctxt "#30024"
 msgid "LCN (Logical Channel Number) from backend"
-msgstr "Logické číslování kanálů (LCN) z backendu"
+msgstr "LCN (logické číslo kanálu) z backendu"
 
 msgctxt "#30025"
 msgid "Channel index in backend"
@@ -84,7 +84,7 @@ msgstr "Index kanálu v backendu"
 
 msgctxt "#30026"
 msgid "Reminder time (minutes before program starts)"
-msgstr "Čas upozornění (minuty před začátkem programu)"
+msgstr "Čas upozornění (minuty před začátkem pořadu)"
 
 msgctxt "#30027"
 msgid "Skip initial EPG load"
@@ -130,64 +130,64 @@ msgstr "Zrušit všechna upozornění kanálu"
 # help info - Connection
 msgctxt "#30600"
 msgid "Contains settings for connecting to the VBox device from both your local network and from the internet. A local connection will be attempted first and if unsuccessful the internet settings will be used."
-msgstr ""
+msgstr "Obsahuje nastavení pro připojení k zařízení VBox z místní sítě i z internetu. Nejdříve se zkusí místní připojení, a pokud se nezdaří, použijí se nastavení pro internet."
 
 msgctxt "#30601"
 msgid "The IP address or hostname of your VBox when accessed from the local network."
-msgstr ""
+msgstr "IP adresa nebo název hostitele zařízení VBox při přístupu z místní sítě."
 
 msgctxt "#30602"
 msgid "The port used to connect to your VBox when accessed from the local network. Default value is `80`."
-msgstr ""
+msgstr "Port používaný pro připojení k zařízení VBox při přístupu z místní sítě. Výchozí hodnota je `80`."
 
 msgctxt "#30603"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the local network. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Port používaný pro připojení k zařízení VBox přes HTTPS při přístupu z místní sítě. Výchozí hodnota `0` znamená, že je tato volba vypnutá a místo ní se použije HTTP."
 
 msgctxt "#30604"
 msgid "The port used to connect to your VBox via UPnP when accessed from the local network. Default value is `55555`."
-msgstr ""
+msgstr "Port používaný pro připojení k zařízení VBox přes UPnP při přístupu z místní sítě. Výchozí hodnota je `55555`."
 
 msgctxt "#30605"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the local network. Default value is `3`."
-msgstr ""
+msgstr "Hodnota v sekundách určující, kdy se pokus o připojení z místní sítě považuje za neúspěšný. Výchozí hodnota je `3`."
 
 msgctxt "#30606"
 msgid "The IP address or hostname of your VBox when accessed from the internet."
-msgstr ""
+msgstr "IP adresa nebo název hostitele zařízení VBox při přístupu z internetu."
 
 msgctxt "#30607"
 msgid "The port used to connect to your VBox when accessed from the internet."
-msgstr ""
+msgstr "Port používaný pro připojení k zařízení VBox při přístupu z internetu."
 
 msgctxt "#30608"
 msgid "The port used to connect to your VBox if using HTTPS when accessed from the internet. The default `0` means this is disabled and HTTP will be used instead."
-msgstr ""
+msgstr "Port používaný pro připojení k zařízení VBox přes HTTPS při přístupu z internetu. Výchozí hodnota `0` znamená, že je tato volba vypnutá a místo ní se použije HTTP."
 
 msgctxt "#30609"
 msgid "The port used to connect to your VBox via UPnP when accessed from the internet. Default value is `55555`."
-msgstr ""
+msgstr "Port používaný pro připojení k zařízení VBox přes UPnP při přístupu z internetu. Výchozí hodnota je `55555`."
 
 msgctxt "#30610"
 msgid "The value used (in seconds) to denote when a connection attempt has failed when accessed from the internet. Default value is `10`."
-msgstr ""
+msgstr "Hodnota v sekundách určující, kdy se pokus o připojení z internetu považuje za neúspěšný. Výchozí hodnota je `10`."
 
 # empty strings from id 30611 to 30619
 msgctxt "#30620"
 msgid "Settings related to Channels & EPG."
-msgstr ""
+msgstr "Nastavení související s kanály a EPG."
 
 msgctxt "#30621"
 msgid "Channel numbers can be set via either of the following two options: [LCN (Logical Channel Number) from backend] The channel numbers as set on the backend; [Channel index in backend] Starting from 1 number the channels as per the order they appear on the backend."
-msgstr ""
+msgstr "Čísla kanálů lze nastavit jednou ze dvou možností: [LCN (logické číslo kanálu) z backendu] čísla kanálů nastavená v backendu; [Index kanálu v backendu] kanály se očíslují od 1 podle pořadí, v jakém se zobrazují v backendu."
 
 msgctxt "#30622"
 msgid "The amount of time in minutes prior to a programme start that a reminder should pop up."
-msgstr ""
+msgstr "Doba v minutách před začátkem pořadu, kdy se má zobrazit upozornění."
 
 msgctxt "#30623"
 msgid "Ignore the initial EPG load. Enabled by default to prevent crash issues on LibreElec/CoreElec."
-msgstr ""
+msgstr "Ignorovat počáteční načtení EPG. Ve výchozím stavu je zapnuto, aby se předešlo pádům v LibreELEC/CoreELEC."
 
 # empty strings from id 30624 to 30639
 msgctxt "#30640"
@@ -196,8 +196,8 @@ msgstr ""
 
 msgctxt "#30641"
 msgid "If enabled allows pause, rewind and fast-forward of live TV."
-msgstr ""
+msgstr "Pokud je zapnuto, umožňuje pozastavení, přetáčení zpět a rychlý posun vpřed u živé TV."
 
 msgctxt "#30642"
 msgid "The path where the timeshift buffer files should be stored when timeshifting is enabled. Make sure you have a reasonable amount of disk space available since the buffer will grow indefinitely until you stop watching or switch channels."
-msgstr ""
+msgstr "Cesta, kam se mají ukládat soubory vyrovnávací paměti časového posunu, když je časový posun povolen. Ujistěte se, že je k dispozici dostatek místa na disku, protože vyrovnávací paměť bude neomezeně růst, dokud sledování nezastavíte nebo nepřepnete kanál."
